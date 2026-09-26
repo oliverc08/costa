@@ -2,6 +2,7 @@ import { generateText, isStepCount, streamText, type ModelMessage } from "ai";
 import { models } from "@/lib/config";
 import type { LanguageCode } from "@/lib/languages";
 import type { Channel } from "@/lib/store/types";
+import { auditReply } from "@/lib/safety/output";
 import { createTools, type ToolContext } from "@/lib/tools";
 import { buildInstructions } from "./instructions";
 
@@ -44,8 +45,13 @@ function settings(ctx: AgentContext) {
   };
 }
 
+function logAudit(channel: Channel, text: string) {
+  const issues = auditReply(text);
+  if (issues.length) console.warn(`[safety] ${channel} reply flagged`, issues.map((i) => i.kind));
+}
+
 export function streamAgent(ctx: AgentContext, messages: ModelMessage[]) {
-  return streamText({ ...settings(ctx), messages });
+  return streamText({ ...settings(ctx), messages, onFinish: ({ text }) => logAudit(ctx.channel, text) });
 }
 
 export async function runAgent(
@@ -53,6 +59,7 @@ export async function runAgent(
   messages: ModelMessage[],
 ): Promise<{ text: string; tools: ToolTrace[] }> {
   const result = await generateText({ ...settings(ctx), messages });
+  logAudit(ctx.channel, result.text);
   const outputs = new Map<string, unknown>();
   for (const r of result.steps.flatMap((s) => s.toolResults)) outputs.set(r.toolCallId, r.output);
   const tools: ToolTrace[] = result.steps.flatMap((s) => s.toolCalls).map((c) => ({

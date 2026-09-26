@@ -211,6 +211,13 @@ const PROVIDERS: Provider[] = [
   },
 ];
 
+/** Every phone number in the curated directory, including language-specific lines. */
+export function providerPhones(): string[] {
+  return PROVIDERS.flatMap((p) => [p.phone, ...Object.values(p.phoneByLanguage ?? {})]).filter(
+    (x): x is string => Boolean(x),
+  );
+}
+
 const SAN_MATEO_PLACES = [
   "san mateo", "half moon bay", "pescadero", "la honda", "san gregorio", "el granada", "montara", "moss beach",
   "princeton", "coastside", "pacifica", "daly city", "redwood city", "menlo park", "east palo alto", "burlingame",
