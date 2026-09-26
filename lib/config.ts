@@ -11,8 +11,9 @@ export const EMBEDDING_DIMENSIONS = 1536;
 
 export const RETENTION_DAYS = 30;
 
+/** On Vercel deployments the OIDC token arrives per request, not as an env var. */
 export function hasAiGateway(): boolean {
-  return Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
+  return Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || process.env.VERCEL === "1");
 }
 
 export function hasDatabase(): boolean {
