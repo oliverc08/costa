@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { LetterUpload } from "@/components/LetterUpload";
-import { LETTER_UI, UI } from "@/lib/i18n";
+import { DISCLAIMER, LETTER_UI, UI } from "@/lib/i18n";
 import { resolveUiLanguage } from "@/lib/ui-language";
 
 export const metadata: Metadata = { title: "Explain a letter · Costa" };
@@ -35,9 +35,7 @@ export default async function LetterPage({ searchParams }: PageProps<"/letter">)
 
       <LetterUpload lang={lang} />
 
-      <footer className="pt-4 text-xs text-stone-500">
-        Costa explains letters in plain language but is not a government agency. Your county makes all decisions.
-      </footer>
+      <footer className="pt-4 text-xs text-stone-500">{DISCLAIMER[lang].letter}</footer>
     </main>
   );
 }

@@ -297,6 +297,29 @@ export const VOICE: Record<
   },
 };
 
+export const DISCLAIMER: Record<LanguageCode, { site: string; letter: string }> = {
+  en: {
+    site: "Costa is a student project, not a government agency. It gives general information from official sources and cannot decide eligibility. For emergencies, call 911.",
+    letter: "Costa explains letters in plain language but is not a government agency. Your county makes all decisions.",
+  },
+  es: {
+    site: "Costa es un proyecto estudiantil, no una agencia del gobierno. Da información general de fuentes oficiales y no puede decidir si usted califica. En una emergencia, llame al 911.",
+    letter: "Costa explica cartas en palabras sencillas, pero no es una agencia del gobierno. Su condado toma todas las decisiones.",
+  },
+  zh: {
+    site: "Costa 是一个学生项目，不是政府机构。它提供来自官方资料的一般信息，不能决定您的资格。紧急情况请拨打 911。",
+    letter: "Costa 用简单的语言解释信件，但不是政府机构。所有决定都由您所在的县做出。",
+  },
+  tl: {
+    site: "Ang Costa ay proyekto ng estudyante, hindi ahensya ng gobyerno. Nagbibigay ito ng pangkalahatang impormasyon mula sa opisyal na source at hindi nito mapagpapasyahan ang eligibility. Sa emergency, tumawag sa 911.",
+    letter: "Ipinapaliwanag ng Costa ang mga sulat sa simpleng salita pero hindi ito ahensya ng gobyerno. Ang county mo ang nagpapasya sa lahat.",
+  },
+  vi: {
+    site: "Costa là dự án của học sinh, không phải cơ quan chính phủ. Costa cung cấp thông tin chung từ nguồn chính thức và không thể quyết định điều kiện. Trường hợp khẩn cấp, hãy gọi 911.",
+    letter: "Costa giải thích thư bằng ngôn ngữ đơn giản nhưng không phải cơ quan chính phủ. Quận của bạn đưa ra mọi quyết định.",
+  },
+};
+
 export interface LetterStrings {
   unreadable: string;
   notLetter: string;

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Chat } from "@/components/Chat";
 import { LanguagePicker } from "@/components/LanguagePicker";
-import { UI } from "@/lib/i18n";
+import { DISCLAIMER, UI } from "@/lib/i18n";
 import { resolveUiLanguage } from "@/lib/ui-language";
 import { readEvalSummary } from "@/lib/eval-summary";
 
@@ -84,9 +84,11 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         )}
       </section>
 
-      <footer className="pb-6 text-xs text-stone-500">
-        Costa is a student project and is not a government agency. It gives general information from official
-        sources and cannot decide eligibility. For emergencies, call 911.
+      <footer className="flex flex-wrap items-center justify-between gap-3 pb-6 text-xs text-stone-500">
+        <p className="max-w-xl">{DISCLAIMER[lang].site}</p>
+        <Link href="/partners" className="underline underline-offset-2 hover:text-stone-800">
+          Partner organizations
+        </Link>
       </footer>
     </main>
   );
