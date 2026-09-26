@@ -296,3 +296,109 @@ export const VOICE: Record<
     oneMoment: "Xin chờ một chút để tôi kiểm tra.",
   },
 };
+
+export interface LetterStrings {
+  unreadable: string;
+  notLetter: string;
+  error: string;
+  uncertain: string;
+  daysLeft: (n: number) => string;
+  dueToday: string;
+  overdue: string;
+  another: string;
+  back: string;
+  areaLabel: string;
+  contactBy: string;
+  callMe: string;
+  textMe: string;
+  sending: string;
+  fromLetter: string;
+}
+
+export const LETTER_UI: Record<LanguageCode, LetterStrings> = {
+  en: {
+    unreadable: "Costa couldn't read that photo. Try again with the whole page, flat, in good light.",
+    notLetter: "That doesn't look like a benefits letter. Try a photo of the letter itself.",
+    error: "Something went wrong. Please try again.",
+    uncertain: "Costa isn't sure about",
+    daysLeft: (n) => `${n} day${n === 1 ? "" : "s"} left`,
+    dueToday: "Due today",
+    overdue: "This date has passed. Act now; you may still have options.",
+    another: "Explain another letter",
+    back: "Back",
+    areaLabel: "Your city",
+    contactBy: "Contact me by",
+    callMe: "Phone call",
+    textMe: "Text message",
+    sending: "Sending…",
+    fromLetter: "Read from your letter",
+  },
+  es: {
+    unreadable: "Costa no pudo leer la foto. Intente otra vez con toda la página, plana y con buena luz.",
+    notLetter: "No parece una carta de beneficios. Intente con una foto de la carta.",
+    error: "Algo salió mal. Intente de nuevo.",
+    uncertain: "Costa no está seguro sobre",
+    daysLeft: (n) => `Quedan ${n} día${n === 1 ? "" : "s"}`,
+    dueToday: "Vence hoy",
+    overdue: "Esta fecha ya pasó. Actúe ahora; todavía puede tener opciones.",
+    another: "Explicar otra carta",
+    back: "Regresar",
+    areaLabel: "Su ciudad",
+    contactBy: "Contácteme por",
+    callMe: "Llamada",
+    textMe: "Mensaje de texto",
+    sending: "Enviando…",
+    fromLetter: "Leído de su carta",
+  },
+  zh: {
+    unreadable: "Costa 无法看清这张照片。请把整页放平，在光线充足处重新拍摄。",
+    notLetter: "这看起来不像福利信件。请拍摄信件本身。",
+    error: "出了点问题，请再试一次。",
+    uncertain: "Costa 不确定的地方：",
+    daysLeft: (n) => `还剩 ${n} 天`,
+    dueToday: "今天截止",
+    overdue: "这个日期已经过了。请马上行动，您可能仍有办法。",
+    another: "解释另一封信",
+    back: "返回",
+    areaLabel: "您所在的城市",
+    contactBy: "联系方式",
+    callMe: "打电话",
+    textMe: "发短信",
+    sending: "正在发送…",
+    fromLetter: "从您的信中读取",
+  },
+  tl: {
+    unreadable: "Hindi mabasa ni Costa ang litrato. Subukan ulit: buong pahina, nakalapag, sa maliwanag na lugar.",
+    notLetter: "Mukhang hindi ito sulat tungkol sa benepisyo. Subukan ang litrato ng mismong sulat.",
+    error: "May nangyaring mali. Subukan ulit.",
+    uncertain: "Hindi sigurado si Costa tungkol sa",
+    daysLeft: (n) => `${n} araw na lang`,
+    dueToday: "Deadline ngayong araw",
+    overdue: "Lumipas na ang petsang ito. Kumilos agad; baka may paraan pa.",
+    another: "Ipaliwanag ang ibang sulat",
+    back: "Bumalik",
+    areaLabel: "Iyong lungsod",
+    contactBy: "Kontakin ako sa",
+    callMe: "Tawag",
+    textMe: "Text",
+    sending: "Ipinapadala…",
+    fromLetter: "Nabasa mula sa iyong sulat",
+  },
+  vi: {
+    unreadable: "Costa không đọc được ảnh. Hãy chụp lại cả trang, để phẳng, đủ ánh sáng.",
+    notLetter: "Đây có vẻ không phải thư phúc lợi. Hãy chụp chính lá thư.",
+    error: "Đã có lỗi. Vui lòng thử lại.",
+    uncertain: "Costa chưa chắc chắn về",
+    daysLeft: (n) => `Còn ${n} ngày`,
+    dueToday: "Hạn chót hôm nay",
+    overdue: "Ngày này đã qua. Hãy hành động ngay; bạn có thể vẫn còn lựa chọn.",
+    another: "Giải thích thư khác",
+    back: "Quay lại",
+    areaLabel: "Thành phố của bạn",
+    contactBy: "Liên hệ với tôi qua",
+    callMe: "Gọi điện",
+    textMe: "Tin nhắn",
+    sending: "Đang gửi…",
+    fromLetter: "Đọc từ thư của bạn",
+  },
+};

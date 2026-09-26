@@ -3,12 +3,16 @@
 import { useRouter, usePathname } from "next/navigation";
 import { LANGUAGES, LANGUAGE_CODES, type LanguageCode } from "@/lib/languages";
 
+function rememberLanguage(code: LanguageCode) {
+  document.cookie = `costa_lang=${code}; path=/; max-age=31536000; samesite=lax`;
+}
+
 export function LanguagePicker({ current }: { current: LanguageCode }) {
   const router = useRouter();
   const pathname = usePathname();
 
   function choose(code: LanguageCode) {
-    document.cookie = `costa_lang=${code}; path=/; max-age=31536000; samesite=lax`;
+    rememberLanguage(code);
     router.replace(`${pathname}?lang=${code}`);
   }
 
