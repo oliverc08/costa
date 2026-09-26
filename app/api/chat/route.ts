@@ -1,5 +1,6 @@
 import {
   convertToModelMessages,
+  createUIMessageStream,
   createUIMessageStreamResponse,
   toUIMessageStream,
   type UIMessage,
@@ -7,7 +8,8 @@ import {
 import { cookies } from "next/headers";
 import { streamAgent } from "@/lib/agent";
 import { hasAiGateway } from "@/lib/config";
-import { isLanguageCode } from "@/lib/languages";
+import { type Faq, faqSources, matchFaq } from "@/lib/faq";
+import { isLanguageCode, type LanguageCode } from "@/lib/languages";
 import { REDACTED, redact } from "@/lib/safety/redact";
 import { wantsHuman } from "@/lib/safety/intent";
 
@@ -15,16 +17,47 @@ export const maxDuration = 60;
 
 const SESSION_COOKIE = "costa_sid";
 
+function faqResponse(faq: Faq, language: LanguageCode): Response {
+  const stream = createUIMessageStream({
+    execute: ({ writer }) => {
+      const textId = crypto.randomUUID();
+      const toolCallId = `faq-${crypto.randomUUID()}`;
+      writer.write({ type: "text-start", id: textId });
+      writer.write({ type: "text-delta", id: textId, delta: faq.answer[language] });
+      writer.write({ type: "text-end", id: textId });
+      writer.write({
+        type: "tool-input-available",
+        toolCallId,
+        toolName: "searchBenefits",
+        input: { query: faq.question[language] },
+      });
+      writer.write({
+        type: "tool-output-available",
+        toolCallId,
+        output: { found: true, results: faqSources(faq) },
+      });
+    },
+  });
+  return createUIMessageStreamResponse({ stream });
+}
+
 export async function POST(req: Request) {
+  const body = (await req.json()) as { messages: UIMessage[]; language?: string };
+  const messages = body.messages.slice(-30);
+
+  const last = messages.at(-1);
+  if (last?.role === "user") {
+    const text = last.parts.map((p) => (p.type === "text" ? p.text : "")).join(" ");
+    const hit = matchFaq(text);
+    if (hit) return faqResponse(hit.faq, hit.language);
+  }
+
   if (!hasAiGateway()) {
     return Response.json(
       { error: "Costa is not configured yet: set AI_GATEWAY_API_KEY." },
       { status: 503 },
     );
   }
-
-  const body = (await req.json()) as { messages: UIMessage[]; language?: string };
-  const messages = body.messages.slice(-30);
 
   let redactedThisTurn = false;
   const lastIndex = messages.length - 1;

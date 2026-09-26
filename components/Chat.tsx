@@ -108,7 +108,7 @@ function ToolCard({ part, t }: { part: UIMessage["parts"][number]; t: UiStrings 
   return null;
 }
 
-export function Chat({ t }: { t: UiStrings }) {
+export function Chat({ t, suggestions }: { t: UiStrings; suggestions: string[] }) {
   const [input, setInput] = useState("");
   const [redactedNotice, setRedactedNotice] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -148,17 +148,20 @@ export function Chat({ t }: { t: UiStrings }) {
     <section className="flex flex-col rounded-3xl border border-stone-200 bg-stone-50/80 shadow-sm">
       <div className="flex max-h-[28rem] min-h-[14rem] flex-col gap-4 overflow-y-auto p-4 sm:p-6" aria-live="polite">
         {messages.length === 0 && (
-          <div className="flex flex-wrap gap-2">
-            {t.suggestions.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => send(s)}
-                className="rounded-full border border-stone-300 bg-white px-4 py-2 text-left text-sm text-stone-800 hover:border-teal-500 hover:text-teal-900"
-              >
-                {s}
-              </button>
-            ))}
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">{t.commonQuestions}</p>
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => send(s)}
+                  className="rounded-full border border-stone-300 bg-white px-4 py-2 text-left text-sm text-stone-800 hover:border-teal-500 hover:text-teal-900"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

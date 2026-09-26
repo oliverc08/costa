@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Chat } from "@/components/Chat";
 import { LanguagePicker } from "@/components/LanguagePicker";
+import { faqQuestions } from "@/lib/faq";
 import { DISCLAIMER, UI } from "@/lib/i18n";
 import { resolveUiLanguage } from "@/lib/ui-language";
 import { readEvalSummary } from "@/lib/eval-summary";
@@ -53,7 +54,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
       <section id="ask" className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{t.ask}</h2>
-        <Chat t={t} />
+        <Chat t={t} suggestions={faqQuestions(lang)} />
         <Link
           href={`/letter?lang=${lang}`}
           className="flex items-center justify-between rounded-2xl border border-stone-200 bg-white px-5 py-4 font-medium text-stone-900 hover:border-teal-600"

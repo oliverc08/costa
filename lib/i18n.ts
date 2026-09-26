@@ -29,7 +29,7 @@ export interface UiStrings {
   redactedWarning: string;
   safetyTitle: string;
   safetyItems: string[];
-  suggestions: string[];
+  commonQuestions: string;
   notConfigured: string;
 }
 
@@ -70,11 +70,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       "You can ask for a real person at any time.",
       "Messages are deleted after 30 days.",
     ],
-    suggestions: [
-      "How do I renew my Medi-Cal?",
-      "My Medi-Cal was cut off. What do I do?",
-      "Can my family get food help?",
-    ],
+    commonQuestions: "Common questions",
     notConfigured: "Costa's AI is not configured on this server yet.",
   },
   es: {
@@ -113,11 +109,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       "Puede pedir hablar con una persona en cualquier momento.",
       "Los mensajes se borran después de 30 días.",
     ],
-    suggestions: [
-      "¿Cómo renuevo mi Medi-Cal?",
-      "Me cortaron el Medi-Cal. ¿Qué hago?",
-      "¿Mi familia puede recibir ayuda para comida?",
-    ],
+    commonQuestions: "Preguntas frecuentes",
     notConfigured: "La IA de Costa todavía no está configurada en este servidor.",
   },
   zh: {
@@ -156,7 +148,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       "您随时可以要求与真人交谈。",
       "消息会在 30 天后删除。",
     ],
-    suggestions: ["我怎么续保 Medi-Cal？", "我的 Medi-Cal 被停了，怎么办？", "我家可以申请食物补助吗？"],
+    commonQuestions: "常见问题",
     notConfigured: "此服务器尚未配置 Costa 的 AI。",
   },
   tl: {
@@ -195,11 +187,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       "Puwede kang humingi ng totoong tao anumang oras.",
       "Binubura ang mga mensahe pagkalipas ng 30 araw.",
     ],
-    suggestions: [
-      "Paano ko ire-renew ang Medi-Cal ko?",
-      "Natigil ang Medi-Cal ko. Ano ang gagawin ko?",
-      "Puwede bang makakuha ng tulong sa pagkain ang pamilya ko?",
-    ],
+    commonQuestions: "Mga karaniwang tanong",
     notConfigured: "Hindi pa naka-configure ang AI ni Costa sa server na ito.",
   },
   vi: {
@@ -238,11 +226,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       "Bạn có thể yêu cầu nói chuyện với người thật bất cứ lúc nào.",
       "Tin nhắn được xóa sau 30 ngày.",
     ],
-    suggestions: [
-      "Làm sao để gia hạn Medi-Cal?",
-      "Medi-Cal của tôi bị cắt. Tôi phải làm gì?",
-      "Gia đình tôi có thể nhận trợ giúp thực phẩm không?",
-    ],
+    commonQuestions: "Câu hỏi thường gặp",
     notConfigured: "AI của Costa chưa được cấu hình trên máy chủ này.",
   },
 };
