@@ -50,7 +50,16 @@ export interface HandoffFilter {
   topic?: string;
 }
 
+/** A voice reply computed in the background, picked up by the next Twilio request. */
+export interface PendingReply {
+  text: string;
+  language: LanguageCode;
+  endCall?: boolean;
+}
+
 export interface Store {
+  putPendingReply(key: string, reply: PendingReply): Promise<void>;
+  takePendingReply(key: string): Promise<PendingReply | null>;
   getSession(id: string): Promise<Session | null>;
   saveSession(session: Session): Promise<void>;
   createHandoff(input: NewHandoff): Promise<Handoff>;

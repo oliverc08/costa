@@ -51,6 +51,17 @@ export async function fetchTwilioMedia(url: string): Promise<{ data: Uint8Array;
   throw new Error(`Failed to fetch Twilio media (${lastStatus})`);
 }
 
+/** Deletes a Twilio-hosted MMS media item or call recording so it isn't retained. */
+export async function deleteTwilioMedia(url: string): Promise<void> {
+  if (!hasTwilio()) return;
+  const auth = Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString("base64");
+  const res = await fetch(url.replace(/\.(json|wav|mp3)$/, ""), {
+    method: "DELETE",
+    headers: { Authorization: `Basic ${auth}` },
+  });
+  if (!res.ok && res.status !== 404) console.warn(`[twilio] delete failed (${res.status})`);
+}
+
 export async function sendSms(to: string, body: string, from?: string) {
   const client = twilioClient();
   await client.messages.create({

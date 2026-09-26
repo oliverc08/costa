@@ -54,8 +54,8 @@ export async function runAgent(
 ): Promise<{ text: string; tools: ToolTrace[] }> {
   const result = await generateText({ ...settings(ctx), messages });
   const outputs = new Map<string, unknown>();
-  for (const r of result.toolResults) outputs.set(r.toolCallId, r.output);
-  const tools: ToolTrace[] = result.toolCalls.map((c) => ({
+  for (const r of result.steps.flatMap((s) => s.toolResults)) outputs.set(r.toolCallId, r.output);
+  const tools: ToolTrace[] = result.steps.flatMap((s) => s.toolCalls).map((c) => ({
     toolName: c.toolName,
     input: c.input,
     output: outputs.get(c.toolCallId),

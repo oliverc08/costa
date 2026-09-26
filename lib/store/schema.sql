@@ -29,6 +29,12 @@ CREATE TABLE IF NOT EXISTS handoffs (
 
 CREATE INDEX IF NOT EXISTS handoffs_status_idx ON handoffs (status, created_at DESC);
 
+CREATE TABLE IF NOT EXISTS pending_replies (
+  key TEXT PRIMARY KEY,
+  payload JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS source_chunks (
   id TEXT PRIMARY KEY,
   source_id TEXT NOT NULL,

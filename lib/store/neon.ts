@@ -4,6 +4,7 @@ import type {
   HandoffFilter,
   HandoffStatus,
   NewHandoff,
+  PendingReply,
   Session,
   Store,
 } from "./types";
@@ -51,6 +52,17 @@ export function createNeonStore(url: string): Store {
   const sql = neon(url);
 
   return {
+    async putPendingReply(key, reply) {
+      await sql`
+        INSERT INTO pending_replies (key, payload) VALUES (${key}, ${JSON.stringify(reply)}::jsonb)
+        ON CONFLICT (key) DO UPDATE SET payload = EXCLUDED.payload, created_at = now()`;
+    },
+
+    async takePendingReply(key) {
+      const rows = (await sql`DELETE FROM pending_replies WHERE key = ${key} RETURNING payload`) as Row[];
+      return rows[0] ? (rows[0].payload as PendingReply) : null;
+    },
+
     async getSession(id) {
       const rows = (await sql`SELECT * FROM sessions WHERE id = ${id}`) as Row[];
       return rows[0] ? toSession(rows[0]) : null;
@@ -109,6 +121,7 @@ export function createNeonStore(url: string): Store {
         DELETE FROM handoffs
         WHERE status = 'resolved' AND updated_at < now() - make_interval(days => ${days})
         RETURNING id`) as Row[];
+      await sql`DELETE FROM pending_replies WHERE created_at < now() - interval '1 hour'`;
       return { sessions: s.length, handoffs: h.length };
     },
   };

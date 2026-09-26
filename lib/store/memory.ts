@@ -1,9 +1,10 @@
-import type { Handoff, HandoffFilter, NewHandoff, Session, Store } from "./types";
+import type { Handoff, HandoffFilter, NewHandoff, PendingReply, Session, Store } from "./types";
 import { makeReference } from "./reference";
 
 interface MemoryData {
   sessions: Map<string, Session>;
   handoffs: Map<string, Handoff>;
+  pending: Map<string, PendingReply>;
 }
 
 const globalKey = "__costaMemoryStore" as const;
@@ -11,13 +12,21 @@ const globalKey = "__costaMemoryStore" as const;
 function data(): MemoryData {
   const g = globalThis as unknown as Record<string, MemoryData | undefined>;
   if (!g[globalKey]) {
-    g[globalKey] = { sessions: new Map(), handoffs: new Map() };
+    g[globalKey] = { sessions: new Map(), handoffs: new Map(), pending: new Map() };
   }
   return g[globalKey]!;
 }
 
 export function createMemoryStore(): Store {
   return {
+    async putPendingReply(key, reply) {
+      data().pending.set(key, reply);
+    },
+    async takePendingReply(key) {
+      const r = data().pending.get(key) ?? null;
+      data().pending.delete(key);
+      return r;
+    },
     async getSession(id) {
       const s = data().sessions.get(id);
       return s ? structuredClone(s) : null;
