@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "kb:build": "tsx scripts/build-kb.ts",
+    "predev": "npm run kb:build",
     "dev": "next dev",
+    "prebuild": "npm run kb:build",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

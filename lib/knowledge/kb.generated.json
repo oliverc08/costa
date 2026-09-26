@@ -1,0 +1,436 @@
+{
+  "sources": [
+    {
+      "id": "caleitc-itin",
+      "agency": "California Franchise Tax Board (FTB)",
+      "program": "caleitc",
+      "topic": "tax-credits",
+      "title": "CalEITC, Young Child Tax Credit, and filing with an ITIN",
+      "url": "https://www.ftb.ca.gov/file/personal/credits/caleitc/eligibility-and-credit-information.html",
+      "lastVerified": "2026-09-26",
+      "nextAction": "File a California tax return (Form 540 with Form FTB 3514) to claim CalEITC. Free tax help is available at VITA sites; find one at irs.gov/vita or call 1-800-906-9887."
+    },
+    {
+      "id": "calfresh",
+      "agency": "California Department of Social Services (CDSS)",
+      "program": "calfresh",
+      "topic": "overview",
+      "title": "CalFresh food benefits",
+      "url": "https://www.cdss.ca.gov/benefits-services/food-nutrition-services/calfresh/frequently-asked-questions",
+      "lastVerified": "2026-09-26",
+      "nextAction": "Apply at BenefitsCal.com or call 1-877-847-3663 (1-877-847-FOOD) to reach your county CalFresh office."
+    },
+    {
+      "id": "disaster-assistance",
+      "agency": "Federal Emergency Management Agency (FEMA)",
+      "program": "disaster",
+      "topic": "disaster-assistance",
+      "title": "Disaster assistance from FEMA and CalFresh",
+      "url": "https://www.fema.gov/assistance/individual/program/citizenship-immigration-status",
+      "lastVerified": "2026-09-26",
+      "nextAction": "If your county has a federal disaster declaration, apply at DisasterAssistance.gov or call FEMA at 1-800-621-3362. CalFresh households who lost food should call 1-877-847-3663 within 10 days."
+    },
+    {
+      "id": "medi-cal-2026-changes",
+      "agency": "California Department of Health Care Services (DHCS)",
+      "program": "medi-cal",
+      "topic": "rule-changes",
+      "title": "Medi-Cal changes in 2026 and 2027",
+      "url": "https://www.dhcs.ca.gov/medi-cal/help/medi-cal-changes/",
+      "lastVerified": "2026-09-26",
+      "nextAction": "If you already have full-scope Medi-Cal, renew on time and report changes within 10 days so you can keep it. For free help with these changes, call the Health Consumer Alliance at 1-888-804-3536."
+    },
+    {
+      "id": "medi-cal-apply",
+      "agency": "California Department of Health Care Services (DHCS)",
+      "program": "medi-cal",
+      "topic": "enrollment",
+      "title": "Applying for Medi-Cal",
+      "url": "https://www.dhcs.ca.gov/medi-cal/help/",
+      "lastVerified": "2026-09-26",
+      "nextAction": "Apply online at BenefitsCal.com, or call your county (San Mateo 1-800-223-8383, Santa Clara 1-877-962-3633)."
+    },
+    {
+      "id": "medi-cal-changes",
+      "agency": "California Department of Health Care Services (DHCS)",
+      "program": "medi-cal",
+      "topic": "report-changes",
+      "title": "Reporting changes to Medi-Cal (moving, income, household)",
+      "url": "https://www.dhcs.ca.gov/medi-cal/help/",
+      "lastVerified": "2026-09-26",
+      "nextAction": "Report the change to your county within 10 days on BenefitsCal.com or by calling your county office."
+    },
+    {
+      "id": "medi-cal-lost-coverage",
+      "agency": "California Department of Health Care Services (DHCS)",
+      "program": "medi-cal",
+      "topic": "loss-of-coverage",
+      "title": "If your Medi-Cal ended",
+      "url": "https://www.dhcs.ca.gov/faqs/",
+      "lastVerified": "2026-09-26",
+      "nextAction": "If it has been less than 90 days since your Medi-Cal ended, send your county the signed renewal form and ALL missing documents now. You do not need a new application."
+    },
+    {
+      "id": "medi-cal-notices",
+      "agency": "California Department of Health Care Services (DHCS)",
+      "program": "medi-cal",
+      "topic": "notices",
+      "title": "Understanding Medi-Cal letters and notices",
+      "url": "https://www.dhcs.ca.gov/services/medi-cal-resources/medi-cal-fair-hearing/",
+      "lastVerified": "2026-09-26",
+      "nextAction": "Find the date and due date on the letter, then do what it asks before the due date. If you disagree with a decision, you have 90 days from the notice date to ask for a State Hearing."
+    },
+    {
+      "id": "medi-cal-renewal",
+      "agency": "California Department of Health Care Services (DHCS)",
+      "program": "medi-cal",
+      "topic": "renewal",
+      "title": "Renewing Medi-Cal",
+      "url": "https://www.dhcs.ca.gov/faqs/",
+      "lastVerified": "2026-09-26",
+      "nextAction": "If you got a yellow renewal envelope, fill out the form and send the proof it asks for by the due date, on BenefitsCal.com, by mail, by phone, or in person at your county office."
+    },
+    {
+      "id": "wic",
+      "agency": "California Department of Public Health, WIC Division (CDPH WIC)",
+      "program": "wic",
+      "topic": "overview",
+      "title": "WIC for pregnant people, new parents, and young children",
+      "url": "https://myfamily.wic.ca.gov/Home/AmIEligible",
+      "lastVerified": "2026-09-26",
+      "nextAction": "Call California WIC at 1-800-852-5770 or use the office search at myfamily.wic.ca.gov to make an appointment."
+    }
+  ],
+  "chunks": [
+    {
+      "id": "caleitc-itin#what-caleitc-is",
+      "sourceId": "caleitc-itin",
+      "heading": "What CalEITC is",
+      "text": "The California Earned Income Tax Credit (CalEITC) is cash back for low-income working Californians. You must file a California state tax return to get it. You can get money back even if you owe no tax."
+    },
+    {
+      "id": "caleitc-itin#who-can-get-caleitc-tax-year-2025",
+      "sourceId": "caleitc-itin",
+      "heading": "Who can get CalEITC (tax year 2025)",
+      "text": "You must meet all of these during the tax year:\n- Be at least 18 years old, or have a qualifying child.\n- Have earned income (such as wages or self-employment) of at least $1 and not more than $32,900.\n- Have a valid Social Security number or ITIN for yourself, your spouse, and any qualifying children.\n- Live in California for more than half the year.\n- Not be claimed as a dependent by someone else (unless you have a qualifying child)."
+    },
+    {
+      "id": "caleitc-itin#how-much-caleitc-can-be-tax-year-2025",
+      "sourceId": "caleitc-itin",
+      "heading": "How much CalEITC can be (tax year 2025)",
+      "text": "Maximum amounts (most people get less, based on income):\n- No qualifying children: up to $302.\n- 1 qualifying child: up to $2,016.\n- 2 qualifying children: up to $3,339.\n- 3 or more qualifying children: up to $3,756."
+    },
+    {
+      "id": "caleitc-itin#young-child-tax-credit-yctc",
+      "sourceId": "caleitc-itin",
+      "heading": "Young Child Tax Credit (YCTC)",
+      "text": "If you qualify for CalEITC and have a qualifying child under 6 at the end of the tax year, you may also get the Young Child Tax Credit: up to $1,189 per tax return for tax year 2025. The credit gets smaller when earned income is above $27,425 and ends at $32,901. Some families with $0 earned income can still qualify for YCTC."
+    },
+    {
+      "id": "caleitc-itin#filing-with-an-itin",
+      "sourceId": "caleitc-itin",
+      "heading": "Filing with an ITIN",
+      "text": "An ITIN (Individual Taxpayer Identification Number) is a tax number the IRS gives to people who cannot get a Social Security number. Californians can use an ITIN to file a state tax return and claim three refundable credits: CalEITC, the Young Child Tax Credit, and the Foster Youth Tax Credit. Claim them on Form FTB 3514.\n\nTo get or renew an ITIN, apply to the IRS using Form W-7. The IRS issues and renews ITINs.\n\nThe federal Earned Income Tax Credit (federal EITC) is different: it requires a Social Security number, so ITIN filers can claim the California credits but not the federal EITC."
+    },
+    {
+      "id": "caleitc-itin#free-help-filing-taxes",
+      "sourceId": "caleitc-itin",
+      "heading": "Free help filing taxes",
+      "text": "The IRS Volunteer Income Tax Assistance (VITA) program offers free tax help for people with low to moderate income. Find a site at irs.gov/vita or call 1-800-906-9887. The Franchise Tax Board's CalEITC calculator can estimate your credit."
+    },
+    {
+      "id": "calfresh#what-calfresh-is",
+      "sourceId": "calfresh",
+      "heading": "What CalFresh is",
+      "text": "CalFresh gives monthly money for food on an EBT card (like a debit card). It can be used to buy most foods at most grocery stores and farmers markets. It is California's version of the federal SNAP program."
+    },
+    {
+      "id": "calfresh#how-to-apply-for-calfresh",
+      "sourceId": "calfresh",
+      "heading": "How to apply for CalFresh",
+      "text": "- Online at BenefitsCal.com.\n- By phone: call 1-877-847-3663 (1-877-847-FOOD) to connect to your county office. San Mateo County: 1-800-223-8383. Santa Clara County: 1-877-962-3633.\n- In person at your county human services office.\n\nAfter you apply, the county will do an interview, usually by phone, and ask for proof of income."
+    },
+    {
+      "id": "calfresh#calfresh-income-limits-october-1-2025-to-september-30-2026",
+      "sourceId": "calfresh",
+      "heading": "CalFresh income limits (October 1, 2025 to September 30, 2026)",
+      "text": "Most households can qualify if their gross (before taxes) monthly income is at or below these amounts (200% of the Federal Poverty Level):\n\n- 1 person: $2,610\n- 2 people: $3,526\n- 3 people: $4,442\n- 4 people: $5,360\n- 5 people: $6,276\n- 6 people: $7,192\n- 7 people: $8,110\n- 8 people: $9,026\n- Each additional person: add $918\n\nHouseholds where an older adult or a person with a disability is a separate household have different rules. The county decides eligibility and the benefit amount."
+    },
+    {
+      "id": "calfresh#maximum-monthly-calfresh-amounts-october-1-2025-to-september-30-2026",
+      "sourceId": "calfresh",
+      "heading": "Maximum monthly CalFresh amounts (October 1, 2025 to September 30, 2026)",
+      "text": "- 1 person: $298\n- 2 people: $546\n- 3 people: $785\n- 4 people: $994\n- 5 people: $1,183\n- 6 people: $1,421\n- 7 people: $1,571\n- 8 people: $1,789\n- Each additional person: add $218\n\nMost households get less than the maximum. The amount depends on income and expenses like rent and utilities."
+    },
+    {
+      "id": "calfresh#calfresh-changes-from-the-federal-h-r-1-law",
+      "sourceId": "calfresh",
+      "heading": "CalFresh changes from the federal H.R. 1 law",
+      "text": "- Since November 1, 2025: households without a member over 60 or with a disability must have heating or cooling costs separate from their rent to claim a utility deduction. Some households got less money because of this.\n- Since April 1, 2026: many lawfully present immigrants no longer qualify for CalFresh.\n- Since June 1, 2026: more CalFresh recipients may need to participate in work or community engagement activities to keep their benefits.\n\nIf you are not sure how these changes affect you, contact your county."
+    },
+    {
+      "id": "calfresh#keeping-calfresh",
+      "sourceId": "calfresh",
+      "heading": "Keeping CalFresh",
+      "text": "Most CalFresh households must send a periodic report (form SAR 7) every six months and renew once a year. Return forms by the due date or your benefits may stop."
+    },
+    {
+      "id": "calfresh#if-you-disagree-with-a-decision",
+      "sourceId": "calfresh",
+      "heading": "If you disagree with a decision",
+      "text": "You have 90 days from the date of the Notice of Action to ask for a State Hearing. Call (800) 743-8525 or use the form on the back of the notice."
+    },
+    {
+      "id": "disaster-assistance#fema-disaster-assistance",
+      "sourceId": "disaster-assistance",
+      "heading": "FEMA disaster assistance",
+      "text": "After a disaster that the President declares for Individual Assistance, FEMA may give money and services to people affected. You can apply:\n- Online at DisasterAssistance.gov.\n- With the FEMA App.\n- By phone: FEMA helpline 1-800-621-3362, open seven days a week. Help is available in most languages.\n- In person at a Disaster Recovery Center (find one at fema.gov/drc)."
+    },
+    {
+      "id": "disaster-assistance#immigration-status-and-fema",
+      "sourceId": "disaster-assistance",
+      "heading": "Immigration status and FEMA",
+      "text": "To get FEMA cash assistance, you or a member of your household must be a U.S. citizen, non-citizen national, or qualified non-citizen (for example, a green card holder, refugee, or asylee).\n\nHouseholds with mixed immigration status only need one member who qualifies, including a minor child under 18, to apply. A parent or guardian who does not qualify can apply as co-applicant on behalf of a qualifying minor child who lives with them, using the child's Social Security number. The parent or guardian does not have to give any information about their own immigration status. FEMA may ask for the child's Social Security card and U.S. birth certificate.\n\nPeople who do not qualify for FEMA cash assistance may still get short-term, non-cash emergency help."
+    },
+    {
+      "id": "disaster-assistance#calfresh-food-replacement-after-a-disaster-or-power-outage",
+      "sourceId": "disaster-assistance",
+      "heading": "CalFresh food replacement after a disaster or power outage",
+      "text": "If food you bought with CalFresh was destroyed or spoiled because of a disaster, fire, flood, or power outage, you can ask for replacement benefits.\n- Contact your county: call 1-877-847-3663 (1-877-847-FOOD).\n- Fill out, sign, and turn in form CF 303. Include your contact information, what happened, and the date and time of the outage.\n- Normally you must ask within 10 days of the food loss. After big disasters, the state sometimes extends this, often to 30 days."
+    },
+    {
+      "id": "disaster-assistance#disaster-calfresh-d-calfresh",
+      "sourceId": "disaster-assistance",
+      "heading": "Disaster CalFresh (D-CalFresh)",
+      "text": "After some major disasters, Disaster CalFresh (D-SNAP) gives one month of food benefits to affected people who normally would not get CalFresh. It is only available when the federal government approves it for a specific disaster. Check the California Department of Social Services Disaster Help Center."
+    },
+    {
+      "id": "disaster-assistance#local-disaster-information",
+      "sourceId": "disaster-assistance",
+      "heading": "Local disaster information",
+      "text": "Dial 2-1-1 for local disaster shelters, food, and recovery resources in San Mateo and Santa Clara counties."
+    },
+    {
+      "id": "medi-cal-2026-changes#enrollment-freeze-for-some-adults-since-january-1-2026",
+      "sourceId": "medi-cal-2026-changes",
+      "heading": "Enrollment freeze for some adults (since January 1, 2026)",
+      "text": "Starting January 1, 2026, adults 19 and older who do not have a qualifying immigration status and are not already enrolled can no longer sign up for full-scope Medi-Cal. This includes people who are undocumented, some green card holders in the five-year waiting period, and people considered PRUCOL. They can get restricted-scope Medi-Cal, which covers emergency care, pregnancy-related care, and nursing home care."
+    },
+    {
+      "id": "medi-cal-2026-changes#keeping-full-scope-medi-cal-if-you-already-have-it",
+      "sourceId": "medi-cal-2026-changes",
+      "heading": "Keeping full-scope Medi-Cal if you already have it",
+      "text": "If you already have full-scope Medi-Cal, you can keep it no matter your immigration status. You must renew on time and still meet the Medi-Cal rules, like income and California residency.\n\nIf your Medi-Cal ends, you have three months (a grace period) starting the day your coverage ends to sign up again for full-scope Medi-Cal. If you miss the three-month grace period, you must apply again and you will only be able to get restricted-scope Medi-Cal."
+    },
+    {
+      "id": "medi-cal-2026-changes#who-still-gets-full-scope-medi-cal-regardless-of-immigration-status",
+      "sourceId": "medi-cal-2026-changes",
+      "heading": "Who still gets full-scope Medi-Cal regardless of immigration status",
+      "text": "- Children under 19.\n- Pregnant people, during the pregnancy and for one year after the pregnancy ends.\n- Foster youth and former foster youth who were in foster care on their 18th birthday, up to age 26."
+    },
+    {
+      "id": "medi-cal-2026-changes#dental-changes-since-july-1-2026",
+      "sourceId": "medi-cal-2026-changes",
+      "heading": "Dental changes (since July 1, 2026)",
+      "text": "Starting July 1, 2026, Medi-Cal no longer covers regular dental services for some adults 19 and older affected by the immigration-status changes, except emergencies. This does not apply to people who are pregnant or within one year after pregnancy, or to former foster youth under 26."
+    },
+    {
+      "id": "medi-cal-2026-changes#help-with-the-changes",
+      "sourceId": "medi-cal-2026-changes",
+      "heading": "Help with the changes",
+      "text": "DHCS offers a nurse advice line and community navigators to help people affected by these changes. The Health Consumer Alliance gives free help with Medi-Cal eligibility questions: 1-888-804-3536."
+    },
+    {
+      "id": "medi-cal-2026-changes#coming-in-2027-six-month-eligibility-checks",
+      "sourceId": "medi-cal-2026-changes",
+      "heading": "Coming in 2027: six-month eligibility checks",
+      "text": "Starting January 1, 2027, some adults ages 19 to 64 who get Medi-Cal through the Affordable Care Act adult expansion will have their eligibility checked every six months instead of once a year. New members who enroll after January 1, 2027 will have their first check six months after joining. People already on Medi-Cal move to the six-month schedule at their next renewal after March 1, 2027. Children, pregnant and postpartum people, older adults, people with disabilities, and American Indian and Alaska Native members keep renewing once a year."
+    },
+    {
+      "id": "medi-cal-2026-changes#coming-in-2027-work-and-community-engagement-requirements",
+      "sourceId": "medi-cal-2026-changes",
+      "heading": "Coming in 2027: work and community engagement requirements",
+      "text": "Starting January 1, 2027, some adults ages 19 to 64 in the Affordable Care Act adult expansion group will need to do one or more of these to keep Medi-Cal, unless they have an exemption:\n- Work and earn at least $580 a month (seasonal workers can average $580 a month over six months).\n- Be in a job training program for at least 80 hours a month.\n- Volunteer or do community service for at least 80 hours a month.\n- Go to school at least half-time.\n- A mix of these that adds up to at least 80 hours or $580 a month.\n\nMedi-Cal will send you a letter if this applies to you. If you miss deadlines, you could lose your Medi-Cal."
+    },
+    {
+      "id": "medi-cal-apply#what-medi-cal-is",
+      "sourceId": "medi-cal-apply",
+      "heading": "What Medi-Cal is",
+      "text": "Medi-Cal is California's free or low-cost health insurance for people with low income. It is California's version of the federal Medicaid program. It pays for doctor visits, hospital care, prescriptions, and other health services."
+    },
+    {
+      "id": "medi-cal-apply#how-to-apply-for-medi-cal",
+      "sourceId": "medi-cal-apply",
+      "heading": "How to apply for Medi-Cal",
+      "text": "You can apply for Medi-Cal at any time of year. There is no enrollment deadline.\n\n- Online: BenefitsCal.com (the state's benefits website) or CoveredCA.com.\n- By phone: call your county human services office. San Mateo County Human Services Agency: 1-800-223-8383 (Monday to Friday, 8 a.m. to 5 p.m.). Santa Clara County Social Services Agency: 1-877-962-3633, or the Benefits Assistance Center at (408) 758-3800.\n- Covered California can also help you apply: 1-800-300-1506.\n- In person: visit your county human services office.\n\nThe county decides if you qualify. If you need more information, the county will send you a letter asking for proof, such as pay stubs."
+    },
+    {
+      "id": "medi-cal-apply#medi-cal-income-limits-for-2026",
+      "sourceId": "medi-cal-apply",
+      "heading": "Medi-Cal income limits for 2026",
+      "text": "Medi-Cal uses the Federal Poverty Level (FPL). For 2026, 100% FPL is $15,960 per year for one person, plus $5,680 for each additional person in the household.\n\n- Adults ages 19 to 64: up to 138% FPL.\n- Children under 19: up to 266% FPL.\n- Pregnant people: up to 213% FPL for full-scope, no-cost Medi-Cal. A pregnant person counts as two (or more, for twins) household members.\n- Pregnant people with income above 213% and up to 322% FPL may qualify for the Medi-Cal Access Program (MCAP).\n- In San Mateo and Santa Clara counties, children with income above 266% and up to 322% FPL may qualify for the County Children's Health Initiative Program (C-CHIP).\n\nPeople with income above the Medi-Cal limit may qualify for a Covered California health plan with financial help."
+    },
+    {
+      "id": "medi-cal-apply#asset-limits-for-some-people-2026",
+      "sourceId": "medi-cal-apply",
+      "heading": "Asset limits for some people (2026)",
+      "text": "Most people applying for Medi-Cal do not have an asset (property) test. An asset limit applies to people who are 65 or older, have a disability, live in a nursing home, or are in a family whose income is too high under the federal tax rules. Through June 30, 2027, the asset limit is $130,000 for one person plus $65,000 for each additional household member (up to 10 people). Your home, one car, household items, and some retirement accounts do not count. Starting July 1, 2027, the limit will be $21,000 for one person and $31,000 for two people."
+    },
+    {
+      "id": "medi-cal-apply#children-and-pregnant-people",
+      "sourceId": "medi-cal-apply",
+      "heading": "Children and pregnant people",
+      "text": "Children under 19 and pregnant people (during pregnancy and for one year after) can get full-scope Medi-Cal regardless of immigration status, if they meet the income rules. Some adults cannot newly enroll in full-scope Medi-Cal since January 1, 2026 because of immigration status; see \"Medi-Cal changes in 2026 and 2027.\""
+    },
+    {
+      "id": "medi-cal-apply#help-for-pregnant-people",
+      "sourceId": "medi-cal-apply",
+      "heading": "Help for pregnant people",
+      "text": "A pregnant person with income at or below 213% FPL can get immediate temporary coverage for prenatal care through Presumptive Eligibility while their Medi-Cal application is processed. For information, call (800) 824-0088."
+    },
+    {
+      "id": "medi-cal-changes#you-must-report-changes-within-10-days",
+      "sourceId": "medi-cal-changes",
+      "heading": "You must report changes within 10 days",
+      "text": "You must tell your county human services office within 10 days when something in your life changes that could affect your Medi-Cal. You can report online at BenefitsCal.com, by phone, by email or fax, or in person.\n\nChanges you must report include:\n- You move or change your mailing address.\n- Your income or job changes.\n- Someone moves into or out of your home, or you have or adopt a baby.\n- You become pregnant.\n- You get married, divorced, or separated.\n- You get other health insurance, like through a job or Medicare.\n- Your disability status changes.\n- Your tax filing status or tax dependents change.\n- You change your name, date of birth, or Social Security number."
+    },
+    {
+      "id": "medi-cal-changes#if-you-move-to-another-county-in-california",
+      "sourceId": "medi-cal-changes",
+      "heading": "If you move to another county in California",
+      "text": "Your Medi-Cal case can move with you. This is called an Inter-County Transfer. Report your new address to either your old county or your new county within 10 days. Your Medi-Cal health plan in your old county ends on the last day of the month, and you will need to choose a health plan in your new county."
+    },
+    {
+      "id": "medi-cal-changes#if-your-income-goes-up-or-down",
+      "sourceId": "medi-cal-changes",
+      "heading": "If your income goes up or down",
+      "text": "Report income changes within 10 days. If your income goes up, you may move to a different Medi-Cal program, or you may qualify for a Covered California plan with financial help instead. If your income goes down, you may qualify for more help. The county will send you a notice explaining any change."
+    },
+    {
+      "id": "medi-cal-changes#why-reporting-matters",
+      "sourceId": "medi-cal-changes",
+      "heading": "Why reporting matters",
+      "text": "The county uses your address to mail renewal forms and notices. If your address is wrong, you could miss your renewal and lose your Medi-Cal."
+    },
+    {
+      "id": "medi-cal-lost-coverage#if-your-medi-cal-ended-because-of-missing-paperwork-90-day-cure-period",
+      "sourceId": "medi-cal-lost-coverage",
+      "heading": "If your Medi-Cal ended because of missing paperwork (90-day cure period)",
+      "text": "If your Medi-Cal ended because you did not return your renewal form or the information the county asked for, you have 90 days from the date your coverage ended to fix it. This is called the 90-day cure period.\n\n- Turn in the signed renewal form and all of the missing information to your county within those 90 days.\n- You do not need to fill out a new application.\n- If the county finds you still qualify, your Medi-Cal is restored back to the date it ended, with no gap in coverage.\n- You must send everything that was requested. If you only send part of it, your Medi-Cal may stay closed until the county gets the rest.\n\nIf it has been more than 90 days, you must submit a new Medi-Cal application."
+    },
+    {
+      "id": "medi-cal-lost-coverage#three-month-grace-period-for-some-adults",
+      "sourceId": "medi-cal-lost-coverage",
+      "heading": "Three-month grace period for some adults",
+      "text": "Some adults affected by the 2026 enrollment freeze have a three-month grace period after their full-scope Medi-Cal ends to sign up again. After that, they can only get restricted-scope Medi-Cal. See \"Medi-Cal changes in 2026 and 2027.\""
+    },
+    {
+      "id": "medi-cal-lost-coverage#other-coverage-after-medi-cal-ends",
+      "sourceId": "medi-cal-lost-coverage",
+      "heading": "Other coverage after Medi-Cal ends",
+      "text": "If you lose Medi-Cal, you may be able to enroll in a Covered California health plan. You have up to 90 days after Medi-Cal ends to request Covered California coverage through a special enrollment period. Call Covered California at 1-800-300-1506."
+    },
+    {
+      "id": "medi-cal-lost-coverage#if-you-disagree-with-a-decision-state-hearing",
+      "sourceId": "medi-cal-lost-coverage",
+      "heading": "If you disagree with a decision: State Hearing",
+      "text": "If you think the county's decision is wrong, you can ask for a State Hearing. You have 90 days from the date on the Notice of Action to ask. After 90 days, you must show a good reason for asking late.\n\nWays to ask for a State Hearing:\n- Fill out the \"Request for State Hearing\" on the back of your Notice of Action and send it to the county address on the notice.\n- Online at the California Department of Social Services hearing request page.\n- By phone: California Department of Social Services, (800) 743-8525 (TDD (800) 952-8349).\n\nWhen you ask, tell them your language (and dialect) so they can provide an interpreter at the hearing.\n\nIf your problem is with your Medi-Cal managed care health plan (not the county), you generally must first file an appeal with your plan within 60 days of the plan's notice."
+    },
+    {
+      "id": "medi-cal-lost-coverage#free-legal-help-with-medi-cal-problems",
+      "sourceId": "medi-cal-lost-coverage",
+      "heading": "Free legal help with Medi-Cal problems",
+      "text": "The Health Consumer Alliance gives free help with Medi-Cal problems, including denials and loss of coverage: 1-888-804-3536."
+    },
+    {
+      "id": "medi-cal-notices#common-medi-cal-letters",
+      "sourceId": "medi-cal-notices",
+      "heading": "Common Medi-Cal letters",
+      "text": "- Renewal form (often in a bright yellow envelope; for most people it is form MC 216): the county needs you to confirm or update your information and send proof so you can keep Medi-Cal. Return it by the due date.\n- Request for information or verification (form MC 355): the county needs specific documents, such as pay stubs, before it can decide. Send exactly what is listed by the due date.\n- Notice of Action (NOA) approving Medi-Cal: you are approved. It says when coverage starts.\n- Notice of Action denying or ending (discontinuing) Medi-Cal: it says why and the date coverage ends. The back of the notice explains how to ask for a State Hearing.\n- Notice of Action changing your benefits: your coverage type or cost is changing."
+    },
+    {
+      "id": "medi-cal-notices#what-to-look-for-on-any-letter",
+      "sourceId": "medi-cal-notices",
+      "heading": "What to look for on any letter",
+      "text": "- The date the letter was mailed (often labeled \"Date\" or \"Mailing Date\").\n- The due date: when the county must receive what it asks for.\n- What the county is asking you to do or send.\n- The phone number of your county worker or office.\n- Your rights, including how to ask for a State Hearing."
+    },
+    {
+      "id": "medi-cal-notices#deadlines-that-matter",
+      "sourceId": "medi-cal-notices",
+      "heading": "Deadlines that matter",
+      "text": "- Renewal forms and requests for information: return them by the due date on the letter, or your Medi-Cal can end.\n- If Medi-Cal ended because paperwork was missing: you have 90 days after it ended to send everything and have it restored without a new application.\n- If you disagree with a decision: you have 90 days from the date of the Notice of Action to ask for a State Hearing. Keep the envelope, because it shows when the notice was mailed."
+    },
+    {
+      "id": "medi-cal-notices#asking-for-a-state-hearing-about-a-notice",
+      "sourceId": "medi-cal-notices",
+      "heading": "Asking for a State Hearing about a notice",
+      "text": "Fill out the \"Request for State Hearing\" on the back of the Notice of Action and send it to the county address on the notice, request one online through the California Department of Social Services, or call (800) 743-8525. Tell them your language and dialect so an interpreter can be arranged."
+    },
+    {
+      "id": "medi-cal-renewal#how-medi-cal-renewal-works",
+      "sourceId": "medi-cal-renewal",
+      "heading": "How Medi-Cal renewal works",
+      "text": "Medi-Cal must check every year that you still qualify. This is called renewal (redetermination).\n\nFirst, your county tries to renew you automatically using information it already has. If it can, you will get a notice saying you are renewed for one year, and you do not need to do anything else.\n\nIf the county cannot renew you automatically, it mails you a renewal form in a bright yellow envelope. The form is pre-filled with information the county has."
+    },
+    {
+      "id": "medi-cal-renewal#what-to-do-with-the-yellow-renewal-form",
+      "sourceId": "medi-cal-renewal",
+      "heading": "What to do with the yellow renewal form",
+      "text": "- Read the pre-filled information. If anything is wrong, correct it on the form.\n- Send the proof the form asks for, such as pay stubs or tax returns.\n- Sign the form.\n- Return it by the due date on the form. You can turn it in online at BenefitsCal.com, by mail, by phone, or in person at your county office.\n- If you get a renewal form and do not complete it, your Medi-Cal will end.\n\nYou can keep using Medi-Cal while the county reviews your renewal. It only ends if you are no longer eligible, and then you will get a notice that says the date it ends."
+    },
+    {
+      "id": "medi-cal-renewal#after-you-turn-in-your-renewal",
+      "sourceId": "medi-cal-renewal",
+      "heading": "After you turn in your renewal",
+      "text": "If something is missing, the county will send you a notice asking for more information. If you still qualify, you will get a notice that your Medi-Cal is renewed for one year. If you do not qualify, the notice tells you when your Medi-Cal ends and how to ask for a State Hearing if you disagree."
+    },
+    {
+      "id": "medi-cal-renewal#keep-your-address-and-phone-number-up-to-date",
+      "sourceId": "medi-cal-renewal",
+      "heading": "Keep your address and phone number up to date",
+      "text": "Renewal forms are sent by mail. If you move or change your phone number, tell your county within 10 days so you do not miss your renewal. You can update your information on BenefitsCal.com or by calling your county office."
+    },
+    {
+      "id": "medi-cal-renewal#how-often-you-renew",
+      "sourceId": "medi-cal-renewal",
+      "heading": "How often you renew",
+      "text": "Today, most people renew Medi-Cal once a year. Starting in 2027, some adults ages 19 to 64 will renew every six months; see \"Medi-Cal changes in 2026 and 2027.\""
+    },
+    {
+      "id": "wic#what-wic-is",
+      "sourceId": "wic",
+      "heading": "What WIC is",
+      "text": "WIC (Women, Infants, and Children) gives healthy food, nutrition education, and breastfeeding support to pregnant people, new parents, babies, and young children. WIC benefits are loaded on a card to buy specific healthy foods."
+    },
+    {
+      "id": "wic#who-can-get-wic",
+      "sourceId": "wic",
+      "heading": "Who can get WIC",
+      "text": "You must live in California and be in one of these groups:\n- Pregnant.\n- Breastfeeding a baby under 12 months old.\n- Had a baby or a pregnancy ended within the last 6 months.\n- An infant or a child under 5 years old (including foster children).\n\nFathers, grandparents, foster parents, and other guardians can apply for WIC for a child under 5 they care for."
+    },
+    {
+      "id": "wic#wic-income-limits-may-1-2026-to-june-30-2027",
+      "sourceId": "wic",
+      "heading": "WIC income limits (May 1, 2026 to June 30, 2027)",
+      "text": "Gross (before taxes) monthly household income must be at or below:\n- 1 person: $2,461\n- 2 people: $3,337\n- 3 people: $4,212\n- 4 people: $5,088\n- 5 people: $5,964\n- 6 people: $6,839\n- 7 people: $7,715\n- 8 people: $8,591\n- Each additional person: add $876\n\nAn unborn baby can be counted in the household size."
+    },
+    {
+      "id": "wic#automatic-income-eligibility",
+      "sourceId": "wic",
+      "heading": "Automatic income eligibility",
+      "text": "If you or your child already get Medi-Cal, CalFresh, or CalWORKs, you automatically meet the WIC income rule. You still need to be in a WIC group (for example, pregnant or a child under 5), and WIC staff will do a short nutrition check."
+    },
+    {
+      "id": "wic#immigration-status-and-wic",
+      "sourceId": "wic",
+      "heading": "Immigration status and WIC",
+      "text": "WIC does not require a Social Security number or proof of citizenship. Families can get WIC no matter their immigration status, as long as they live in California and meet the program rules."
+    },
+    {
+      "id": "wic#how-to-apply-for-wic",
+      "sourceId": "wic",
+      "heading": "How to apply for WIC",
+      "text": "Call your local WIC office or California WIC at 1-800-852-5770 (toll-free) to make an appointment. You can also check if you may qualify at myfamily.wic.ca.gov. Only WIC staff can officially confirm that you qualify. Bring proof of identity, proof of address, and proof of income (or your Medi-Cal, CalFresh, or CalWORKs card or letter)."
+    }
+  ]
+}
