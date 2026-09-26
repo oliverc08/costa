@@ -102,6 +102,12 @@ export function createNeonStore(url: string): Store {
       return rows.map(toHandoff);
     },
 
+    async getHandoff(id) {
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+      const rows = (await sql`SELECT * FROM handoffs WHERE id = ${id}`) as Row[];
+      return rows[0] ? toHandoff(rows[0]) : null;
+    },
+
     async updateHandoff(id, patch) {
       const rows = (await sql`
         UPDATE handoffs SET

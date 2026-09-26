@@ -1,7 +1,10 @@
 import { createHmac } from "node:crypto";
 
 function secret(): string {
-  return process.env.SESSION_SECRET ?? "costa-dev-secret";
+  const s = process.env.SESSION_SECRET;
+  if (s) return s;
+  if (process.env.NODE_ENV === "production") throw new Error("SESSION_SECRET must be set in production");
+  return "costa-dev-secret";
 }
 
 /** Stable, non-reversible session key for a phone number so raw numbers never key stored conversations. */

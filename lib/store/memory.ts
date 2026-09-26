@@ -56,6 +56,10 @@ export function createMemoryStore(): Store {
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
         .map((h) => structuredClone(h));
     },
+    async getHandoff(id) {
+      const h = data().handoffs.get(id);
+      return h ? structuredClone(h) : null;
+    },
     async updateHandoff(id, patch) {
       const h = data().handoffs.get(id);
       if (!h) return null;

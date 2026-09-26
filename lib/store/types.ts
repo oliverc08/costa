@@ -64,6 +64,7 @@ export interface Store {
   saveSession(session: Session): Promise<void>;
   createHandoff(input: NewHandoff): Promise<Handoff>;
   listHandoffs(filter?: HandoffFilter): Promise<Handoff[]>;
+  getHandoff(id: string): Promise<Handoff | null>;
   updateHandoff(
     id: string,
     patch: { status?: HandoffStatus; assignedTo?: string | null },
