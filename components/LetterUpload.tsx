@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { addReminder, downloadIcs } from "@/lib/device";
 import { LETTER_UI, UI } from "@/lib/i18n";
+import { APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import type { LetterResult } from "@/lib/letters";
+import { CalendarIcon, CameraIcon, CheckIcon, PlusIcon } from "./app/Icons";
+import { PersonRequest } from "./app/PersonRequest";
 
 type Phase =
   | { kind: "idle" }
@@ -76,7 +80,9 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
       {(phase.kind === "idle" || phase.kind === "error") && (
         <>
           <label className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-teal-600/50 bg-white px-6 py-14 text-center hover:border-teal-600 hover:bg-teal-50/50">
-            <span aria-hidden className="text-5xl">📷</span>
+            <span aria-hidden className="grid h-16 w-16 place-items-center rounded-2xl bg-teal-50 text-teal-800">
+              <CameraIcon size={34} />
+            </span>
             <span className="text-lg font-semibold text-teal-900">{t.letterChoose}</span>
             <span className="text-sm text-stone-500">JPG · PNG · PDF</span>
             <input
@@ -168,7 +174,12 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
         <p className="mt-2 text-lg leading-relaxed text-stone-900">{e.whatThisMeans}</p>
       </section>
 
-      {e.deadline && <DeadlineBadge days={result.daysUntilDeadline} label={e.deadline} lang={lang} />}
+      {e.deadline && (
+        <div className="flex flex-col gap-2">
+          <DeadlineBadge days={result.daysUntilDeadline} label={e.deadline} lang={lang} />
+          <SaveDeadline result={result} lang={lang} />
+        </div>
+      )}
 
       <section className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-teal-800">{t.whatToDo}</h2>
@@ -221,7 +232,22 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
         </div>
       )}
 
-      <HandoffForm result={result} lang={lang} />
+      <section className="flex flex-col gap-3">
+        <div>
+          <h2 className="text-xl font-bold">{t.needHelp}</h2>
+          <p className="text-[15px] text-stone-600">{t.needHelpBody}</p>
+        </div>
+        <PersonRequest
+          lang={lang}
+          letter={{
+            program: x.program,
+            noticeType: x.noticeType,
+            formNumber: x.formNumber,
+            deadline: x.deadline,
+            requestedAction: x.requestedAction,
+          }}
+        />
+      </section>
 
       <button type="button" onClick={onReset} className="self-start rounded-full px-1 py-2 text-teal-800 underline underline-offset-4">
         {l.another}
@@ -230,88 +256,33 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
   );
 }
 
-function HandoffForm({ result, lang }: { result: Extract<LetterResult, { ok: true }>; lang: LanguageCode }) {
-  const t = UI[lang];
-  const l = LETTER_UI[lang];
-  const [phone, setPhone] = useState("");
-  const [area, setArea] = useState("");
-  const [by, setBy] = useState<"call" | "sms">("call");
-  const [consent, setConsent] = useState(false);
-  const [state, setState] = useState<{ kind: "idle" | "sending" } | { kind: "sent"; reference: string } | { kind: "error"; message: string }>({ kind: "idle" });
-
-  if (state.kind === "sent") {
-    return (
-      <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-950">
-        {t.requestSent} <strong className="font-mono text-lg">{state.reference}</strong>
-      </div>
-    );
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setState({ kind: "sending" });
-    const x = result.extraction;
-    const res = await fetch("/api/handoff", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        consent,
-        language: lang,
-        area,
-        preferredContact: by,
-        contact: phone,
-        letter: {
-          program: x.program,
-          noticeType: x.noticeType,
-          formNumber: x.formNumber,
-          deadline: x.deadline,
-          requestedAction: x.requestedAction,
-        },
-      }),
-    }).catch(() => null);
-    const data = (await res?.json().catch(() => null)) as { ok?: boolean; reference?: string } | null;
-    if (data?.ok && data.reference) setState({ kind: "sent", reference: data.reference });
-    else setState({ kind: "error", message: l.error });
-  }
-
-  const field = "w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-base outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20";
+function SaveDeadline({ result, lang }: { result: Extract<LetterResult, { ok: true }>; lang: LanguageCode }) {
+  const a = APP[lang];
+  const [saved, setSaved] = useState(false);
+  const x = result.extraction;
+  if (!x.deadline || !/^\d{4}-\d{2}-\d{2}$/.test(x.deadline) || (result.daysUntilDeadline ?? -1) < 0) return null;
+  const program = x.program in a.check.programs ? a.check.programs[x.program as keyof typeof a.check.programs].name : null;
+  const reminder = { id: `letter-${x.deadline}`, title: [a.letter.reminderTitle, program, x.formNumber].filter(Boolean).join(" · "), date: x.deadline };
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3 rounded-3xl bg-teal-900 p-5 text-teal-50 sm:p-6">
-      <div>
-        <h2 className="text-lg font-semibold text-white">{t.needHelp}</h2>
-        <p className="text-sm text-teal-100">{t.needHelpBody}</p>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
-          {t.phoneLabel}
-          <input required type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.currentTarget.value)} className={`${field} text-stone-900`} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          {l.areaLabel}
-          <input required value={area} onChange={(e) => setArea(e.currentTarget.value)} placeholder="Half Moon Bay" className={`${field} text-stone-900`} />
-        </label>
-      </div>
-      <fieldset className="flex flex-wrap items-center gap-4 text-sm">
-        <legend className="mb-1">{l.contactBy}</legend>
-        {(["call", "sms"] as const).map((v) => (
-          <label key={v} className="flex items-center gap-2">
-            <input type="radio" name="by" checked={by === v} onChange={() => setBy(v)} className="accent-teal-300" />
-            {v === "call" ? l.callMe : l.textMe}
-          </label>
-        ))}
-      </fieldset>
-      <label className="flex items-start gap-2 text-sm">
-        <input required type="checkbox" checked={consent} onChange={(e) => setConsent(e.currentTarget.checked)} className="mt-1 accent-teal-300" />
-        {t.consentLabel}
-      </label>
-      {state.kind === "error" && <p role="alert" className="text-sm text-red-200">{state.message}</p>}
+    <div className="grid grid-cols-2 gap-2">
       <button
-        type="submit"
-        disabled={state.kind === "sending" || !consent}
-        className="self-start rounded-full bg-white px-5 py-3 font-semibold text-teal-900 hover:bg-teal-50 disabled:opacity-50"
+        type="button"
+        disabled={saved}
+        onClick={() => {
+          addReminder(reminder.title, reminder.date);
+          setSaved(true);
+        }}
+        className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-amber-900 px-3 text-[15px] font-semibold text-white disabled:bg-amber-100 disabled:text-amber-950"
       >
-        {state.kind === "sending" ? l.sending : t.requestHelp}
+        {saved ? <CheckIcon size={18} /> : <CalendarIcon size={18} />} {saved ? a.letter.deadlineSaved : a.letter.saveDeadline}
       </button>
-    </form>
+      <button
+        type="button"
+        onClick={() => downloadIcs(reminder, result.explanation.whatToDo.join("\n"))}
+        className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-900/30 px-3 text-[15px] font-semibold text-amber-950"
+      >
+        <PlusIcon size={18} /> {a.home.addToCalendar}
+      </button>
+    </div>
   );
 }

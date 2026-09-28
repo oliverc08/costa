@@ -1,4 +1,5 @@
 import { getSource } from "@/lib/knowledge";
+import type { TopicId } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 
 /**
@@ -9,14 +10,16 @@ import type { LanguageCode } from "@/lib/languages";
  */
 export interface Faq {
   id: string;
+  topic: TopicId;
   sourceIds: string[];
   question: Record<LanguageCode, string>;
   answer: Record<LanguageCode, string>;
 }
 
-export const FAQS: Faq[] = [
+const CORE_FAQS: Faq[] = [
   {
     id: "renew-medi-cal",
+    topic: "health",
     sourceIds: ["medi-cal-renewal", "medi-cal-apply"],
     question: {
       en: "How do I renew my Medi-Cal?",
@@ -35,6 +38,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: "medi-cal-ended",
+    topic: "health",
     sourceIds: ["medi-cal-lost-coverage"],
     question: {
       en: "My Medi-Cal was cut off. What do I do?",
@@ -53,6 +57,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: "apply-medi-cal",
+    topic: "health",
     sourceIds: ["medi-cal-apply"],
     question: {
       en: "How do I apply for Medi-Cal?",
@@ -71,6 +76,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: "food-help",
+    topic: "food",
     sourceIds: ["calfresh", "wic"],
     question: {
       en: "Can my family get food help?",
@@ -89,6 +95,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: "wic",
+    topic: "food",
     sourceIds: ["wic"],
     question: {
       en: "I'm pregnant or have a baby. Can I get WIC?",
@@ -107,6 +114,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: "report-change",
+    topic: "health",
     sourceIds: ["medi-cal-changes", "medi-cal-apply"],
     question: {
       en: "I moved or my income changed. What do I do?",
@@ -125,6 +133,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: "tax-credits-itin",
+    topic: "money",
     sourceIds: ["caleitc-itin"],
     question: {
       en: "Can I get tax credits with an ITIN?",
@@ -143,6 +152,7 @@ export const FAQS: Faq[] = [
   },
   {
     id: "confusing-letter",
+    topic: "health",
     sourceIds: ["medi-cal-notices"],
     question: {
       en: "I got a letter I don't understand.",
@@ -152,14 +162,61 @@ export const FAQS: Faq[] = [
       vi: "Tôi nhận được một lá thư mà tôi không hiểu.",
     },
     answer: {
-      en: "Look for three things on the letter: the date it was mailed, the due date, and what it asks you to send or do. Do it before the due date.\n- A yellow envelope is usually a Medi-Cal renewal form.\n- A Notice of Action tells you about a decision. If you disagree, you have 90 days from the date on the notice to ask for a State Hearing: (800) 743-8525.\n\nYou can also take a photo of the letter with the button below this chat, and Costa will explain it in your language.",
-      es: "Busque tres cosas en la carta: la fecha en que se envió, la fecha límite y lo que le pide enviar o hacer. Hágalo antes de la fecha límite.\n- Un sobre amarillo casi siempre es un formulario de renovación de Medi-Cal.\n- Un Aviso de Acción le informa sobre una decisión. Si no está de acuerdo, tiene 90 días desde la fecha del aviso para pedir una Audiencia Estatal: (800) 743-8525.\n\nTambién puede tomarle una foto a la carta con el botón debajo de este chat, y Costa se la explica en su idioma.",
-      zh: "请在信上找三样东西：寄出日期、截止日期，以及信上要求您寄送或做什么。请在截止日期前办好。\n- 黄色信封通常是 Medi-Cal 续保表格。\n- 行动通知（Notice of Action）是告诉您一个决定。如果您不同意，可以在通知日期起 90 天内要求州听证会：(800) 743-8525。\n\n您也可以用这个聊天框下面的按钮给信拍照，Costa 会用您的语言解释。",
-      tl: "Hanapin ang tatlong bagay sa sulat: ang petsa na ipinadala ito, ang deadline, at kung ano ang hinihingi nitong ipadala o gawin. Gawin ito bago ang deadline.\n- Ang dilaw na sobre ay kadalasang renewal form ng Medi-Cal.\n- Ang Notice of Action ay nagsasabi tungkol sa isang desisyon. Kung hindi ka sang-ayon, may 90 araw ka mula sa petsa ng notice para humingi ng State Hearing: (800) 743-8525.\n\nPuwede mo ring kunan ng litrato ang sulat gamit ang button sa ilalim ng chat na ito, at ipapaliwanag ito ni Costa sa iyong wika.",
-      vi: "Hãy tìm ba điều trên thư: ngày gửi thư, hạn chót, và thư yêu cầu bạn gửi hay làm gì. Hãy làm trước hạn chót.\n- Phong bì màu vàng thường là mẫu gia hạn Medi-Cal.\n- Thông Báo Hành Động (Notice of Action) cho bạn biết về một quyết định. Nếu không đồng ý, bạn có 90 ngày kể từ ngày ghi trên thư báo để xin Phiên Điều Trần Tiểu Bang: (800) 743-8525.\n\nBạn cũng có thể chụp ảnh lá thư bằng nút bên dưới khung trò chuyện này, và Costa sẽ giải thích bằng ngôn ngữ của bạn.",
+      en: "Look for three things on the letter: the date it was mailed, the due date, and what it asks you to send or do. Do it before the due date.\n- A yellow envelope is usually a Medi-Cal renewal form.\n- A Notice of Action tells you about a decision. If you disagree, you have 90 days from the date on the notice to ask for a State Hearing: (800) 743-8525.\n\nYou can also take a photo of the letter in the Letter tab, and Costa will explain it in your language.",
+      es: "Busque tres cosas en la carta: la fecha en que se envió, la fecha límite y lo que le pide enviar o hacer. Hágalo antes de la fecha límite.\n- Un sobre amarillo casi siempre es un formulario de renovación de Medi-Cal.\n- Un Aviso de Acción le informa sobre una decisión. Si no está de acuerdo, tiene 90 días desde la fecha del aviso para pedir una Audiencia Estatal: (800) 743-8525.\n\nTambién puede tomarle una foto a la carta en la sección Carta, y Costa se la explica en su idioma.",
+      zh: "请在信上找三样东西：寄出日期、截止日期，以及信上要求您寄送或做什么。请在截止日期前办好。\n- 黄色信封通常是 Medi-Cal 续保表格。\n- 行动通知（Notice of Action）是告诉您一个决定。如果您不同意，可以在通知日期起 90 天内要求州听证会：(800) 743-8525。\n\n您也可以在“信件”页面给信拍照，Costa 会用您的语言解释。",
+      tl: "Hanapin ang tatlong bagay sa sulat: ang petsa na ipinadala ito, ang deadline, at kung ano ang hinihingi nitong ipadala o gawin. Gawin ito bago ang deadline.\n- Ang dilaw na sobre ay kadalasang renewal form ng Medi-Cal.\n- Ang Notice of Action ay nagsasabi tungkol sa isang desisyon. Kung hindi ka sang-ayon, may 90 araw ka mula sa petsa ng notice para humingi ng State Hearing: (800) 743-8525.\n\nPuwede mo ring kunan ng litrato ang sulat sa tab na Sulat, at ipapaliwanag ito ni Costa sa iyong wika.",
+      vi: "Hãy tìm ba điều trên thư: ngày gửi thư, hạn chót, và thư yêu cầu bạn gửi hay làm gì. Hãy làm trước hạn chót.\n- Phong bì màu vàng thường là mẫu gia hạn Medi-Cal.\n- Thông Báo Hành Động (Notice of Action) cho bạn biết về một quyết định. Nếu không đồng ý, bạn có 90 ngày kể từ ngày ghi trên thư báo để xin Phiên Điều Trần Tiểu Bang: (800) 743-8525.\n\nBạn cũng có thể chụp ảnh lá thư trong mục Thư, và Costa sẽ giải thích bằng ngôn ngữ của bạn.",
     },
   },
 ];
+
+const DISASTER_FAQS: Faq[] = [
+  {
+    id: "disaster-help",
+    topic: "disaster",
+    sourceIds: ["disaster-assistance"],
+    question: {
+      en: "How do I get help after a disaster?",
+      es: "¿Cómo recibo ayuda después de un desastre?",
+      zh: "发生灾害后怎么获得帮助？",
+      tl: "Paano makakuha ng tulong pagkatapos ng sakuna?",
+      vi: "Làm sao để nhận trợ giúp sau thiên tai?",
+    },
+    answer: {
+      en: "If the President declares a disaster for your area, FEMA may give money and services.\n- Apply at DisasterAssistance.gov, with the FEMA App, or call 1-800-621-3362. It is open 7 days a week, with help in most languages.\n- In a household with mixed immigration status, one person who qualifies is enough, including a child under 18. A parent can apply for the child and does not have to give any information about their own status.\n- For shelters, food, and local recovery help, dial 211.",
+      es: "Si el Presidente declara un desastre en su área, FEMA puede dar dinero y servicios.\n- Solicite en DisasterAssistance.gov, con la aplicación de FEMA o llame al 1-800-621-3362. Está abierto los 7 días de la semana, con ayuda en la mayoría de los idiomas.\n- En una familia con estatus migratorio mixto, basta con una persona que califique, incluso un niño menor de 18 años. Un padre o madre puede solicitar por el niño y no tiene que dar información sobre su propio estatus.\n- Para refugios, comida y ayuda local para recuperarse, marque 211.",
+      zh: "如果总统宣布您所在地区发生灾害，FEMA 可能提供钱和服务。\n- 在 DisasterAssistance.gov 网上申请、用 FEMA App，或拨打 1-800-621-3362。每周 7 天开放，提供大多数语言的帮助。\n- 如果家庭成员的移民身份不同，只要有一个人合资格就可以，包括 18 岁以下的孩子。父母可以代孩子申请，不需要提供自己身份的任何信息。\n- 需要避难所、食物和本地灾后帮助，请拨打 211。",
+      tl: "Kung magdeklara ang Presidente ng sakuna sa lugar mo, puwedeng magbigay ang FEMA ng pera at serbisyo.\n- Mag-apply sa DisasterAssistance.gov, sa FEMA App, o tumawag sa 1-800-621-3362. Bukas ito 7 araw sa isang linggo, may tulong sa karamihan ng wika.\n- Sa pamilyang magkakaiba ang immigration status, sapat na ang isang taong pasok, kasama ang batang wala pang 18 taon. Puwedeng mag-apply ang magulang para sa bata at hindi niya kailangang magbigay ng impormasyon tungkol sa sarili niyang status.\n- Para sa shelter, pagkain, at lokal na tulong sa pagbangon, i-dial ang 211.",
+      vi: "Nếu Tổng Thống công bố thiên tai tại khu vực của bạn, FEMA có thể cấp tiền và dịch vụ.\n- Nộp đơn tại DisasterAssistance.gov, qua ứng dụng FEMA, hoặc gọi 1-800-621-3362. Mở cửa 7 ngày mỗi tuần, có trợ giúp bằng hầu hết các ngôn ngữ.\n- Trong gia đình có tình trạng di trú khác nhau, chỉ cần một người hội đủ, kể cả trẻ dưới 18 tuổi. Cha mẹ có thể nộp đơn thay cho con và không phải cung cấp thông tin gì về tình trạng của chính mình.\n- Để tìm nơi trú ẩn, thực phẩm và trợ giúp phục hồi tại địa phương, hãy gọi 211.",
+    },
+  },
+  {
+    id: "food-spoiled",
+    topic: "disaster",
+    sourceIds: ["disaster-assistance"],
+    question: {
+      en: "My food spoiled in a power outage. Can CalFresh replace it?",
+      es: "Mi comida se echó a perder en un apagón. ¿CalFresh la puede reponer?",
+      zh: "停电让我的食物坏了，CalFresh 可以补回吗？",
+      tl: "Nasira ang pagkain ko dahil sa brownout. Mapapalitan ba ito ng CalFresh?",
+      vi: "Thực phẩm của tôi bị hỏng vì mất điện. CalFresh có bù lại không?",
+    },
+    answer: {
+      en: "If food you bought with CalFresh was destroyed or spoiled because of a disaster, fire, flood, or power outage, you can ask for replacement benefits.\n1. Call your county at 1-877-847-3663.\n2. Fill out, sign, and turn in form CF 303. Say what happened and the date and time of the outage.\n3. Ask within 10 days of the food loss. After big disasters, the state sometimes gives more time.",
+      es: "Si la comida que compró con CalFresh se destruyó o se echó a perder por un desastre, incendio, inundación o apagón, puede pedir que le repongan los beneficios.\n1. Llame a su condado al 1-877-847-3663.\n2. Llene, firme y entregue el formulario CF 303. Diga qué pasó y la fecha y hora del apagón.\n3. Pídalo dentro de 10 días de haber perdido la comida. Después de desastres grandes, el estado a veces da más tiempo.",
+      zh: "如果您用 CalFresh 买的食物因为灾害、火灾、水灾或停电而损坏，您可以申请补发福利。\n1. 打电话给县政府：1-877-847-3663。\n2. 填写、签名并交回 CF 303 表格。写明发生了什么，以及停电的日期和时间。\n3. 请在食物损失后 10 天内申请。发生大灾害后，州政府有时会延长时间。",
+      tl: "Kung nasira o napanis ang pagkaing binili mo gamit ang CalFresh dahil sa sakuna, sunog, baha, o brownout, puwede kang humingi ng kapalit na benepisyo.\n1. Tawagan ang county mo sa 1-877-847-3663.\n2. Sagutan, pirmahan, at ipasa ang form CF 303. Sabihin kung ano ang nangyari at ang petsa at oras ng brownout.\n3. Humingi sa loob ng 10 araw mula nang masira ang pagkain. Pagkatapos ng malalaking sakuna, minsan nagbibigay ang estado ng mas mahabang panahon.",
+      vi: "Nếu thực phẩm bạn mua bằng CalFresh bị hư hỏng vì thiên tai, cháy, lụt hoặc mất điện, bạn có thể xin cấp bù phúc lợi.\n1. Gọi cho quận số 1-877-847-3663.\n2. Điền, ký và nộp mẫu CF 303. Ghi rõ chuyện gì đã xảy ra và ngày giờ mất điện.\n3. Hãy xin trong vòng 10 ngày kể từ khi mất thực phẩm. Sau những thiên tai lớn, tiểu bang đôi khi cho thêm thời gian.",
+    },
+  },
+];
+
+export const FAQS: Faq[] = [...CORE_FAQS, ...DISASTER_FAQS];
+
+export function faqsForTopic(topic: TopicId): Faq[] {
+  return FAQS.filter((f) => f.topic === topic);
+}
 
 function normalize(text: string): string {
   return text

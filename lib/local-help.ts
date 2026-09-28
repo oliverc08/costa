@@ -3,7 +3,7 @@ import type { LanguageCode } from "@/lib/languages";
 
 export type County = "san-mateo" | "santa-clara";
 export type HelpNeed = "apply" | "renew" | "legal-help" | "appeal" | "tax-help" | "disaster" | "general";
-type HelpProgram = "medi-cal" | "calfresh" | "wic" | "caleitc" | "disaster";
+export type HelpProgram = "medi-cal" | "calfresh" | "wic" | "caleitc" | "disaster";
 
 export const findLocalHelpInputSchema = z.object({
   area: z
@@ -257,6 +257,41 @@ export function normalizeArea(area: string): County | null {
   if (SANTA_CLARA_PLACES.some((p) => a.includes(p))) return "santa-clara";
   if (SAN_MATEO_PLACES.some((p) => a.includes(p))) return "san-mateo";
   return null;
+}
+
+export interface ProviderCard {
+  id: string;
+  name: string;
+  kind: Provider["kind"];
+  phone: string | null;
+  url: string;
+  address?: string;
+  hours: string | null;
+  languages: LanguageCode[] | "interpreters";
+}
+
+/**
+ * The directory for the Help screen: everything in the person's county, then the
+ * statewide lines, with lines for the chosen program first.
+ */
+export function listProviders(county: County | null, lang: LanguageCode, program: HelpProgram | "any" = "any") {
+  const serves = (p: Provider) => program === "any" || p.programs === "all" || p.programs.includes(program);
+  const card = (p: Provider): ProviderCard => ({
+    id: p.id,
+    name: p.name,
+    kind: p.kind,
+    phone: p.phoneByLanguage?.[lang] ?? p.phone,
+    url: p.url,
+    address: p.address,
+    hours: p.hours,
+    languages: p.languages,
+  });
+  const byRelevance = (x: Provider, y: Provider) => Number(serves(y)) - Number(serves(x));
+  const local = county
+    ? PROVIDERS.filter((p) => p.counties !== "statewide" && p.counties.includes(county)).sort(byRelevance).map(card)
+    : [];
+  const statewide = PROVIDERS.filter((p) => p.counties === "statewide").sort(byRelevance).map(card);
+  return { local, statewide };
 }
 
 export interface LocalHelpResult {
