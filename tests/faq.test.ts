@@ -103,4 +103,40 @@ describe("chat route FAQ shortcut", () => {
     expect(body).toContain("Medi-Cal");
     expect(body).toContain("CalFresh");
   });
+
+  it("returns a helpful offline hint when the model is unavailable and nothing matches", async () => {
+    const prevKey = process.env.AI_GATEWAY_API_KEY;
+    const prevOidc = process.env.VERCEL_OIDC_TOKEN;
+    const prevVercel = process.env.VERCEL;
+    delete process.env.AI_GATEWAY_API_KEY;
+    delete process.env.VERCEL_OIDC_TOKEN;
+    delete process.env.VERCEL;
+    try {
+      const res = await POST(
+        new Request("http://localhost/api/chat", {
+          method: "POST",
+          body: JSON.stringify({
+            language: "en",
+            messages: [
+              {
+                id: "1",
+                role: "user",
+                parts: [{ type: "text", text: "what is the weather in San Jose today" }],
+              },
+            ],
+          }),
+        }),
+      );
+      expect(res.status).toBe(200);
+      const body = await res.text();
+      expect(body).toMatch(/common question|Help to request a person/i);
+    } finally {
+      if (prevKey !== undefined) process.env.AI_GATEWAY_API_KEY = prevKey;
+      else delete process.env.AI_GATEWAY_API_KEY;
+      if (prevOidc !== undefined) process.env.VERCEL_OIDC_TOKEN = prevOidc;
+      else delete process.env.VERCEL_OIDC_TOKEN;
+      if (prevVercel !== undefined) process.env.VERCEL = prevVercel;
+      else delete process.env.VERCEL;
+    }
+  });
 });

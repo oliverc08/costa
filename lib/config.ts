@@ -11,9 +11,13 @@ export const EMBEDDING_DIMENSIONS = 1536;
 
 export const RETENTION_DAYS = 30;
 
-/** On Vercel deployments the OIDC token arrives per request, not as an env var. */
+/**
+ * Prefer an explicit Gateway credential. `VERCEL === "1"` alone is not enough:
+ * preview/prod can still fail at request time (billing / missing OIDC), and Ask
+ * should fall back to FAQ / offline guidance instead of a broken stream.
+ */
 export function hasAiGateway(): boolean {
-  return Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || process.env.VERCEL === "1");
+  return Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
 }
 
 /** AI Gateway free tier is locked until the team adds a payment method. */

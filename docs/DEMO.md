@@ -13,14 +13,18 @@ The Congressional App Challenge deadline for CA-16 is **Monday, October 26, 2026
 
 ## Two-minute demo script
 
+Prefer the **web app** on a phone (voice + letter + Ask). Keep a Twilio call as a backup segment if the number is verified.
+
 | Time | Show | Say |
 | --- | --- | --- |
-| 0:00–0:15 | Landing page, switch languages | "In our district, [X]% of people speak a language other than English at home. Medi-Cal renewals, notices, and 2026 rule changes are confusing even in English. Costa is a language layer for benefits." |
-| 0:15–0:45 | **Call Costa** on speakerphone. Say in Spanish: "Me llegó un sobre amarillo de Medi-Cal, ¿qué hago?" | Let the answer play. "No app, no account. It answered in Spanish, from the official DHCS source, with the next step." |
-| 0:45–1:10 | `/letter`: photo of an MC 355 letter, explained in Vietnamese | Point at the deadline badge and the numbered steps. "It reads the deadline and what the county wants, checks it against verified sources, and the photo is never saved." |
-| 1:10–1:25 | Chat: "My Medi-Cal was cut off last month" → "I want to talk to a person" | Show the source chips, then the handoff reference number. |
-| 1:25–1:45 | Partner dashboard: the new request appears; click **Assign to me**, open the detail view | "A local organization gets the language, the benefit, a summary, and how to reach them. Nothing else." |
-| 1:45–2:00 | Safety section with the eval score | "Costa uses AI for communication, not authority. It never decides eligibility, never asks about immigration status, and removes Social Security numbers. We test it on 150 scenarios in five languages." |
+| 0:00–0:15 | Welcome → pick Spanish (or Vietnamese) | "In our district, [X]% of people speak a language other than English at home. Medi-Cal renewals and notices are confusing even in English. Costa is a language layer for benefits." |
+| 0:15–0:40 | Home: tap the mic, say in Spanish: "Me cortaron el Medi-Cal, ¿qué hago?" | Let Ask open and answer. "No account. It matched a verified answer with the next step and sources." |
+| 0:40–1:05 | Letter tab: **photo** of an MC 355 / renewal letter (not PDF if Gateway is flaky) | Point at the deadline and numbered steps. "It reads the notice in your language. The photo is not saved." |
+| 1:05–1:20 | Save deadline → Plan tab; or Checkup → Save to my plan → Plan | "Steps and deadlines stay on this phone." |
+| 1:20–1:40 | Help → request a person (or Ask → talk to a person) | Show the handoff confirmation. "A local helper can follow up." |
+| 1:40–2:00 | Partner dashboard on a laptop (optional) + safety line | "Costa uses AI for communication, not authority. It never decides eligibility and never asks about immigration status." |
+
+**Safer Ask path if free-text AI fails:** tap a common-question chip (FAQ) — those answers are canned and do not need the model.
 
 Fill in [X] from the Census Bureau's American Community Survey (table S1601, "Language Spoken at Home," for California's 16th Congressional District at data.census.gov) and cite it in the write-up.
 

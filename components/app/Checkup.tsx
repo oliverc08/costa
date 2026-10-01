@@ -392,20 +392,22 @@ function ResultsScreen({
       </ul>
 
       {worth.length > 0 && (
-        <button
-          type="button"
-          disabled={savedPlan}
-          onClick={onSave}
-          className="flex min-h-14 items-center justify-center gap-2 rounded-md bg-pine-800 px-4 text-[17px] font-bold text-white active:bg-pine-900 disabled:bg-pine-100 disabled:text-pine-900"
-        >
-          {savedPlan ? (
-            <>
-              <CheckIcon /> {c.saved}
-            </>
-          ) : (
-            c.savePlan
-          )}
-        </button>
+        savedPlan ? (
+          <Link
+            href="/plan"
+            className="flex min-h-14 items-center justify-center gap-2 rounded-md bg-pine-100 px-4 text-[17px] font-bold text-pine-900 active:bg-pine-50"
+          >
+            <CheckIcon /> {c.saved}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={onSave}
+            className="flex min-h-14 items-center justify-center gap-2 rounded-md bg-pine-800 px-4 text-[17px] font-bold text-white active:bg-pine-900"
+          >
+            {c.savePlan}
+          </button>
+        )
       )}
 
       <NearbyHelp lang={lang} county={answers.county} />

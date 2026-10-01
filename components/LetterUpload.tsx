@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { addReminder, downloadIcs } from "@/lib/device";
 import { letterUi, ui, LETTER_UI, UI } from "@/lib/i18n";
 import { app, APP } from "@/lib/i18n-app";
@@ -103,7 +104,13 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
           return;
         }
       }
-      if (res.status === 503) return setPhase({ kind: "error", message: t.notConfigured });
+      if (res.status === 503) {
+        const pdfHint =
+          prepared.filename === "letter.pdf"
+            ? " Try a clear photo of the letter page instead of a PDF."
+            : "";
+        return setPhase({ kind: "error", message: `${t.notConfigured}${pdfHint}` });
+      }
       setPhase({ kind: "error", message: res.status === 415 ? l.unreadable : l.error });
     } catch {
       setPhase({ kind: "error", message: l.error });
@@ -114,6 +121,7 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
 
   function choose(file: File | undefined) {
     if (!file) return;
+    analyzing.current = false;
     const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(file.name);
     const previewUrl = isImage ? URL.createObjectURL(file) : null;
     setPhase({ kind: "ready", file, preview: previewUrl });
@@ -122,6 +130,13 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
   }
 
   function reset() {
+    analyzing.current = false;
+    setPhase({ kind: "idle" });
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  function cancelAnalyze() {
+    analyzing.current = false;
     setPhase({ kind: "idle" });
     if (inputRef.current) inputRef.current.value = "";
   }
@@ -135,7 +150,7 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
               <CameraIcon size={34} />
             </span>
             <span className="text-lg font-semibold text-pine-900">{t.letterChoose}</span>
-            <span className="text-sm text-stone-500">JPG · PNG · HEIC · PDF</span>
+            <span className="text-sm text-stone-500">Photo works best · JPG · PNG · HEIC · PDF</span>
             <input
               ref={inputRef}
               type="file"
@@ -165,11 +180,9 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
           <div className="h-1.5 overflow-hidden rounded-full bg-stone-200">
             <div className="h-full w-1/3 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-pine-600" />
           </div>
-          {phase.kind === "ready" && (
-            <button type="button" onClick={reset} className="self-center rounded-md px-5 py-3 text-stone-600 hover:text-stone-900">
-              {l.back}
-            </button>
-          )}
+          <button type="button" onClick={cancelAnalyze} className="self-center rounded-md px-5 py-3 font-semibold text-stone-600 hover:text-stone-900">
+            {l.back}
+          </button>
         </div>
       )}
 
@@ -438,25 +451,32 @@ function SaveDeadline({ result, lang }: { result: Extract<LetterResult, { ok: tr
     date: x.deadline,
   };
   return (
-    <div className="grid grid-cols-2 gap-2">
-      <button
-        type="button"
-        disabled={saved}
-        onClick={() => {
-          addReminder(reminder.title, reminder.date);
-          setSaved(true);
-        }}
-        className="flex min-h-12 items-center justify-center gap-1.5 rounded-md bg-amber-900 px-3 text-[15px] font-semibold text-white disabled:bg-amber-100 disabled:text-amber-950"
-      >
-        {saved ? <CheckIcon size={18} /> : <CalendarIcon size={18} />} {saved ? a.letter.deadlineSaved : a.letter.saveDeadline}
-      </button>
-      <button
-        type="button"
-        onClick={() => downloadIcs(reminder, result.explanation.whatToDo.join("\n"))}
-        className="flex min-h-12 items-center justify-center gap-1.5 rounded-md border-2 border-amber-900/30 px-3 text-[15px] font-semibold text-amber-950"
-      >
-        <PlusIcon size={18} /> {a.home.addToCalendar}
-      </button>
+    <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          disabled={saved}
+          onClick={() => {
+            addReminder(reminder.title, reminder.date);
+            setSaved(true);
+          }}
+          className="flex min-h-12 items-center justify-center gap-1.5 rounded-md bg-amber-900 px-3 text-[15px] font-semibold text-white disabled:bg-amber-100 disabled:text-amber-950"
+        >
+          {saved ? <CheckIcon size={18} /> : <CalendarIcon size={18} />} {saved ? a.letter.deadlineSaved : a.letter.saveDeadline}
+        </button>
+        <button
+          type="button"
+          onClick={() => downloadIcs(reminder, result.explanation.whatToDo.join("\n"))}
+          className="flex min-h-12 items-center justify-center gap-1.5 rounded-md border-2 border-amber-900/30 px-3 text-[15px] font-semibold text-amber-950"
+        >
+          <PlusIcon size={18} /> {a.home.addToCalendar}
+        </button>
+      </div>
+      {saved && (
+        <Link href="/plan" className="text-center text-[15px] font-semibold text-pine-800 underline decoration-pine-300 underline-offset-4">
+          {a.home.planTitle}
+        </Link>
+      )}
     </div>
   );
 }

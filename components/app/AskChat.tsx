@@ -135,8 +135,12 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
   useEffect(() => {
     const pending = sessionStorage.getItem(PENDING_VOICE_KEY);
     if (pending) {
-      sessionStorage.removeItem(PENDING_VOICE_KEY);
-      queueMicrotask(() => send(pending));
+      // Keep until send starts so a failed hop can still show the utterance in the input.
+      setInput(pending);
+      queueMicrotask(() => {
+        sessionStorage.removeItem(PENDING_VOICE_KEY);
+        send(pending);
+      });
       return;
     }
     const saved = sessionStorage.getItem(CHAT_STORAGE_KEY);
@@ -286,9 +290,10 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
           </div>
         )}
         {error && (
-          <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-[15px] text-red-800">
-            {error.message.includes("configured") ? t.notConfigured : letterUi(lang).error}
-          </p>
+          <div role="alert" className="flex flex-col gap-2 rounded-md bg-red-50 px-4 py-3 text-[15px] text-red-800">
+            <p>{error.message.includes("configured") || error.message.includes("503") ? t.notConfigured : letterUi(lang).error}</p>
+            <p className="text-[14px] text-red-700/90">{t.commonQuestions}: {a.ask.emptyBody}</p>
+          </div>
         )}
         <div ref={bottomRef} className="h-28 shrink-0" />
       </div>

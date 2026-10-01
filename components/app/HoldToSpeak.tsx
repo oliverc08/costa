@@ -1,8 +1,9 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import Link from "next/link";
 import { useVoiceInput } from "@/lib/speech";
-import { app, APP } from "@/lib/i18n-app";
+import { app } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { MicIcon, StopIcon } from "./Icons";
 
@@ -25,7 +26,19 @@ export function HoldToSpeak({
   const a = app(lang);
   const voice = useVoiceInput(lang, onText);
 
-  if (!voice.supported) return null;
+  if (!voice.supported) {
+    if (size === "hero") {
+      return (
+        <Link
+          href="/ask"
+          className="flex min-h-14 items-center justify-center rounded-md border-2 border-pine-800 bg-white px-6 text-[17px] font-bold text-pine-900 active:bg-pine-50"
+        >
+          {a.home.orType}
+        </Link>
+      );
+    }
+    return null;
+  }
 
   const recording = voice.state === "recording" || voice.state === "transcribing" || voice.state === "loading-model";
   const note =

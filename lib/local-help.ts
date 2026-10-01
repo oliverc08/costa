@@ -11,7 +11,7 @@ export const findLocalHelpInputSchema = z.object({
     .default("unknown")
     .describe("City, county, or ZIP the person mentioned, e.g. 'Half Moon Bay', 'San Jose', '95128'."),
   program: z.enum(["medi-cal", "calfresh", "wic", "caleitc", "disaster", "any"]).default("any"),
-  language: z.enum(["en", "es", "zh", "tl", "vi"]).default("en").describe("Language the person is using."),
+  language: z.enum(["en", "es", "zh", "tl", "vi", "ko", "pt"]).default("en").describe("Language the person is using."),
   need: z.enum(["apply", "renew", "legal-help", "appeal", "tax-help", "disaster", "general"]).default("general"),
 });
 

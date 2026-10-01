@@ -3,7 +3,7 @@ import { createHandoff } from "@/lib/handoff";
 
 const contactFields = {
   consent: z.literal(true),
-  language: z.enum(["en", "es", "zh", "tl", "vi"]),
+  language: z.enum(["en", "es", "zh", "tl", "vi", "ko", "pt"]),
   area: z.string().trim().min(2).max(80),
   preferredContact: z.enum(["sms", "call"]),
   contact: z.string().trim().min(7).max(40),

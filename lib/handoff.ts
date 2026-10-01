@@ -7,7 +7,7 @@ export const handoffInputSchema = z.object({
   userConsented: z
     .literal(true)
     .describe("Must be true: the user explicitly said yes to being contacted by a local helper."),
-  language: z.enum(["en", "es", "zh", "tl", "vi"]).describe("Language the helper should use."),
+  language: z.enum(["en", "es", "zh", "tl", "vi", "ko", "pt"]).describe("Language the helper should use."),
   topic: z
     .enum(["medi-cal", "calfresh", "wic", "caleitc", "disaster", "other"])
     .describe("Main benefit the person needs help with."),

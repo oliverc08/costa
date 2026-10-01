@@ -1,7 +1,7 @@
 "use client";
 
 import { app } from "@/lib/i18n-app";
-import { LANGUAGES, LANGUAGE_CODES, type LanguageCode } from "@/lib/languages";
+import { LANGUAGES, LANGUAGE_CODES, TRANSLATED_UI_LANGS, isTranslatedUiLang, type LanguageCode } from "@/lib/languages";
 import { ArrowRightIcon } from "./Icons";
 import { Logo } from "./AppShell";
 import { useSwitchLanguage } from "./SettingsSheet";
@@ -9,7 +9,9 @@ import { useSwitchLanguage } from "./SettingsSheet";
 /** First visit: brand, promise, then language — judge-readable in under 10 seconds. */
 export function Welcome({ suggested }: { suggested: LanguageCode }) {
   const switchLanguage = useSwitchLanguage();
-  const ordered = [suggested, ...LANGUAGE_CODES.filter((c) => c !== suggested)];
+  const primary = TRANSLATED_UI_LANGS.filter((c) => c !== suggested);
+  const secondary = LANGUAGE_CODES.filter((c) => !isTranslatedUiLang(c) && c !== suggested);
+  const ordered: LanguageCode[] = [suggested, ...primary, ...secondary];
   const copy = app(suggested);
   const w = copy.welcome;
 

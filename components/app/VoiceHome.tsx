@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { app, APP } from "@/lib/i18n-app";
+import { app } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import {
   BasketIcon,
@@ -17,7 +17,7 @@ import { HoldToSpeak } from "./HoldToSpeak";
 const BIG = [
   { key: "food" as const, href: "/topics/food", Icon: BasketIcon },
   { key: "health" as const, href: "/topics/health", Icon: HeartIcon },
-  { key: "housing" as const, href: "/help?topic=other", Icon: HomeIcon },
+  { key: "housing" as const, href: "/help", Icon: HomeIcon },
   { key: "family" as const, href: "/check", Icon: PeopleIcon },
   { key: "disaster" as const, href: "/topics/disaster", Icon: FlameIcon },
   { key: "other" as const, href: "/ask", Icon: ChatIcon },

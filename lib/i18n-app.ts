@@ -11,7 +11,7 @@ export type ProviderKind = "county" | "state" | "legal" | "community" | "federal
  * (only "may"), never ask about immigration status, keep sentences short.
  */
 export interface AppStrings {
-  nav: { home: string; ask: string; check: string; letter: string; help: string };
+  nav: { home: string; ask: string; check: string; letter: string; help: string; plan: string };
   common: {
     back: string;
     next: string;
@@ -223,7 +223,7 @@ export interface AppStrings {
 
 export const APP: Record<TranslatedUiLang, AppStrings> = {
   en: {
-    nav: { home: "Home", ask: "Ask", check: "Check", letter: "Letter", help: "Help" },
+    nav: { home: "Home", ask: "Ask", check: "Check", letter: "Letter", help: "Help", plan: "Plan" },
     common: {
       back: "Back",
       next: "Next",
@@ -267,7 +267,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       bigTopics: {
         food: "Food",
         health: "Health care",
-        housing: "Housing",
+        housing: "Local help",
         family: "Family",
         disaster: "Disaster help",
         other: "Something else",
@@ -495,7 +495,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
   },
 
   es: {
-    nav: { home: "Inicio", ask: "Preguntar", check: "Revisar", letter: "Carta", help: "Ayuda" },
+    nav: { home: "Inicio", ask: "Preguntar", check: "Revisar", letter: "Carta", help: "Ayuda", plan: "Plan" },
     common: {
       back: "Regresar",
       next: "Siguiente",
@@ -539,7 +539,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       bigTopics: {
         food: "Comida",
         health: "Salud",
-        housing: "Vivienda",
+        housing: "Ayuda local",
         family: "Familia",
         disaster: "Ayuda por desastre",
         other: "Otra cosa",
@@ -763,7 +763,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
   },
 
   zh: {
-    nav: { home: "首页", ask: "提问", check: "查询", letter: "信件", help: "帮助" },
+    nav: { home: "首页", ask: "提问", check: "查询", letter: "信件", help: "帮助", plan: "计划" },
     common: {
       back: "返回",
       next: "下一步",
@@ -807,7 +807,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       bigTopics: {
         food: "食物",
         health: "医疗",
-        housing: "住房",
+        housing: "本地帮助",
         family: "家庭",
         disaster: "灾后帮助",
         other: "其他",
@@ -1031,7 +1031,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
   },
 
   tl: {
-    nav: { home: "Home", ask: "Magtanong", check: "Suriin", letter: "Sulat", help: "Tulong" },
+    nav: { home: "Home", ask: "Magtanong", check: "Suriin", letter: "Sulat", help: "Tulong", plan: "Plano" },
     common: {
       back: "Bumalik",
       next: "Susunod",
@@ -1075,7 +1075,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       bigTopics: {
         food: "Pagkain",
         health: "Kalusugan",
-        housing: "Pabahay",
+        housing: "Lokal na tulong",
         family: "Pamilya",
         disaster: "Tulong sa sakuna",
         other: "Iba pa",
@@ -1299,7 +1299,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
   },
 
   vi: {
-    nav: { home: "Trang chủ", ask: "Hỏi", check: "Kiểm tra", letter: "Thư", help: "Trợ giúp" },
+    nav: { home: "Trang chủ", ask: "Hỏi", check: "Kiểm tra", letter: "Thư", help: "Trợ giúp", plan: "Kế hoạch" },
     common: {
       back: "Quay lại",
       next: "Tiếp",
@@ -1343,7 +1343,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       bigTopics: {
         food: "Thực phẩm",
         health: "Y tế",
-        housing: "Nhà ở",
+        housing: "Trợ giúp gần đây",
         family: "Gia đình",
         disaster: "Trợ giúp thiên tai",
         other: "Khác",
@@ -1570,13 +1570,92 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
 /** UI copy for any LanguageCode — falls back to English for Korean/Portuguese until fully translated. */
 export function app(lang: LanguageCode): AppStrings {
   if (isTranslatedUiLang(lang)) return APP[lang];
-  return {
+  const base: AppStrings = {
     ...APP.en,
     languageNames: {
       ...APP.en.languageNames,
       [lang]: LANGUAGES_NATIVE[lang],
     },
   };
+  if (lang === "ko") {
+    return {
+      ...base,
+      nav: { home: "홈", ask: "질문", check: "확인", letter: "편지", help: "도움", plan: "계획" },
+      welcome: {
+        tagline: "혜택 편지를 이해하고, 다음에 무엇을 할지 알려 드립니다.",
+        trust: "이민 신분은 묻지 않습니다. 계정 없이 이용할 수 있습니다.",
+      },
+      home: {
+        ...base.home,
+        voicePrompt: "무엇을 도와드릴까요?",
+        orType: "또는 입력하기",
+        topicsTitle: "주제를 고르세요",
+        planTitle: "내 계획",
+        planEmpty: "저장한 단계와 마감일이 여기에 표시됩니다.",
+        bigTopics: {
+          food: "식량",
+          health: "건강",
+          housing: "지역 도움",
+          family: "가족",
+          disaster: "재난",
+          other: "기타",
+        },
+      },
+      ask: {
+        ...base.ask,
+        emptyTitle: "혜택에 대해 무엇이든 물어보세요",
+        emptyBody: "질문을 입력하거나, 마이크를 누르거나, 아래 자주 묻는 질문을 고르세요.",
+        title: "질문",
+        newChat: "새 대화",
+        talkToPerson: "실제 사람과 이야기하기",
+      },
+      common: {
+        ...base.common,
+        chooseLanguage: "언어 선택",
+        stayPrivate: "개인정보는 이 기기에 보관됩니다.",
+      },
+    };
+  }
+  if (lang === "pt") {
+    return {
+      ...base,
+      nav: { home: "Início", ask: "Perguntar", check: "Verificar", letter: "Carta", help: "Ajuda", plan: "Plano" },
+      welcome: {
+        tagline: "Entenda cartas de benefícios e o que fazer a seguir.",
+        trust: "Não perguntamos sobre status migratório. Sem conta.",
+      },
+      home: {
+        ...base.home,
+        voicePrompt: "Em que posso ajudar?",
+        orType: "ou digite",
+        topicsTitle: "Escolha um tema",
+        planTitle: "Meu plano",
+        planEmpty: "Os passos e prazos que guardar aparecem aqui.",
+        bigTopics: {
+          food: "Comida",
+          health: "Saúde",
+          housing: "Ajuda local",
+          family: "Família",
+          disaster: "Desastre",
+          other: "Outro",
+        },
+      },
+      ask: {
+        ...base.ask,
+        emptyTitle: "Pergunte qualquer coisa sobre benefícios",
+        emptyBody: "Digite uma pergunta, toque no microfone, ou escolha uma pergunta comum abaixo.",
+        title: "Perguntar",
+        newChat: "Nova conversa",
+        talkToPerson: "Falar com uma pessoa",
+      },
+      common: {
+        ...base.common,
+        chooseLanguage: "Escolher idioma",
+        stayPrivate: "As informações privadas ficam neste aparelho.",
+      },
+    };
+  }
+  return base;
 }
 
 const LANGUAGES_NATIVE: Record<LanguageCode, string> = {
