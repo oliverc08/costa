@@ -1,8 +1,8 @@
 import { after } from "next/server";
 import twilio from "twilio";
-import { hasAiGateway, hasTwilio } from "@/lib/config";
+import { hasTwilio, hasLocalLlm } from "@/lib/config";
 import { loadOrCreateSession, phoneSessionId, runPhoneTurn } from "@/lib/conversation";
-import { smsConsent, SMS_CONSENT, UI } from "@/lib/i18n";
+import { smsConsent, SMS_CONSENT } from "@/lib/i18n";
 import { detectLanguage } from "@/lib/languages";
 import { analyzeLetter, formatLetterSms, LETTER_MEDIA_TYPES, MAX_LETTER_BYTES } from "@/lib/letters";
 import { getStore } from "@/lib/store";
@@ -33,7 +33,6 @@ export async function POST(req: Request) {
   const numMedia = Number(hook.params.NumMedia ?? "0");
   if (!from) return new Response("Missing From", { status: 400 });
   if (OPT_KEYWORDS.test(body) && numMedia === 0) return twiml([]);
-  if (!hasAiGateway()) return twiml([UI.en.notConfigured]);
 
   const { session } = await loadOrCreateSession(phoneSessionId("sms", from), "sms");
   const media =
@@ -51,26 +50,34 @@ export async function POST(req: Request) {
 
     if (media && (LETTER_MEDIA_TYPES as readonly string[]).includes(media.type)) {
       try {
-        const file = await fetchTwilioMedia(media.url);
-        const result =
-          file.data.byteLength > MAX_LETTER_BYTES
-            ? ({ ok: false, reason: "unreadable" } as const)
-            : await analyzeLetter({ data: file.data, mediaType: media.type, language });
-        const reply = formatLetterSms(result, language);
-        out.push(reply);
-        const now = new Date().toISOString();
-        session.language = language;
-        session.turns = [
-          ...session.turns,
-          { role: "user" as const, content: "[Sent a photo of a benefits letter]", at: now },
-          {
-            role: "assistant" as const,
-            content: result.ok ? `Letter summary: ${JSON.stringify(result.extraction)}\n\n${reply}` : reply,
-            at: now,
-          },
-        ].slice(-24);
-        session.updatedAt = now;
-        await getStore().saveSession(session);
+        if (!hasLocalLlm()) {
+          out.push(
+            language === "es"
+              ? "Para explicar una carta, use la app web de Costa (foto en el teléfono). SMS no usa modelos en la nube."
+              : "To explain a letter photo, use the Costa web app (on-device OCR). SMS letter vision needs a local model (COSTA_LOCAL_LLM_URL).",
+          );
+        } else {
+          const file = await fetchTwilioMedia(media.url);
+          const result =
+            file.data.byteLength > MAX_LETTER_BYTES
+              ? ({ ok: false, reason: "unreadable" } as const)
+              : await analyzeLetter({ data: file.data, mediaType: media.type, language });
+          const reply = formatLetterSms(result, language);
+          out.push(reply);
+          const now = new Date().toISOString();
+          session.language = language;
+          session.turns = [
+            ...session.turns,
+            { role: "user" as const, content: "[Sent a photo of a benefits letter]", at: now },
+            {
+              role: "assistant" as const,
+              content: result.ok ? `Letter summary: ${JSON.stringify(result.extraction)}\n\n${reply}` : reply,
+              at: now,
+            },
+          ].slice(-24);
+          session.updatedAt = now;
+          await getStore().saveSession(session);
+        }
       } finally {
         await deleteTwilioMedia(media.url).catch(() => {});
       }

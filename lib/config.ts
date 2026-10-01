@@ -1,31 +1,46 @@
+/**
+ * Inference config — Costa is local-first.
+ * - Default: deterministic local agent (FAQ + lexical KB + templates). No cloud LLM.
+ * - Optional: small local models via Ollama-compatible OpenAI API (`COSTA_LOCAL_LLM_URL`).
+ * AI Gateway / cloud billing is not used.
+ */
+
 export const models = {
-  chat: process.env.COSTA_CHAT_MODEL ?? "anthropic/claude-sonnet-5",
-  voice: process.env.COSTA_VOICE_MODEL ?? "google/gemini-3.8-flash",
-  vision: process.env.COSTA_VISION_MODEL ?? "anthropic/claude-sonnet-5",
-  judge: process.env.COSTA_JUDGE_MODEL ?? "anthropic/claude-sonnet-5",
-  embedding: process.env.COSTA_EMBEDDING_MODEL ?? "openai/text-embedding-3-small",
-  transcription: process.env.COSTA_TRANSCRIPTION_MODEL ?? "openai/whisper-1",
+  /** Ollama (or compatible) model id when COSTA_LOCAL_LLM_URL is set */
+  chat: process.env.COSTA_CHAT_MODEL ?? "llama3.2:1b",
+  voice: process.env.COSTA_VOICE_MODEL ?? process.env.COSTA_CHAT_MODEL ?? "llama3.2:1b",
+  vision: process.env.COSTA_VISION_MODEL ?? process.env.COSTA_CHAT_MODEL ?? "llama3.2:1b",
+  judge: process.env.COSTA_JUDGE_MODEL ?? process.env.COSTA_CHAT_MODEL ?? "llama3.2:1b",
+  embedding: process.env.COSTA_EMBEDDING_MODEL ?? "nomic-embed-text",
+  transcription: process.env.COSTA_TRANSCRIPTION_MODEL ?? "whisper-tiny",
 };
 
-export const EMBEDDING_DIMENSIONS = 1536;
+export const EMBEDDING_DIMENSIONS = 768;
 
 export const RETENTION_DAYS = 30;
 
-/**
- * Prefer an explicit Gateway credential. `VERCEL === "1"` alone is not enough:
- * preview/prod can still fail at request time (billing / missing OIDC), and Ask
- * should fall back to FAQ / offline guidance instead of a broken stream.
- */
-export function hasAiGateway(): boolean {
-  return Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN);
+/** OpenAI-compatible base URL for a local server (Ollama default: http://127.0.0.1:11434/v1). */
+export function localLlmBaseUrl(): string | null {
+  const raw = process.env.COSTA_LOCAL_LLM_URL?.trim();
+  if (!raw) return null;
+  return raw.replace(/\/$/, "");
 }
 
-/** AI Gateway free tier is locked until the team adds a payment method. */
-export function isGatewayBillingError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
-  const cause =
-    error && typeof error === "object" && "cause" in error && error.cause instanceof Error ? error.cause.message : "";
-  return /credit card|customer_verification/i.test(`${message}\n${cause}`);
+/** True when a small local LLM endpoint is configured (optional upgrade over the deterministic agent). */
+export function hasLocalLlm(): boolean {
+  return Boolean(localLlmBaseUrl());
+}
+
+/**
+ * @deprecated Use hasLocalLlm(). Kept so older call sites compile during the migration;
+ * always false — Costa no longer uses Vercel AI Gateway.
+ */
+export function hasAiGateway(): boolean {
+  return false;
+}
+
+export function isGatewayBillingError(_error: unknown): boolean {
+  return false;
 }
 
 export function hasDatabase(): boolean {

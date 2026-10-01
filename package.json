@@ -17,12 +17,15 @@
     "kb:embed": "tsx scripts/embed-kb.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^4.0.83",
     "@ai-sdk/react": "^4.0.119",
     "@huggingface/transformers": "^3.8.1",
     "@neondatabase/serverless": "^1.1.0",
+    "@vercel/analytics": "^2.0.1",
     "ai": "^7.0.116",
     "gray-matter": "^4.0.3",
     "next": "16.3.6",
+    "pdfjs-dist": "^6.3.289",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tesseract.js": "^5.1.1",

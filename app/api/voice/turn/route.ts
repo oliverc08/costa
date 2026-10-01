@@ -1,8 +1,9 @@
-import { gateway, transcribe } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { after } from "next/server";
-import { models } from "@/lib/config";
+import { transcribe } from "ai";
+import { hasLocalLlm, localLlmBaseUrl, models } from "@/lib/config";
 import { loadOrCreateSession, phoneSessionId, runPhoneTurn } from "@/lib/conversation";
-import { voice, VOICE } from "@/lib/i18n";
+import { voice } from "@/lib/i18n";
 import { detectLanguage, isLanguageCode, normalizeLanguage, type LanguageCode } from "@/lib/languages";
 import { getStore } from "@/lib/store";
 import { deleteTwilioMedia, fetchTwilioMedia, readTwilioWebhook, twimlResponse } from "@/lib/twilio";
@@ -20,10 +21,29 @@ const APOLOGY: Record<LanguageCode, string> = {
   pt: "Desculpe, tive um problema. Ligue de novo ou envie uma mensagem de texto para este número.",
 };
 
+const USE_WEB: Record<LanguageCode, string> = {
+  en: "Phone speech needs a local speech model. Please use the Costa web app, or text this number.",
+  es: "La voz por teléfono necesita un modelo local. Use la app web de Costa, o mande un mensaje de texto.",
+  zh: "电话语音需要本地语音模型。请使用 Costa 网页，或发短信到这个号码。",
+  tl: "Kailangan ng local speech model ang tawag. Gamitin ang Costa web app, o mag-text.",
+  vi: "Cuộc gọi cần mô hình giọng nói cục bộ. Hãy dùng ứng dụng web Costa, hoặc nhắn tin.",
+  ko: "전화 음성은 로컬 음성 모델이 필요합니다. Costa 웹을 쓰거나 문자하세요.",
+  pt: "Voz por telefone precisa de um modelo local. Use a app web Costa, ou envie SMS.",
+};
+
 async function transcribeRecording(url: string): Promise<{ text: string; language: LanguageCode | null }> {
   try {
+    if (!hasLocalLlm()) return { text: "", language: null };
+    const openai = createOpenAI({
+      baseURL: localLlmBaseUrl()!,
+      apiKey: process.env.COSTA_LOCAL_LLM_API_KEY ?? "ollama",
+      name: "costa-local",
+    });
     const audio = await fetchTwilioMedia(url);
-    const result = await transcribe({ model: gateway.transcriptionModel(models.transcription), audio: audio.data });
+    const result = await transcribe({
+      model: openai.transcription(models.transcription),
+      audio: audio.data,
+    });
     return { text: result.text.trim(), language: normalizeLanguage(result.language) };
   } finally {
     await deleteTwilioMedia(url).catch(() => {});
@@ -58,6 +78,10 @@ export async function POST(req: Request) {
     try {
       let text = speech;
       if (!text && recordingUrl) {
+        if (!hasLocalLlm()) {
+          await store.putPendingReply(key, { text: USE_WEB[language], language, endCall: true });
+          return;
+        }
         const t = await transcribeRecording(recordingUrl);
         text = t.text;
         language = knownLang ?? t.language ?? detectLanguage(text) ?? "en";

@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
 import { ExternalIcon, MapPinIcon, PhoneIcon } from "@/components/app/Icons";
+import { HelpAreaForm } from "@/components/app/HelpAreaForm";
 import { PersonRequest, type HelpTopic } from "@/components/app/PersonRequest";
-import { app, APP } from "@/lib/i18n-app";
+import { app } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { listProviders, normalizeArea, type HelpProgram, type ProviderCard } from "@/lib/local-help";
 import { resolveUiLanguage } from "@/lib/ui-language";
 
 export const metadata: Metadata = { title: "Free help · Costa" };
 
-const CITIES = ["Half Moon Bay", "Pescadero", "Redwood City", "East Palo Alto", "San José", "Gilroy"];
 const TOPICS: HelpTopic[] = ["medi-cal", "calfresh", "wic", "caleitc", "disaster", "other"];
 function languagesLine(p: ProviderCard, lang: LanguageCode) {
   const a = app(lang);
@@ -73,37 +73,7 @@ export default async function HelpPage({ searchParams }: PageProps<"/help">) {
           <p className="text-[16px] leading-relaxed text-stone-700">{a.help.intro}</p>
         </header>
 
-        <form action="/help" className="flex flex-col gap-3">
-          {topic !== "other" && <input type="hidden" name="topic" value={topic} />}
-          <label htmlFor="area" className="text-[15px] font-semibold">
-            {a.help.whereLabel}
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="area"
-              name="area"
-              defaultValue={area}
-              placeholder={a.help.wherePlaceholder}
-              autoComplete="address-level2"
-              enterKeyHint="search"
-              className="min-h-13 min-w-0 flex-1 rounded-md border border-stone-400 bg-white px-3.5 text-[17px] outline-none focus:border-pine-800 focus:ring-2 focus:ring-pine-800/15"
-            />
-            <button type="submit" className="min-h-13 rounded-md bg-stone-900 px-4 font-semibold text-white active:bg-stone-700">
-              {a.help.search}
-            </button>
-          </div>
-          <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
-            {CITIES.map((c) => (
-              <Link
-                key={c}
-                href={`/help?area=${encodeURIComponent(c)}${topic !== "other" ? `&topic=${topic}` : ""}`}
-                className={`min-h-10 shrink-0 rounded-md border px-3.5 py-2 text-[15px] font-medium ${area === c ? "border-pine-800 bg-pine-800 text-white" : "border-stone-400 bg-white"}`}
-              >
-                {c}
-              </Link>
-            ))}
-          </div>
-        </form>
+        <HelpAreaForm lang={lang} topic={topic} initialArea={area} hasCounty={Boolean(county)} />
 
         {county && (
           <section className="flex flex-col gap-3">
@@ -116,7 +86,6 @@ export default async function HelpPage({ searchParams }: PageProps<"/help">) {
             </ul>
           </section>
         )}
-        {area && !county && <p className="rounded-md bg-amber-50 px-4 py-3 text-[15px] leading-relaxed text-amber-950">{a.help.outside}</p>}
 
         <section id="person" className="flex scroll-mt-20 flex-col gap-3">
           <div className="flex flex-col gap-1">

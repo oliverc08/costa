@@ -15,7 +15,7 @@ function twilioPost(path: string, params: Record<string, string>): Request {
 }
 
 beforeAll(() => {
-  process.env.AI_GATEWAY_API_KEY = "test";
+  delete process.env.COSTA_LOCAL_LLM_URL;
   delete process.env.TWILIO_AUTH_TOKEN;
 });
 

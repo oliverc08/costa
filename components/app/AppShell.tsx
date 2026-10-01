@@ -45,7 +45,9 @@ export function AppShell({
         )}
         <SettingsSheet lang={lang} />
       </header>
-      <main className="flex flex-1 flex-col px-5 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5">{children}</main>
+      <main id="main" className="flex flex-1 flex-col px-5 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5">
+        {children}
+      </main>
       <BottomNav labels={a.nav} />
     </div>
   );

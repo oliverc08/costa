@@ -24,10 +24,11 @@ const STEPS = [
 const TECH = [
   "Next.js App Router on Vercel",
   "On-device checkup (no server round-trip for screening math)",
-  "FAQ shortcut before the LLM",
-  "AI Gateway only for open chat, letters, and Whisper fallback",
-  "Output safety audit for definite eligibility claims",
-  "localStorage plan / reminders; chats expire after 30 days",
+  "FAQ shortcut before any LLM",
+  "Deterministic local agent (lexical KB) — no cloud AI required",
+  "Optional tiny local models via Ollama (COSTA_LOCAL_LLM_URL)",
+  "On-device letter OCR + PDF rasterize; output safety audit",
+  "localStorage plan / city / reminders; chats expire after 30 days",
   "No account; no immigration questions",
   "AI coding assistance disclosed in docs/AI-DISCLOSURE.md (CAC requirement)",
 ];
@@ -54,7 +55,7 @@ export default async function HowPage({ searchParams }: PageProps<"/how">) {
             </p>
           ) : (
             <p className="rounded-md border border-amber-800/20 bg-amber-50 px-4 py-3 text-[14px] leading-relaxed text-amber-950">
-              Safety eval score not published yet. Judges can run <code className="font-mono text-[13px]">npm run eval</code> with AI Gateway credentials, or review scenarios in <code className="font-mono text-[13px]">evals/scenarios.ts</code>.
+              Safety eval score not published yet. Judges can run <code className="font-mono text-[13px]">npm run eval</code> (no API keys — local agent), or review scenarios in <code className="font-mono text-[13px]">evals/scenarios.ts</code>.
             </p>
           )}
         </header>

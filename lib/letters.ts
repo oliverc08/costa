@@ -1,9 +1,21 @@
+import { createOpenAI } from "@ai-sdk/openai";
 import { generateText, Output } from "ai";
 import { z } from "zod";
-import { models } from "@/lib/config";
+import { hasLocalLlm, localLlmBaseUrl, models } from "@/lib/config";
 import { searchBenefits, type SearchHit } from "@/lib/knowledge/search";
 import { LANGUAGES, isTranslatedUiLang, type LanguageCode, type TranslatedUiLang } from "@/lib/languages";
 import { redact } from "@/lib/safety/redact";
+
+function localModel(kind: "chat" | "vision") {
+  const baseURL = localLlmBaseUrl();
+  if (!baseURL) throw new Error("COSTA_LOCAL_LLM_URL is required for letter vision");
+  const openai = createOpenAI({
+    baseURL,
+    apiKey: process.env.COSTA_LOCAL_LLM_API_KEY ?? "ollama",
+    name: "costa-local",
+  });
+  return openai.chat(kind === "vision" ? models.vision : models.chat);
+}
 
 export const MAX_LETTER_BYTES = 8 * 1024 * 1024;
 export const LETTER_MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"] as const;
@@ -106,8 +118,11 @@ export async function analyzeLetter(opts: {
   mediaType: string;
   language: LanguageCode;
 }): Promise<LetterResult> {
+  if (!hasLocalLlm()) {
+    throw new Error("Letter vision requires COSTA_LOCAL_LLM_URL; use on-device OCR on the web app.");
+  }
   const { output: raw } = await generateText({
-    model: models.vision,
+    model: localModel("vision"),
     instructions: EXTRACTION_PROMPT,
     output: Output.object({ schema: letterExtractionSchema }),
     temperature: 0,
@@ -134,7 +149,7 @@ export async function analyzeLetter(opts: {
   const lang = LANGUAGES[opts.language];
 
   const { output: explanation } = await generateText({
-    model: models.chat,
+    model: localModel("chat"),
     instructions: `You explain benefits letters to people with limited English. Write ONLY in ${lang.name} (${lang.native}), at a 5th-grade reading level. Keep official program and form names in English in parentheses the first time.
 Use only the extracted letter facts and the verified sources below. If they disagree or something is missing, say so in "uncertainty". Never say the person qualifies or will lose benefits for sure; the agency decides. Never invent phone numbers: use the letter's number or one from the sources.
 If there is a denial or discontinuance, mention the right to ask for a State Hearing within 90 days.`,

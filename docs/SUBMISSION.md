@@ -1,5 +1,8 @@
 # Congressional App Challenge — CA-16 submission pack
 
+**Internal (script + code understanding):** [TEAM-BRIEF.md](./TEAM-BRIEF.md) — not for the portal attachment.  
+**Full application draft (copy-paste):** [APPLICATION.md](./APPLICATION.md)
+
 District: **California’s 16th** (Rep. Sam Liccardo) — hosting ✅  
 National rules: [2026 CAC Rules PDF](https://www.congressionalappchallenge.us/wp-content/uploads/2026/05/2026-CAC-Rules.pdf)  
 District page: [liccardo.house.gov/services/congressional-app-challenge](https://liccardo.house.gov/services/congressional-app-challenge)  
@@ -99,6 +102,8 @@ Upload to YouTube/Vimeo as **Public**. Add English captions if you speak another
 ---
 
 ## Draft portal answers (edit in your own voice)
+
+**Use the full copy-paste pack:** [APPLICATION.md](./APPLICATION.md) (questions 1–6, AI disclosure, video script, registration + submit checklists).
 
 **1. Title**  
 Costa

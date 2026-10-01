@@ -1,39 +1,18 @@
-import { gateway, transcribe } from "ai";
-import { hasAiGateway, isGatewayBillingError, models } from "@/lib/config";
 import { normalizeLanguage } from "@/lib/languages";
 
 export const maxDuration = 30;
 
-const MAX_AUDIO_BYTES = 10 * 1024 * 1024;
-
-/** Fallback speech-to-text when the browser has no SpeechRecognition. Audio is not stored. */
-export async function POST(req: Request) {
-  if (!hasAiGateway()) {
-    return Response.json({ error: "Costa is not configured yet: set AI_GATEWAY_API_KEY." }, { status: 503 });
-  }
-  const form = await req.formData().catch(() => null);
-  const audio = form?.get("audio");
-  if (!(audio instanceof Blob) || audio.size === 0) {
-    return Response.json({ error: "missing-audio" }, { status: 400 });
-  }
-  if (audio.size > MAX_AUDIO_BYTES) {
-    return Response.json({ error: "too-large" }, { status: 413 });
-  }
-  try {
-    const result = await transcribe({
-      model: gateway.transcriptionModel(models.transcription),
-      audio: new Uint8Array(await audio.arrayBuffer()),
-    });
-    const text = result.text?.trim() ?? "";
-    if (!text) {
-      return Response.json({ error: "empty-transcript" }, { status: 422 });
-    }
-    return Response.json({ text, language: normalizeLanguage(result.language) });
-  } catch (error) {
-    console.error("[transcribe] failed", error);
-    if (isGatewayBillingError(error)) {
-      return Response.json({ error: "gateway-billing" }, { status: 503 });
-    }
-    return Response.json({ error: "transcription-failed" }, { status: 502 });
-  }
+/**
+ * Cloud transcription is disabled — Costa uses browser speech or on-device Whisper
+ * (`lib/local-transcribe.ts`). Kept as a 503 stub so older clients fail clearly.
+ */
+export async function POST() {
+  return Response.json(
+    {
+      error: "use-local-speech",
+      message: "Costa transcribes on-device. Use browser speech recognition or the built-in Whisper fallback.",
+      language: normalizeLanguage("en"),
+    },
+    { status: 503 },
+  );
 }

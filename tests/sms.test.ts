@@ -10,20 +10,20 @@ function sms(params: Record<string, string>): Request {
 }
 
 afterEach(() => {
-  delete process.env.AI_GATEWAY_API_KEY;
+  delete process.env.COSTA_LOCAL_LLM_URL;
 });
 
 describe("SMS webhook", () => {
   it("stays silent for opt-out keywords so Twilio's own STOP handling applies", async () => {
-    process.env.AI_GATEWAY_API_KEY = "test";
     const xml = await (await POST(sms({ From: "+16505550100", Body: "STOP", NumMedia: "0" }))).text();
     expect(xml).not.toContain("<Message>");
   });
 
-  it("explains when the AI is not configured", async () => {
-    const xml = await (await POST(sms({ From: "+16505550100", Body: "hola", NumMedia: "0" }))).text();
+  it("replies with the local agent when no cloud LLM is configured", async () => {
+    const xml = await (await POST(sms({ From: "+16505550199", Body: "hola", NumMedia: "0" }))).text();
     expect(xml).toContain("<Message>");
-    expect(xml).toMatch(/isn't set up|not configured/i);
+    // Local/dev without Twilio replies inline; should not be the old gateway error.
+    expect(xml).not.toMatch(/isn't set up|not configured/i);
   });
 
   it("rejects requests without a sender", async () => {

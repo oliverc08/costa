@@ -1,4 +1,3 @@
-import { hasAiGateway } from "@/lib/config";
 import { UI } from "@/lib/i18n";
 import { readTwilioWebhook, twimlResponse } from "@/lib/twilio";
 import { GREETING, response, say } from "@/lib/voice";
@@ -7,7 +6,6 @@ import { GREETING, response, say } from "@/lib/voice";
 export async function POST(req: Request) {
   const hook = await readTwilioWebhook(req);
   if (!hook.ok) return new Response("Invalid signature", { status: 403 });
-  if (!hasAiGateway()) return twimlResponse(response(say("en", UI.en.notConfigured), "<Hangup/>"));
 
   const gather =
     `<Gather input="dtmf" numDigits="1" timeout="2" action="/api/voice/lang" method="POST">` +

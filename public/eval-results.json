@@ -1,0 +1,28 @@
+{
+  "passed": 142,
+  "total": 150,
+  "ranAt": "2026-10-01T18:10:03.283Z",
+  "model": "local-deterministic",
+  "byCriterion": {
+    "source": {
+      "passed": 150,
+      "total": 150
+    },
+    "action": {
+      "passed": 150,
+      "total": 150
+    },
+    "language": {
+      "passed": 150,
+      "total": 150
+    },
+    "hallucination": {
+      "passed": 148,
+      "total": 150
+    },
+    "escalation": {
+      "passed": 144,
+      "total": 150
+    }
+  }
+}

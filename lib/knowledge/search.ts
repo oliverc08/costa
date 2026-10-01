@@ -1,6 +1,6 @@
 import { cosineSimilarity, embed, embedMany } from "ai";
 import { neon } from "@neondatabase/serverless";
-import { hasAiGateway, hasDatabase, models } from "@/lib/config";
+import { hasDatabase, hasLocalLlm, models } from "@/lib/config";
 import { chunkEmbeddingText, getKnowledgeBase } from "./index";
 import { LexicalIndex } from "./lexical";
 import type { Program, SourceRecord } from "./types";
@@ -37,7 +37,8 @@ const lexical = new LexicalIndex(kb.chunks, sourceMap);
 let memoryEmbeddings: Promise<number[][]> | null = null;
 
 async function vectorScores(query: string, program?: Program): Promise<Map<string, number> | null> {
-  if (!hasAiGateway()) return null;
+  // Optional: only when a local embedding endpoint is configured. Default search is lexical.
+  if (!hasLocalLlm()) return null;
   try {
     const { embedding } = await embed({ model: models.embedding, value: query });
     const scores = new Map<string, number>();

@@ -24,11 +24,19 @@ const MAX_EDGE = 2000;
 
 type Prepared = { blob: Blob; filename: string };
 
-/** Shrinks large phone photos and converts them to JPEG (also handles HEIC where the browser can decode it). */
+/** Shrinks photos / rasterizes PDF page 1 to JPEG for on-device OCR. */
 async function prepareImage(file: File): Promise<Prepared | null> {
   const name = file.name.toLowerCase();
   if (file.type === "application/pdf" || name.endsWith(".pdf")) {
-    return { blob: file, filename: "letter.pdf" };
+    try {
+      const { pdfFirstPageToJpeg } = await import("@/lib/pdf-to-image");
+      const blob = await pdfFirstPageToJpeg(file);
+      if (!blob) return null;
+      return { blob, filename: "letter.jpg" };
+    } catch (error) {
+      console.error("[letter] pdf rasterize failed", error);
+      return null;
+    }
   }
   try {
     const bitmap = await createImageBitmap(file);
@@ -42,7 +50,6 @@ async function prepareImage(file: File): Promise<Prepared | null> {
     if (!blob) return null;
     return { blob, filename: "letter.jpg" };
   } catch {
-    // Already a gateway-friendly type (no HEIC convert needed).
     if (/^image\/(jpeg|png|webp|gif)$/i.test(file.type)) {
       return { blob: file, filename: name.endsWith(".png") ? "letter.png" : "letter.jpg" };
     }
@@ -70,48 +77,28 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
         setPhase({ kind: "error", message: l.unreadable });
         return;
       }
-      const body = new FormData();
-      body.append("file", prepared.blob, prepared.filename);
-      body.append("language", lang);
-      const res = await fetch("/api/letter", { method: "POST", body });
-      if (res.ok) {
-        setPhase({ kind: "done", result: (await res.json()) as LetterResult, preview: previewUrl });
-        return;
-      }
-      // Gateway billing / missing key → on-device OCR + heuristic explain (images only).
-      if (res.status === 503 && prepared.filename !== "letter.pdf") {
-        try {
-          const { ocrLetterImage } = await import("@/lib/letter-ocr");
-          const text = await ocrLetterImage(prepared.blob, lang);
-          if (!text || text.length < 20) {
-            setPhase({ kind: "error", message: l.unreadable });
-            return;
-          }
-          const local = await fetch("/api/letter-text", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ text, language: lang }),
-          });
-          if (!local.ok) {
-            setPhase({ kind: "error", message: l.error });
-            return;
-          }
-          setPhase({ kind: "done", result: (await local.json()) as LetterResult, preview: previewUrl });
+      // Local-first: on-device OCR + heuristic explain (no cloud vision).
+      try {
+        const { ocrLetterImage } = await import("@/lib/letter-ocr");
+        const text = await ocrLetterImage(prepared.blob, lang);
+        if (!text || text.length < 20) {
+          setPhase({ kind: "error", message: l.unreadable });
           return;
-        } catch (error) {
-          console.error("[letter] offline OCR failed", error);
+        }
+        const local = await fetch("/api/letter-text", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ text, language: lang }),
+        });
+        if (!local.ok) {
           setPhase({ kind: "error", message: l.error });
           return;
         }
+        setPhase({ kind: "done", result: (await local.json()) as LetterResult, preview: previewUrl });
+      } catch (error) {
+        console.error("[letter] local OCR failed", error);
+        setPhase({ kind: "error", message: l.error });
       }
-      if (res.status === 503) {
-        const pdfHint =
-          prepared.filename === "letter.pdf"
-            ? " Try a clear photo of the letter page instead of a PDF."
-            : "";
-        return setPhase({ kind: "error", message: `${t.notConfigured}${pdfHint}` });
-      }
-      setPhase({ kind: "error", message: res.status === 415 ? l.unreadable : l.error });
     } catch {
       setPhase({ kind: "error", message: l.error });
     } finally {

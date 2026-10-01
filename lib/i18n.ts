@@ -420,11 +420,113 @@ export function voice(lang: LanguageCode): (typeof VOICE)["en"] {
 }
 
 export function ui(lang: LanguageCode): UiStrings {
-  return isTranslatedUiLang(lang) ? UI[lang] : UI.en;
+  if (isTranslatedUiLang(lang)) return UI[lang];
+  if (lang === "ko") {
+    return {
+      ...UI.en,
+      tagline: "모국어로 혜택 도움을 받으세요.",
+      subtitle:
+        "전화, 문자, 질문. Medi-Cal, CalFresh, WIC, 세금 혜택, 재난 지원을 무료로. 계정·앱 불필요.",
+      call: "Costa에 전화",
+      text: "Costa에 문자",
+      ask: "Costa에게 질문",
+      askPlaceholder: "어떤 언어로든 질문하세요…",
+      send: "보내기",
+      thinking: "Costa가 공식 자료를 확인 중입니다…",
+      letterCta: "어려운 편지가 왔나요? 사진을 찍으세요",
+      letterTitle: "혜택 편지 이해하기",
+      letterIntro:
+        "Medi-Cal, CalFresh 등 혜택 편지 사진을 찍으세요. Costa가 통지 종류를 알려 주고, 사용하는 언어로 설명하며, 마감일과 다음 단계를 안내합니다. 사진은 저장되지 않습니다.",
+      letterChoose: "사진 촬영 또는 선택",
+      letterAnalyze: "이 편지 설명하기",
+      letterAnalyzing: "편지를 읽는 중…",
+      whatThisMeans: "의미",
+      whatToDo: "해야 할 일",
+      deadline: "마감일",
+      needHelp: "도움이 필요하신가요?",
+      needHelpBody: "지역 도우미가 전화나 문자로 연락드릴 수 있습니다.",
+      requestHelp: "사람에게 도움 요청",
+      phoneLabel: "전화번호",
+      consentLabel: "이 요청을 지역 혜택 도우미와 공유하는 데 동의합니다.",
+      requestSent: "요청이 전송되었습니다. 참조 번호:",
+      sources: "확인된 출처",
+      privacyNote: "사회보장번호, ITIN, Medi-Cal ID는 절대 공유하지 마세요.",
+      redactedWarning: "전송 전에 메시지에서 개인 번호를 제거했습니다.",
+      commonQuestions: "자주 묻는 질문",
+      notConfigured: "Costa가 아직 편지나 채팅을 사용할 수 없습니다 — AI 서비스가 설정되지 않았습니다.",
+    };
+  }
+  if (lang === "pt") {
+    return {
+      ...UI.en,
+      tagline: "Ajuda com benefícios no seu idioma.",
+      subtitle:
+        "Ligue. Envie mensagem. Pergunte. Ajuda grátis com Medi-Cal, CalFresh, WIC, créditos fiscais e auxílio por desastre. Sem conta. Sem app.",
+      call: "Ligar para a Costa",
+      text: "Enviar mensagem para a Costa",
+      ask: "Perguntar à Costa",
+      askPlaceholder: "Pergunte em qualquer idioma…",
+      send: "Enviar",
+      thinking: "A Costa está consultando fontes oficiais…",
+      letterCta: "Recebeu uma carta confusa? Tire uma foto",
+      letterTitle: "Entenda uma carta de benefícios",
+      letterIntro:
+        "Tire uma foto de uma carta do Medi-Cal, CalFresh ou outro benefício. A Costa identifica o aviso, explica em voz alta no seu idioma, lista prazos e mostra o próximo passo. A foto não é salva.",
+      letterChoose: "Tirar ou escolher uma foto",
+      letterAnalyze: "Explicar esta carta",
+      letterAnalyzing: "Lendo sua carta…",
+      whatThisMeans: "O que isso significa",
+      whatToDo: "O que você precisa fazer",
+      deadline: "Prazo",
+      needHelp: "Precisa de ajuda?",
+      needHelpBody: "Um assistente local pode ligar ou enviar mensagem.",
+      requestHelp: "Pedir ajuda de uma pessoa",
+      phoneLabel: "Seu número de telefone",
+      consentLabel: "Concordo em compartilhar este pedido com um assistente local de benefícios.",
+      requestSent: "Pedido enviado. Seu número de referência é",
+      sources: "Fontes verificadas",
+      privacyNote: "Nunca compartilhe seu número de Seguro Social, ITIN ou ID do Medi-Cal.",
+      redactedWarning: "Removemos um número privado da sua mensagem antes de enviar.",
+      commonQuestions: "Perguntas frequentes",
+      notConfigured: "A Costa ainda não pode ler cartas nem conversar — o serviço de IA não está configurado.",
+    };
+  }
+  return UI.en;
 }
 
 export function letterUi(lang: LanguageCode): LetterStrings {
-  return isTranslatedUiLang(lang) ? LETTER_UI[lang] : LETTER_UI.en;
+  if (isTranslatedUiLang(lang)) return LETTER_UI[lang];
+  if (lang === "ko") {
+    return {
+      ...LETTER_UI.en,
+      unreadable: "Costa가 사진을 읽지 못했습니다. 밝은 곳에서 페이지 전체를 평평하게 놓고 다시 시도하세요.",
+      notLetter: "혜택 편지로 보이지 않습니다. 편지 자체를 촬영해 보세요.",
+      error: "문제가 발생했습니다. 다시 시도해 주세요.",
+      uncertain: "Costa가 확실하지 않은 부분:",
+      daysLeft: (n) => `${n}일 남음`,
+      dueToday: "오늘 마감",
+      overdue: "이 날짜는 지났습니다. 지금 조치하세요. 아직 선택지가 있을 수 있습니다.",
+      another: "다른 편지 설명하기",
+      back: "뒤로",
+      sending: "전송 중…",
+    };
+  }
+  if (lang === "pt") {
+    return {
+      ...LETTER_UI.en,
+      unreadable: "A Costa não conseguiu ler a foto. Tente de novo com a página inteira, plana e com boa luz.",
+      notLetter: "Isso não parece uma carta de benefícios. Tente uma foto da própria carta.",
+      error: "Algo deu errado. Tente novamente.",
+      uncertain: "A Costa não tem certeza sobre",
+      daysLeft: (n) => (n === 1 ? "Falta 1 dia" : `Faltam ${n} dias`),
+      dueToday: "Vence hoje",
+      overdue: "Esta data já passou. Aja agora; você ainda pode ter opções.",
+      another: "Explicar outra carta",
+      back: "Voltar",
+      sending: "Enviando…",
+    };
+  }
+  return LETTER_UI.en;
 }
 
 export function disclaimer(lang: LanguageCode): { site: string; letter: string } {

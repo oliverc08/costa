@@ -1,67 +1,57 @@
 # Costa setup
 
-Costa runs locally with only an AI Gateway key. Everything else (database, SMS, voice) is optional until you deploy.
+Costa is **local-first**. You can run the full web demo with **no cloud LLM and no AI Gateway**. Ask uses a deterministic agent (FAQ + lexical knowledge search). Letters use on-device OCR. Optional: small local models via Ollama.
 
-Twilio and Vercel billing accounts must be owned by an adult (parent or teacher).
+Twilio and Vercel billing accounts must be owned by an adult (parent or teacher) if you use those services.
 
 ## 1. Local development
 
 ```bash
 cp .env.example .env.local
-# fill in AI_GATEWAY_API_KEY at minimum
 npm install
 npm run dev
 ```
 
+Optional in `.env.local` for freer chat with a tiny local model:
+
+```bash
+# After: brew install ollama && ollama pull llama3.2:1b
+COSTA_LOCAL_LLM_URL=http://127.0.0.1:11434/v1
+COSTA_CHAT_MODEL=llama3.2:1b
+```
+
 Without `DATABASE_URL`, sessions and handoffs live in memory and reset when the server restarts.
-Without an AI Gateway key, retrieval falls back to keyword search, and anything needing the model (chat, letters, evals) returns a clear configuration error.
-
-Scripts (`db:setup`, `kb:embed`, `eval`) read `.env.local`, then `.env`.
-
-The partner dashboard is at `/partners`. In development the passcode is `costa-demo` unless `PARTNER_PASSCODE` is set; in production the dashboard stays disabled until you set it. An empty queue shows a "Load sample requests" button for demos.
-
-## 2. Vercel + AI Gateway
-
-1. Create a Vercel account and import this repo as a project.
-2. Enable **AI Gateway** for the project. Deployments authenticate automatically with OIDC; locally, `npx vercel env pull .env.local` gives you a short-lived OIDC token (re-pull when it expires). An `AI_GATEWAY_API_KEY` also works if you prefer a static key.
-3. Add `PARTNER_PASSCODE`, `SESSION_SECRET` (a long random string, required in production: it signs partner cookies and hashes phone numbers), and `CRON_SECRET` (Vercel Cron sends it to `/api/cron/purge` daily).
-4. Pull env vars locally: `npx vercel link && npx vercel env pull .env.local`.
-
-## 3. Neon Postgres (pgvector)
-
-1. In Vercel, go to **Storage**, then **Create Database**, then choose **Neon**, and connect it to the project. This sets `DATABASE_URL`.
-2. Apply the schema: `npm run db:setup` (safe to re-run; do it after pulling schema changes)
-3. Embed the verified sources: `npm run kb:embed`
-
-Re-run `kb:embed` every time you edit `content/sources/*.md`.
-
-## 4. Twilio (do this on day 1)
-
-1. Create a Twilio account and buy a US phone number with SMS, MMS, and Voice.
-2. **Start carrier verification immediately.** For a toll-free number, submit toll-free verification. For a local number, register A2P 10DLC (brand plus campaign). Approval can take weeks. Until then, a trial account can only text verified numbers, which is fine for the demo.
-3. On the phone number's configuration page:
-   - Messaging webhook (HTTP POST): `https://YOUR-DOMAIN/api/sms`
-   - Voice webhook (HTTP POST): `https://YOUR-DOMAIN/api/voice`
-4. Set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`, and `PUBLIC_BASE_URL` (your production URL, used for signature validation).
-5. Keep Twilio's **Advanced Opt-Out** on (Messaging → Settings). Costa stays silent for STOP/HELP/START so Twilio's compliant replies are the only ones sent.
-6. For local testing, expose your dev server with a tunnel (for example `npx localtunnel --port 3000`), point the webhooks at the tunnel URL, and set `PUBLIC_BASE_URL` to that URL so signatures validate.
-
-How the phone channels work:
-
-- **SMS**: replies are sent through the Twilio REST API after the webhook returns, so long answers never hit Twilio's 15-second timeout. Texting a photo of a letter runs the same letter explainer as the website; the photo is deleted from Twilio after it's read.
-- **Voice**: the caller hears a short greeting in five languages. Pressing 1–5 picks a language; otherwise they just talk, and Whisper detects the language. Each answer is computed in the background and picked up by `/api/voice/answer`, so the caller hears "one moment" instead of silence. Recordings are deleted right after transcription.
-
-Without Twilio credentials, `/api/sms` answers inline as TwiML, so you can test it with curl:
+Without `COSTA_LOCAL_LLM_URL`, Ask still works via the local agent; letters use on-device OCR on the web.
 
 ```bash
-curl -X POST localhost:3000/api/sms -d From=+16505550100 -d "Body=¿Cómo renuevo mi Medi-Cal?" -d NumMedia=0
+npm test          # unit tests, no keys
+npm run eval      # 150-scenario local safety eval, no keys
 ```
 
-## 5. Verify
+The partner dashboard is at `/partners`. Passcode defaults to `costa-demo` in development (`PARTNER_PASSCODE` in `.env.example`). **Set `PARTNER_PASSCODE` and `SESSION_SECRET` on Vercel** so judges can open `/partners` and use “Load sample requests”.
 
-```bash
-npm test          # deterministic unit tests (no keys needed)
-npm run eval      # 150-scenario safety eval (needs AI Gateway access)
-```
+## 2. Vercel deploy
 
-`npm run eval` accepts `--lang es`, `--intent mc-renew-yellow`, `--limit 10`, and `--concurrency 4`. Only a full 150-scenario run updates `public/eval-results.json`, which the landing page shows as "Costa Safety Eval: N/150 passing". Detailed results go to `evals/results/` (git-ignored).
+1. Import this repo as a Vercel project.
+2. Add `PARTNER_PASSCODE`, `SESSION_SECRET` (long random string), and `CRON_SECRET`.
+3. Do **not** configure AI Gateway — Costa does not use it.
+4. Deploy. Live demo: your `*.vercel.app` URL.
+
+## 3. Neon Postgres (optional)
+
+1. In Vercel **Storage**, create **Neon**, connect it (`DATABASE_URL`).
+2. `npm run db:setup`
+3. Optional embeddings with a local embed model: set `COSTA_LOCAL_LLM_URL` and `npm run kb:embed`
+
+Lexical search works without embeddings.
+
+## 4. Twilio (optional)
+
+1. Create a Twilio account and buy a US number with SMS, MMS, and Voice.
+2. Set `TWILIO_*` and `PUBLIC_BASE_URL` to your deployed URL.
+3. Point Twilio webhooks at `/api/sms` and `/api/voice`.
+4. Phone/SMS letter vision needs `COSTA_LOCAL_LLM_URL`; otherwise point users to the web OCR path.
+
+## 5. PWA / offline
+
+The service worker at `/sw.js` caches the app shell (home, Ask, Help, etc.). API routes are never cached.

@@ -1,4 +1,4 @@
-import { hasAiGateway, isGatewayBillingError } from "@/lib/config";
+import { hasLocalLlm } from "@/lib/config";
 import { isLanguageCode } from "@/lib/languages";
 import { analyzeLetter, LETTER_MEDIA_TYPES, MAX_LETTER_BYTES } from "@/lib/letters";
 
@@ -16,10 +16,13 @@ function sniffMediaType(file: File): string {
   return "";
 }
 
-/** Explains an uploaded letter photo. The image is processed in memory and never stored. */
+/**
+ * Optional local-LLM vision path. The web UI prefers on-device OCR → /api/letter-text.
+ * Returns 503 unless COSTA_LOCAL_LLM_URL is set (small local models via Ollama).
+ */
 export async function POST(req: Request) {
-  if (!hasAiGateway()) {
-    return Response.json({ error: "not-configured" }, { status: 503 });
+  if (!hasLocalLlm()) {
+    return Response.json({ error: "not-configured", hint: "Use on-device OCR or set COSTA_LOCAL_LLM_URL" }, { status: 503 });
   }
 
   const form = await req.formData().catch(() => null);
@@ -41,10 +44,7 @@ export async function POST(req: Request) {
     });
     return Response.json(result);
   } catch (error) {
-    console.error("[letter] analysis failed", error);
-    if (isGatewayBillingError(error)) {
-      return Response.json({ error: "not-configured" }, { status: 503 });
-    }
+    console.error("[letter] local vision failed", error);
     return Response.json({ error: "analysis-failed" }, { status: 502 });
   }
 }

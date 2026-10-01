@@ -30,11 +30,13 @@ export interface DeviceData {
   reminders: Reminder[];
   steps: PlanStep[];
   checkup: CheckupSnapshot | null;
+  /** Last city / ZIP used on Help — stays on device only. */
+  area: string | null;
 }
 
 const KEY = "costa_device_v1";
 export const CHAT_STORAGE_KEY = "costa_chat_v1";
-const EMPTY: DeviceData = { reminders: [], steps: [], checkup: null };
+const EMPTY: DeviceData = { reminders: [], steps: [], checkup: null, area: null };
 
 let cache: DeviceData | null = null;
 const listeners = new Set<() => void>();
@@ -111,6 +113,15 @@ export function removeStep(id: string) {
 
 export function saveCheckup(summary: string) {
   write({ ...read(), checkup: { summary, savedAt: new Date().toISOString() } });
+}
+
+export function saveArea(area: string) {
+  const trimmed = area.trim().slice(0, 80);
+  write({ ...read(), area: trimmed || null });
+}
+
+export function getSavedArea(): string | null {
+  return read().area;
 }
 
 export async function clearDeviceData() {

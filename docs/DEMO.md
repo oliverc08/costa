@@ -1,7 +1,8 @@
 # Demo, user testing, and submission
 
 Canonical CAC checklist (rules-aligned): **[docs/SUBMISSION.md](./SUBMISSION.md)**  
-AI / open-source disclosure (required): **[docs/AI-DISCLOSURE.md](./AI-DISCLOSURE.md)**
+AI / open-source disclosure (required): **[docs/AI-DISCLOSURE.md](./AI-DISCLOSURE.md)**  
+Team script / “we understand the code” brief (internal): **[docs/TEAM-BRIEF.md](./TEAM-BRIEF.md)**
 
 **Deadline for CA-16:** Monday, **October 26, 2026, 9:00 AM Pacific** (national cutoff is the same instant: 12:00 pm EDT). Submit by **October 24**.
 
