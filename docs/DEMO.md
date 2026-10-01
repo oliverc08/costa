@@ -1,63 +1,54 @@
 # Demo, user testing, and submission
 
-The Congressional App Challenge deadline for CA-16 is **Monday, October 26, 2026, 9:00 AM PT**. Aim to submit by **October 24** so there's slack for upload problems.
+Canonical CAC checklist (rules-aligned): **[docs/SUBMISSION.md](./SUBMISSION.md)**  
+AI / open-source disclosure (required): **[docs/AI-DISCLOSURE.md](./AI-DISCLOSURE.md)**
+
+**Deadline for CA-16:** Monday, **October 26, 2026, 9:00 AM Pacific** (national cutoff is the same instant: 12:00 pm EDT). Submit by **October 24**.
+
+CA-16 theme (Liccardo): apps that help people access **vital federal, state, or local benefits and services** — Costa is built for this.
 
 ## Before recording
 
-- [ ] Production deploy on Vercel with AI Gateway, Neon (`db:setup`, `kb:embed`), and Twilio connected
-- [ ] Your phone number verified on the Twilio trial (or carrier verification approved)
-- [ ] `npm run eval` run once against production models; the landing page shows "Costa Safety Eval: N/150 passing"
-- [ ] A real Medi-Cal renewal letter (MC 216) or request-for-information letter (MC 355) with every personal detail covered. Print a blank sample if you don't have one.
-- [ ] Partner dashboard signed in on a laptop, queue cleared (or loaded with sample requests)
-- [ ] Screen recorder plus a second camera or phone to film the call
+- [ ] Production deploy: https://costa-five.vercel.app (AI Gateway working **or** rely on FAQ chips + letter photo offline path)
+- [x] GitHub repo **public**: https://github.com/oliverc08/costa
+- [ ] `npm run eval` once with Gateway; commit `public/eval-results.json` if you want the score on `/how`
+- [ ] Sample Medi-Cal letter photo (MC 216 / MC 355) with personal details covered
+- [ ] Partner dashboard ready if you show handoff (`/partners`)
+- [ ] Screen recorder; English captions for non-English speech
 
-## Two-minute demo script
+## Two-minute demo script (recording)
 
-Prefer the **web app** on a phone (voice + letter + Ask). Keep a Twilio call as a backup segment if the number is verified.
+Prefer the **web app** on a phone. CAC video must be **1–3 minutes**, **public** on YouTube/Vimeo (not unlisted), and must state: your names, app name, one-sentence purpose, target audience, tools/languages, and a live showcase. Full beat sheet: [SUBMISSION.md](./SUBMISSION.md).
 
 | Time | Show | Say |
 | --- | --- | --- |
-| 0:00–0:15 | Welcome → pick Spanish (or Vietnamese) | "In our district, [X]% of people speak a language other than English at home. Medi-Cal renewals and notices are confusing even in English. Costa is a language layer for benefits." |
-| 0:15–0:40 | Home: tap the mic, say in Spanish: "Me cortaron el Medi-Cal, ¿qué hago?" | Let Ask open and answer. "No account. It matched a verified answer with the next step and sources." |
-| 0:40–1:05 | Letter tab: **photo** of an MC 355 / renewal letter (not PDF if Gateway is flaky) | Point at the deadline and numbered steps. "It reads the notice in your language. The photo is not saved." |
-| 1:05–1:20 | Save deadline → Plan tab; or Checkup → Save to my plan → Plan | "Steps and deadlines stay on this phone." |
-| 1:20–1:40 | Help → request a person (or Ask → talk to a person) | Show the handoff confirmation. "A local helper can follow up." |
-| 1:40–2:00 | Partner dashboard on a laptop (optional) + safety line | "Costa uses AI for communication, not authority. It never decides eligibility and never asks about immigration status." |
+| 0:00–0:15 | Welcome → Spanish or Vietnamese | Names + “This is Costa.” Mention CA-16 language access + Medi-Cal confusion. |
+| 0:15–0:40 | Home mic or Ask chip / paraphrase | “No account. Verified sources and a next step.” |
+| 0:40–1:05 | Letter **photo** (not PDF if Gateway is flaky) | Deadline + steps. “Photo isn’t saved.” |
+| 1:05–1:25 | Plan tab or Checkup → save | “Steps stay on this phone.” |
+| 1:25–1:45 | Help → request a person | Handoff confirmation. |
+| 1:45–2:00 | `/how` or safety line | “AI explains; never decides eligibility; never asks immigration status.” |
 
-**Safer Ask path if free-text AI fails:** tap a common-question chip (FAQ) — those answers are canned and do not need the model.
+**Safer Ask path:** tap a common-question chip if free-text AI fails.
 
-Fill in [X] from the Census Bureau's American Community Survey (table S1601, "Language Spoken at Home," for California's 16th Congressional District at data.census.gov) and cite it in the write-up.
-
-Tips: record each segment separately and cut them together. Keep the phone call real; judges can tell. Add captions in English for the non-English parts.
+Fill district language stats from ACS table S1601 for CA-16 and cite in the write-up.
 
 ## User testing with community organizations
 
-Goal: five to eight real users, plus at least one staff member from a partner organization, before October 20.
+Goal: five to eight real users, plus at least one staff member, before October 20.
 
-Organizations to contact (all listed in Costa's directory):
+- **ALAS** (Half Moon Bay), 650-560-8947  
+- **Puente de la Costa Sur** (Pescadero), (650) 879-1691  
+- **Sacred Heart Community Service** (San José), (408) 278-2160  
 
-- **ALAS** (Half Moon Bay), 650-560-8947: farmworker families, Spanish
-- **Puente de la Costa Sur** (Pescadero), (650) 879-1691: South Coast families, Spanish
-- **Sacred Heart Community Service** (San José), (408) 278-2160: Spanish and Vietnamese speakers
+Session plan and prompts: see earlier sections in git history / keep short: consent → ask about renewal → photo letter → request a person → trust questions. Put 2–3 quotes in the portal answers.
 
-Ask for 20 minutes with staff first. Show the dashboard and ask whether the handoff summary gives them what they need. Then ask if one or two clients would try Costa while staff are present.
+## Submission checklist (portal)
 
-Session plan (15 minutes per person, in their language, with a staff member or bilingual volunteer):
-
-1. Consent: explain it's a student project, nothing is recorded, and don't use real ID numbers.
-2. Task A: "Ask Costa what to do about a renewal letter" (by phone or text, their choice).
-3. Task B: "Take a photo of this sample letter and find out the deadline."
-4. Task C: "Ask for a person to help you."
-5. Ask: What was confusing? Did you trust the answer? Why or why not? Would you use it again?
-
-Record per session: language, channel, whether each task was completed without help, time taken, quotes, and any wrong or confusing answer. Turn every wrong answer into a new eval scenario in `evals/scenarios.ts`.
-
-Put two or three quotes and the task completion rate in the submission write-up.
-
-## Submission checklist
-
-- [ ] Demo video (2–3 minutes) uploaded to YouTube or Vimeo as **Unlisted**
-- [ ] Code on GitHub (public or shared with the district office)
-- [ ] Write-up: the problem (language access and Medi-Cal churn in CA-16), what Costa does, how it's built, safety approach, eval score, and user-testing results
-- [ ] Team member info and grade levels
-- [ ] Submit through the official Congressional App Challenge portal for **CA-16 (Rep. Sam Liccardo)** before Oct 26, 9:00 AM PT
+- [ ] Registered at congressionalappchallenge.us (personal email)  
+- [ ] Demo video **public** 1–3 min with all required beats  
+- [ ] Portal questions (drafts in SUBMISSION.md)  
+- [ ] AI disclosure attached / pasted  
+- [ ] Source link for judges (public GitHub + live URL)  
+- [ ] Submit before Oct 26, 9:00 AM PT  
+- [ ] Exit questionnaire after deadline (every teammate)  

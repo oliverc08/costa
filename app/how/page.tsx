@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
+import { readEvalSummary } from "@/lib/eval-summary";
 import { resolveUiLanguage } from "@/lib/ui-language";
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ const STEPS = [
   { title: "Intent", body: "Common questions match a multilingual FAQ bank with zero model calls. Open questions go to the chat agent." },
   { title: "Eligibility engine", body: "Deterministic on-device rules (FPL tables, WIC categories, CalEITC). Never asks immigration status. AI does not invent eligibility." },
   { title: "Verified-source RAG", body: "Answers cite government sources with agency and last-verified date. pgvector search over an ingested knowledge base when AI is used." },
-  { title: "Localized response", body: "Pre-written FAQ answers in en / es / zh / tl / vi. Model replies stay in the user’s language with safety audits." },
+  { title: "Localized response", body: "Pre-written FAQ answers in multiple languages. Model replies stay in the user’s language with safety audits." },
   { title: "Speech out", body: "Device text-to-speech reads results and chat replies aloud so the journey can work without reading." },
   { title: "Human handoff", body: "One tap to call local orgs (ALAS, Puente, 211, county lines) or request a person callback with consent." },
 ];
@@ -28,10 +29,12 @@ const TECH = [
   "Output safety audit for definite eligibility claims",
   "localStorage plan / reminders; chats expire after 30 days",
   "No account; no immigration questions",
+  "AI coding assistance disclosed in docs/AI-DISCLOSURE.md (CAC requirement)",
 ];
 
 export default async function HowPage({ searchParams }: PageProps<"/how">) {
   const lang = await resolveUiLanguage((await searchParams).lang);
+  const evalSummary = await readEvalSummary();
 
   return (
     <AppShell lang={lang} back="/" title="Costa">
@@ -42,6 +45,18 @@ export default async function HowPage({ searchParams }: PageProps<"/how">) {
           <p className="text-[16px] leading-relaxed text-stone-700">
             Costa is intentionally simple on the surface — voice first, huge buttons, listen on every important answer — with serious engineering underneath. AI explains; structured rules decide screening.
           </p>
+          {evalSummary ? (
+            <p className="rounded-md border border-pine-800/20 bg-pine-50 px-4 py-3 text-[15px] font-semibold text-pine-950">
+              Costa Safety Eval: {evalSummary.passed}/{evalSummary.total} passing
+              <span className="mt-1 block text-[13px] font-medium text-stone-600">
+                Ran {new Date(evalSummary.ranAt).toLocaleDateString("en-US")} · model {evalSummary.model}
+              </span>
+            </p>
+          ) : (
+            <p className="rounded-md border border-amber-800/20 bg-amber-50 px-4 py-3 text-[14px] leading-relaxed text-amber-950">
+              Safety eval score not published yet. Judges can run <code className="font-mono text-[13px]">npm run eval</code> with AI Gateway credentials, or review scenarios in <code className="font-mono text-[13px]">evals/scenarios.ts</code>.
+            </p>
+          )}
         </header>
 
         <section aria-label="Pipeline" className="flex flex-col">
@@ -68,6 +83,17 @@ export default async function HowPage({ searchParams }: PageProps<"/how">) {
               </li>
             ))}
           </ul>
+          <p className="text-[14px] leading-relaxed text-stone-600">
+            Full AI and open-source disclosure:{" "}
+            <a href="https://github.com/oliverc08/costa/blob/main/docs/AI-DISCLOSURE.md" className="font-semibold text-pine-800 underline">
+              docs/AI-DISCLOSURE.md
+            </a>
+            . Submission checklist:{" "}
+            <a href="https://github.com/oliverc08/costa/blob/main/docs/SUBMISSION.md" className="font-semibold text-pine-800 underline">
+              docs/SUBMISSION.md
+            </a>
+            .
+          </p>
         </section>
 
         <p className="text-[14px] leading-relaxed text-stone-600">
