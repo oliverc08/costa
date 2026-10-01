@@ -34,6 +34,7 @@ export interface AppStrings {
   privacy: { title: string; body: string; deleteButton: string; confirm: string; done: string };
   home: {
     greeting: string;
+    intro: string;
     askCta: string;
     talkCta: string;
     topicsTitle: string;
@@ -193,7 +194,8 @@ export const APP: Record<LanguageCode, AppStrings> = {
       done: "Deleted.",
     },
     home: {
-      greeting: "Hi! How can Costa help you today?",
+      greeting: "Help with Medi-Cal, food, and money",
+      intro: "Free, in your language. Every answer comes from an official government source.",
       askCta: "Ask a question…",
       talkCta: "Talk",
       topicsTitle: "What do you need help with?",
@@ -380,7 +382,8 @@ export const APP: Record<LanguageCode, AppStrings> = {
       done: "Borrado.",
     },
     home: {
-      greeting: "¡Hola! ¿En qué le puede ayudar Costa hoy?",
+      greeting: "Ayuda con Medi-Cal, comida y dinero",
+      intro: "Gratis y en su idioma. Cada respuesta viene de una fuente oficial del gobierno.",
       askCta: "Haga una pregunta…",
       talkCta: "Hablar",
       topicsTitle: "¿Con qué necesita ayuda?",
@@ -567,7 +570,8 @@ export const APP: Record<LanguageCode, AppStrings> = {
       done: "已删除。",
     },
     home: {
-      greeting: "您好！今天 Costa 可以怎么帮您？",
+      greeting: "Medi-Cal、食物和现金福利帮助",
+      intro: "免费，使用您的语言。每个回答都来自政府官方资料。",
       askCta: "输入问题…",
       talkCta: "说话",
       topicsTitle: "您需要哪方面的帮助？",
@@ -754,7 +758,8 @@ export const APP: Record<LanguageCode, AppStrings> = {
       done: "Nabura na.",
     },
     home: {
-      greeting: "Kumusta! Paano ka matutulungan ni Costa ngayon?",
+      greeting: "Tulong sa Medi-Cal, pagkain, at pera",
+      intro: "Libre, sa iyong wika. Bawat sagot ay galing sa opisyal na source ng gobyerno.",
       askCta: "Magtanong…",
       talkCta: "Magsalita",
       topicsTitle: "Saan mo kailangan ng tulong?",
@@ -941,7 +946,8 @@ export const APP: Record<LanguageCode, AppStrings> = {
       done: "Đã xóa.",
     },
     home: {
-      greeting: "Xin chào! Hôm nay Costa có thể giúp gì cho bạn?",
+      greeting: "Trợ giúp về Medi-Cal, thực phẩm và tiền",
+      intro: "Miễn phí, bằng ngôn ngữ của bạn. Mọi câu trả lời đều từ nguồn chính thức của chính phủ.",
       askCta: "Đặt câu hỏi…",
       talkCta: "Nói",
       topicsTitle: "Bạn cần giúp về việc gì?",

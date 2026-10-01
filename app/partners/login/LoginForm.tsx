@@ -6,7 +6,7 @@ import { login } from "../actions";
 export function LoginForm({ devHint }: { devHint: string | null }) {
   const [state, action, pending] = useActionState(login, null);
   const field =
-    "w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20";
+    "w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 outline-none focus:border-pine-600 focus:ring-2 focus:ring-pine-600/20";
 
   return (
     <form action={action} className="flex flex-col gap-4">
@@ -26,7 +26,7 @@ export function LoginForm({ devHint }: { devHint: string | null }) {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-full bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 disabled:opacity-60"
+        className="rounded-full bg-pine-700 px-5 py-3 font-semibold text-white hover:bg-pine-800 disabled:opacity-60"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>

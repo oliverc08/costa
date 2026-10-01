@@ -22,7 +22,7 @@ function Line({ text }: { text: string }) {
             key={i}
             href={href}
             {...(tel ? {} : { target: "_blank", rel: "noreferrer" })}
-            className={`font-semibold underline decoration-2 underline-offset-2 ${tel ? "whitespace-nowrap text-teal-800" : "break-words text-teal-800"}`}
+            className={`font-semibold underline decoration-2 underline-offset-2 ${tel ? "whitespace-nowrap text-pine-800" : "break-words text-pine-800"}`}
           >
             {p}
           </a>
@@ -59,9 +59,9 @@ export function RichText({ text, className = "" }: { text: string; className?: s
                 {items.map((item, ii) => (
                   <li key={ii} className="flex gap-2.5">
                     {ordered ? (
-                      <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-teal-700 text-[13px] font-bold text-white">{ii + 1}</span>
+                      <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-pine-800 text-[13px] font-bold text-white">{ii + 1}</span>
                     ) : (
-                      <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-700" aria-hidden />
+                      <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pine-800" aria-hidden />
                     )}
                     <span>
                       <Line text={item} />

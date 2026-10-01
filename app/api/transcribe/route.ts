@@ -6,7 +6,7 @@ export const maxDuration = 30;
 
 const MAX_AUDIO_BYTES = 10 * 1024 * 1024;
 
-/** Speech-to-text for the mic button in the web app. The audio is not stored. */
+/** Fallback speech-to-text when the browser has no SpeechRecognition. Audio is not stored. */
 export async function POST(req: Request) {
   if (!hasAiGateway()) {
     return Response.json({ error: "Costa is not configured yet: set AI_GATEWAY_API_KEY." }, { status: 503 });

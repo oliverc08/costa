@@ -24,10 +24,10 @@ const START: CheckupAnswers = {
 const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 
 export const STATUS_TONE: Record<ScreenStatus, string> = {
-  likely: "bg-teal-100 text-teal-900",
-  possibly: "bg-amber-100 text-amber-900",
-  unlikely: "bg-stone-200 text-stone-700",
-  "need-more-info": "bg-sky-100 text-sky-900",
+  likely: "border-pine-700 bg-pine-800 text-white",
+  possibly: "border-poppy-600 text-poppy-700",
+  unlikely: "border-stone-300 text-stone-600",
+  "need-more-info": "border-stone-400 text-stone-700",
 };
 
 function Choice({ selected, onClick, children, hint }: { selected: boolean; onClick: () => void; children: React.ReactNode; hint?: string }) {
@@ -36,15 +36,15 @@ function Choice({ selected, onClick, children, hint }: { selected: boolean; onCl
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`flex min-h-16 w-full items-center justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-left ${
-        selected ? "border-teal-700 bg-teal-50" : "border-stone-200 bg-white active:bg-stone-50"
+      className={`flex min-h-16 w-full items-center justify-between gap-3 rounded-md border px-4 py-3 text-left ${
+        selected ? "border-pine-800 bg-pine-50 ring-1 ring-pine-800" : "border-stone-400 bg-white active:bg-stone-100"
       }`}
     >
       <span>
         <span className="block text-[17px] font-semibold leading-snug">{children}</span>
         {hint && <span className="block text-[14px] text-stone-500">{hint}</span>}
       </span>
-      <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 ${selected ? "border-teal-700 bg-teal-700 text-white" : "border-stone-300"}`}>
+      <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-sm border-2 ${selected ? "border-pine-800 bg-pine-800 text-white" : "border-stone-400"}`}>
         {selected && <CheckIcon size={16} strokeWidth={3} />}
       </span>
     </button>
@@ -52,7 +52,7 @@ function Choice({ selected, onClick, children, hint }: { selected: boolean; onCl
 }
 
 function Stepper({ value, onChange, min, max }: { value: number; onChange: (n: number) => void; min: number; max: number }) {
-  const btn = "grid h-16 w-16 place-items-center rounded-2xl border-2 border-stone-200 bg-white text-3xl font-bold text-teal-800 active:bg-stone-100 disabled:opacity-30";
+  const btn = "grid h-16 w-16 place-items-center rounded-md border border-stone-400 bg-white text-3xl font-bold text-pine-800 active:bg-stone-100 disabled:opacity-30";
   return (
     <div className="flex items-center justify-center gap-6 py-4">
       <button type="button" className={btn} onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min} aria-label="−">
@@ -120,18 +120,18 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-[28px] font-bold leading-tight">{c.title}</h1>
+          <h1 className="text-[30px] leading-tight text-pine-950">{c.title}</h1>
           <p className="text-[17px] text-stone-700">{c.intro}</p>
         </div>
-        <ul className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
+        <ul className="flex flex-col gap-3 rounded-md bg-white p-5 ring-1 ring-stone-200">
           {c.promises.map((p) => (
             <li key={p} className="flex items-start gap-3 text-[16px]">
-              <ShieldIcon size={22} className="mt-0.5 shrink-0 text-teal-700" />
+              <ShieldIcon size={22} className="mt-0.5 shrink-0 text-pine-700" />
               {p}
             </li>
           ))}
         </ul>
-        <button type="button" onClick={() => go("county")} className="flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-teal-700 text-lg font-bold text-white shadow-sm active:bg-teal-800">
+        <button type="button" onClick={() => go("county")} className="flex min-h-14 items-center justify-center gap-2 rounded-md bg-pine-800 text-lg font-bold text-white active:bg-pine-900">
           {c.start} <ArrowRightIcon />
         </button>
       </div>
@@ -146,7 +146,7 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
     return (
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-1">
-          <h1 className="text-[26px] font-bold leading-tight">{c.resultsTitle}</h1>
+          <h1 className="text-[30px] leading-tight text-pine-950">{c.resultsTitle}</h1>
           <p className="text-[15px] text-stone-600">{c.resultsIntro}</p>
         </div>
         <ul className="flex flex-col gap-3">
@@ -165,7 +165,7 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
               addSteps(stepTexts);
               setSavedPlan(true);
             }}
-            className="flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-teal-700 px-4 text-[17px] font-bold text-white shadow-sm active:bg-teal-800 disabled:bg-teal-100 disabled:text-teal-900"
+            className="flex min-h-14 items-center justify-center gap-2 rounded-md bg-pine-800 px-4 text-[17px] font-bold text-white active:bg-pine-900 disabled:bg-pine-100 disabled:text-pine-900"
           >
             {savedPlan ? (
               <>
@@ -176,13 +176,13 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
             )}
           </button>
         )}
-        <Link href={`/help?topic=${worth[0]?.program ?? "other"}#person`} className="flex min-h-14 items-center justify-center rounded-2xl border-2 border-teal-700 px-4 text-[17px] font-bold text-teal-900 active:bg-teal-50">
+        <Link href={`/help?topic=${worth[0]?.program ?? "other"}#person`} className="flex min-h-14 items-center justify-center rounded-md border border-pine-800 px-4 text-[17px] font-bold text-pine-900 active:bg-pine-50">
           {c.getHelp}
         </Link>
         <button type="button" onClick={restart} className="flex min-h-12 items-center justify-center gap-2 font-semibold text-stone-600">
           <RefreshIcon size={18} /> {c.startOver}
         </button>
-        <p className="rounded-2xl bg-stone-100 px-4 py-3 text-[14px] leading-relaxed text-stone-600">{c.disclaimer}</p>
+        <p className="rounded-md bg-stone-100 px-4 py-3 text-[14px] leading-relaxed text-stone-600">{c.disclaimer}</p>
       </div>
     );
   }
@@ -197,7 +197,7 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
           <span>{a.common.stepOf(index + 1, flow.length)}</span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-stone-200" aria-hidden>
-          <div className="h-full rounded-full bg-teal-700 transition-all" style={{ width: `${((index + 1) / flow.length) * 100}%` }} />
+          <div className="h-full rounded-full bg-pine-800 transition-all" style={{ width: `${((index + 1) / flow.length) * 100}%` }} />
         </div>
       </div>
 
@@ -246,7 +246,7 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
             <>
               <label className="flex flex-col gap-1.5">
                 <span className="text-[15px] font-medium text-stone-600">{c.income.amount}</span>
-                <span className="flex min-h-16 items-center rounded-2xl border-2 border-stone-200 bg-white px-4 focus-within:border-teal-700">
+                <span className="flex min-h-16 items-center rounded-md border border-stone-400 bg-white px-4 focus-within:border-pine-700">
                   <span className="text-3xl font-bold text-stone-400">$</span>
                   <input
                     inputMode="decimal"
@@ -269,8 +269,8 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
                     type="button"
                     aria-pressed={answers.income?.period === p}
                     onClick={() => setAnswers((prev) => ({ ...prev, income: { amount: prev.income?.amount ?? 0, period: p } }))}
-                    className={`min-h-14 rounded-2xl border-2 px-3 text-[15px] font-semibold leading-tight ${
-                      answers.income?.period === p ? "border-teal-700 bg-teal-50 text-teal-900" : "border-stone-200 bg-white active:bg-stone-50"
+                    className={`min-h-14 rounded-md border-2 px-3 text-[15px] font-semibold leading-tight ${
+                      answers.income?.period === p ? "border-pine-700 bg-pine-50 text-pine-900" : "border-stone-300 bg-white active:bg-stone-50"
                     }`}
                   >
                     {c.income[p]}
@@ -313,7 +313,7 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
         <button
           type="button"
           onClick={() => go(index === 0 ? "intro" : flow[index - 1])}
-          className="min-h-14 rounded-2xl px-5 text-[17px] font-semibold text-stone-600 active:bg-stone-200"
+          className="min-h-14 rounded-md px-5 text-[17px] font-semibold text-stone-600 active:bg-stone-200"
         >
           {a.common.back}
         </button>
@@ -321,7 +321,7 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
           type="button"
           onClick={forward}
           disabled={!canContinue}
-          className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-2xl bg-teal-700 text-[17px] font-bold text-white shadow-sm active:bg-teal-800 disabled:opacity-40"
+          className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-md bg-pine-800 text-[17px] font-bold text-white active:bg-pine-900 disabled:opacity-40"
         >
           {index === flow.length - 1 ? c.seeResults : a.common.next} <ArrowRightIcon />
         </button>
@@ -352,13 +352,13 @@ function ProgramCard({ p, lang, monthly, county, open }: { p: ProgramResult; lan
   const worth = p.status === "likely" || p.status === "possibly";
 
   return (
-    <details open={open} className="group overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm">
+    <details open={open} className="group overflow-hidden rounded-md border border-stone-300 bg-white">
       <summary className="flex cursor-pointer items-center gap-3 p-4">
         <span className="min-w-0 flex-1">
           <span className="block text-[19px] font-bold">{name.name}</span>
           <span className="block text-[14px] text-stone-500">{name.what}</span>
         </span>
-        <span className={`shrink-0 rounded-full px-3 py-1 text-[13px] font-bold ${STATUS_TONE[p.status]}`}>{c.status[p.status]}</span>
+        <span className={`shrink-0 rounded-sm border px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wide ${STATUS_TONE[p.status]}`}>{c.status[p.status]}</span>
       </summary>
       <div className="flex flex-col gap-3 border-t border-stone-100 px-4 pb-4 pt-3 text-[15px]">
         {p.groups.length > 1 && (
@@ -366,19 +366,19 @@ function ProgramCard({ p, lang, monthly, county, open }: { p: ProgramResult; lan
             {p.groups.map((g) => (
               <li key={g.group} className="flex items-center justify-between gap-2">
                 <span className="font-medium">{c.groups[g.group]}</span>
-                <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-bold ${STATUS_TONE[g.status]}`}>{c.status[g.status]}</span>
+                <span className={`rounded-sm border px-1.5 py-px text-[11px] font-semibold uppercase tracking-wide ${STATUS_TONE[g.status]}`}>{c.status[g.status]}</span>
               </li>
             ))}
           </ul>
         )}
         {p.limit !== null && (
-          <p className="rounded-xl bg-stone-50 px-3 py-2 leading-relaxed text-stone-700">
+          <p className="rounded-md bg-stone-50 px-3 py-2 leading-relaxed text-stone-700">
             {c.yourIncome(usd(monthly))}
             <br />
             {c.limitFor(p.sizeUsed, usd(p.limit))}
           </p>
         )}
-        {p.upTo !== null && <p className="text-lg font-bold text-teal-900">{c.upTo(usd(p.upTo))}</p>}
+        {p.upTo !== null && <p className="text-lg font-bold text-pine-900">{c.upTo(usd(p.upTo))}</p>}
         {p.notes.map((n) => (
           <p key={n} className="leading-relaxed text-stone-700">
             {n === "eitcYctc" ? c.notes.eitcYctc(usd(p.yctcUpTo ?? 0)) : c.notes[n]}
@@ -386,10 +386,10 @@ function ProgramCard({ p, lang, monthly, county, open }: { p: ProgramResult; lan
         ))}
         {worth && (
           <div className="grid grid-cols-2 gap-2 pt-1">
-            <a href={apply.url} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-teal-700 px-3 font-semibold text-white active:bg-teal-800">
+            <a href={apply.url} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-center gap-1.5 rounded-md bg-pine-800 px-3 font-semibold text-white active:bg-pine-900">
               {a.common.website} <ExternalIcon size={16} />
             </a>
-            <a href={`tel:${phone.replace(/\D/g, "")}`} className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border-2 border-teal-700 px-3 font-semibold text-teal-900 active:bg-teal-50">
+            <a href={`tel:${phone.replace(/\D/g, "")}`} className="flex min-h-12 items-center justify-center gap-1.5 rounded-md border border-pine-800 px-3 font-semibold text-pine-900 active:bg-pine-50">
               <PhoneIcon size={18} /> {a.common.call}
             </a>
           </div>

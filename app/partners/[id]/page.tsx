@@ -28,7 +28,7 @@ export default async function HandoffDetail({ params }: PageProps<"/partners/[id
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-5 py-8">
-      <Link href="/partners" className="text-sm text-teal-800 underline-offset-2 hover:underline">
+      <Link href="/partners" className="text-sm text-pine-800 underline-offset-2 hover:underline">
         ← All requests
       </Link>
 
@@ -43,13 +43,13 @@ export default async function HandoffDetail({ params }: PageProps<"/partners/[id
         <StatusActions handoff={h} />
       </header>
 
-      <section className="rounded-2xl border border-stone-200 bg-white p-5">
+      <section className="rounded-lg border border-stone-200 bg-white p-5">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-stone-500">Summary</h2>
         <p className="mt-2 text-lg leading-relaxed">{h.summary}</p>
       </section>
 
-      <section className="rounded-2xl bg-teal-900 p-5 text-teal-50">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-teal-200">
+      <section className="rounded-lg bg-pine-900 p-5 text-pine-50">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-pine-200">
           Preferred contact: {CONTACT_LABELS[h.preferredContact]}
         </h2>
         {h.contact ? (
@@ -57,10 +57,10 @@ export default async function HandoffDetail({ params }: PageProps<"/partners/[id
             <span className="font-mono text-2xl text-white">{isPhone ? formatPhone(h.contact) : h.contact}</span>
             {isPhone && (
               <>
-                <a href={`tel:${h.contact}`} className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-teal-900">
+                <a href={`tel:${h.contact}`} className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-pine-900">
                   Call
                 </a>
-                <a href={`sms:${h.contact}`} className="rounded-full border border-teal-200 px-4 py-1.5 text-sm font-semibold">
+                <a href={`sms:${h.contact}`} className="rounded-full border border-pine-200 px-4 py-1.5 text-sm font-semibold">
                   Text
                 </a>
               </>
@@ -69,13 +69,13 @@ export default async function HandoffDetail({ params }: PageProps<"/partners/[id
         ) : (
           <p className="mt-2">No contact provided.</p>
         )}
-        <p className="mt-3 text-sm text-teal-100">
+        <p className="mt-3 text-sm text-pine-100">
           Reach out in {LANGUAGES[h.language].name} and mention reference {h.reference} so they know it&apos;s about
           their Costa request.
         </p>
       </section>
 
-      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 rounded-2xl border border-stone-200 bg-white p-5 text-sm">
+      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 rounded-lg border border-stone-200 bg-white p-5 text-sm">
         {rows.map(([k, v]) => (
           <div key={k} className="contents">
             <dt className="text-stone-500">{k}</dt>

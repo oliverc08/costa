@@ -71,7 +71,7 @@ export function formatPhone(contact: string): string {
 export function StatusActions({ handoff, compact = false }: { handoff: Handoff; compact?: boolean }) {
   const next =
     handoff.status === "new"
-      ? { action: "assign", label: "Assign to me", style: "bg-teal-700 text-white hover:bg-teal-800" }
+      ? { action: "assign", label: "Assign to me", style: "bg-pine-700 text-white hover:bg-pine-800" }
       : handoff.status === "assigned"
         ? { action: "resolve", label: "Mark resolved", style: "bg-emerald-700 text-white hover:bg-emerald-800" }
         : { action: "reopen", label: "Reopen", style: "border border-stone-300 text-stone-700 hover:bg-stone-100" };

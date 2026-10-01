@@ -1,7 +1,31 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-noto), "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-sans: var(--font-body), "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-display: var(--font-serif), "Songti SC", "Noto Serif SC", Georgia, serif;
+}
+
+@theme {
+  --color-paper: #f7f4ed;
+
+  --color-pine-50: #f0f4f1;
+  --color-pine-100: #dce7e0;
+  --color-pine-200: #bad0c2;
+  --color-pine-300: #8fb09c;
+  --color-pine-400: #668e77;
+  --color-pine-500: #4a7460;
+  --color-pine-600: #395e4c;
+  --color-pine-700: #2c4c3d;
+  --color-pine-800: #233e32;
+  --color-pine-900: #1b3128;
+  --color-pine-950: #0e1c16;
+
+  --color-poppy-50: #fcf4ea;
+  --color-poppy-100: #f8e3c9;
+  --color-poppy-300: #eaaa6a;
+  --color-poppy-500: #d4722a;
+  --color-poppy-600: #b75e1f;
+  --color-poppy-700: #924a1a;
 }
 
 html {
@@ -10,14 +34,29 @@ html {
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: --theme(--font-sans);
   font-size: 17px;
   line-height: 1.5;
   overscroll-behavior-y: none;
 }
 
+@layer base {
+  h1,
+  h2 {
+    font-family: --theme(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  :lang(zh) h1,
+  :lang(zh) h2 {
+    font-family: --theme(--font-sans);
+    font-weight: 700;
+  }
+}
+
 :focus-visible {
-  outline: 3px solid #0f766e;
+  outline: 3px solid --theme(--color-poppy-500);
   outline-offset: 2px;
 }
 

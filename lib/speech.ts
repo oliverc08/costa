@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import type { LanguageCode } from "@/lib/languages";
+import { LANGUAGES, type LanguageCode } from "@/lib/languages";
 
 const noopSubscribe = () => () => {};
 
@@ -12,6 +12,47 @@ const VOICE_PREFIX: Record<LanguageCode, string[]> = {
   tl: ["fil", "tl"],
   vi: ["vi"],
 };
+
+/**
+ * BCP-47 tags that Chrome/Safari SpeechRecognition understand.
+ * (Twilio phone STT still uses LANGUAGES.*.speechCode, which differs for Chinese.)
+ */
+export const BROWSER_STT: Record<LanguageCode, string> = {
+  en: "en-US",
+  es: "es-US",
+  zh: "zh-CN",
+  tl: "fil-PH",
+  vi: "vi-VN",
+};
+
+type SpeechRec = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+  onresult: ((e: { results: ArrayLike<{ 0: { transcript: string }; isFinal: boolean }> }) => void) | null;
+  onerror: ((e: { error: string }) => void) | null;
+  onend: (() => void) | null;
+};
+
+type SpeechRecCtor = new () => SpeechRec;
+
+function speechRecCtor(): SpeechRecCtor | null {
+  if (typeof window === "undefined") return null;
+  const w = window as Window & { SpeechRecognition?: SpeechRecCtor; webkitSpeechRecognition?: SpeechRecCtor };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+}
+
+export function hasBrowserSpeech(): boolean {
+  return speechRecCtor() !== null;
+}
+
+function hasMediaRecorder(): boolean {
+  return typeof window !== "undefined" && typeof window.MediaRecorder !== "undefined" && !!navigator.mediaDevices?.getUserMedia;
+}
 
 function pickVoice(lang: LanguageCode): SpeechSynthesisVoice | null {
   const voices = window.speechSynthesis?.getVoices() ?? [];
@@ -77,42 +118,62 @@ export type RecorderState = "idle" | "recording" | "transcribing" | "error" | "b
 
 const MAX_RECORDING_MS = 60_000;
 
-/** Records a short voice question and returns the text from /api/transcribe. */
-export function useVoiceInput(onText: (text: string) => void) {
+/**
+ * Mic input for Ask. Prefers free browser speech recognition (no API key).
+ * Falls back to recording + /api/transcribe (Whisper via AI Gateway) when the
+ * browser has no SpeechRecognition, or when recognition fails with a network error.
+ */
+export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void) {
   const [state, setState] = useState<RecorderState>("idle");
   const recorder = useRef<MediaRecorder | null>(null);
+  const recognition = useRef<SpeechRec | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cancelled = useRef(false);
+  const finalized = useRef(false);
+  const onTextRef = useRef(onText);
+
+  useEffect(() => {
+    onTextRef.current = onText;
+  }, [onText]);
 
   const supported = useSyncExternalStore(
     noopSubscribe,
-    () => typeof window.MediaRecorder !== "undefined" && !!navigator.mediaDevices?.getUserMedia,
+    () => hasBrowserSpeech() || hasMediaRecorder(),
     () => false,
   );
 
-  const finish = useCallback(
-    async (blob: Blob) => {
-      if (cancelled.current || blob.size === 0) return setState("idle");
-      setState("transcribing");
-      const body = new FormData();
-      body.append("audio", blob, blob.type.includes("mp4") ? "question.mp4" : "question.webm");
-      const res = await fetch("/api/transcribe", { method: "POST", body }).catch(() => null);
-      if (res?.status === 503) return setState("unavailable");
-      const data = (await res?.json().catch(() => null)) as { text?: string } | null;
-      if (!res?.ok || !data?.text) return setState("error");
-      setState("idle");
-      onText(data.text);
-    },
-    [onText],
-  );
+  const clearTimer = () => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = null;
+    }
+  };
 
-  const start = useCallback(async () => {
+  const finishCloud = useCallback(async (blob: Blob) => {
+    if (cancelled.current || blob.size === 0) return setState("idle");
+    setState("transcribing");
+    const body = new FormData();
+    body.append("audio", blob, blob.type.includes("mp4") ? "question.mp4" : "question.webm");
+    const res = await fetch("/api/transcribe", { method: "POST", body }).catch(() => null);
+    if (res?.status === 503) return setState("unavailable");
+    const data = (await res?.json().catch(() => null)) as { text?: string } | null;
+    if (!res?.ok || !data?.text) return setState("error");
+    setState("idle");
+    onTextRef.current(data.text);
+  }, []);
+
+  const startCloud = useCallback(async () => {
     cancelled.current = false;
+    finalized.current = false;
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
       return setState("blocked");
+    }
+    if (!hasMediaRecorder()) {
+      stream.getTracks().forEach((t) => t.stop());
+      return setState("unavailable");
     }
     const mime = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm"].find((m) => MediaRecorder.isTypeSupported(m));
     const r = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
@@ -120,24 +181,118 @@ export function useVoiceInput(onText: (text: string) => void) {
     r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     r.onstop = () => {
       stream.getTracks().forEach((t) => t.stop());
-      if (timer.current) clearTimeout(timer.current);
-      void finish(new Blob(chunks, { type: r.mimeType || "audio/webm" }));
+      clearTimer();
+      void finishCloud(new Blob(chunks, { type: r.mimeType || "audio/webm" }));
     };
     recorder.current = r;
     r.start();
     setState("recording");
     timer.current = setTimeout(() => r.state === "recording" && r.stop(), MAX_RECORDING_MS);
-  }, [finish]);
+  }, [finishCloud]);
+
+  const startBrowser = useCallback(() => {
+    const Ctor = speechRecCtor();
+    if (!Ctor) return false;
+    cancelled.current = false;
+    finalized.current = false;
+    const rec = new Ctor();
+    rec.lang = BROWSER_STT[lang] ?? LANGUAGES[lang].speechCode;
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+
+    rec.onresult = (e) => {
+      const last = e.results[e.results.length - 1];
+      const text = last?.[0]?.transcript?.trim() ?? "";
+      if (!text || !last?.isFinal) return;
+      finalized.current = true;
+      setState("idle");
+      onTextRef.current(text);
+    };
+
+    rec.onerror = (e) => {
+      if (cancelled.current) return;
+      if (e.error === "aborted" || e.error === "no-speech") {
+        setState("idle");
+        return;
+      }
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        setState("blocked");
+        return;
+      }
+      // Chrome often needs network for recognition; if that fails, try Whisper.
+      if (e.error === "network" && hasMediaRecorder()) {
+        finalized.current = true;
+        recognition.current = null;
+        void startCloud();
+        return;
+      }
+      setState("error");
+    };
+
+    rec.onend = () => {
+      recognition.current = null;
+      clearTimer();
+      if (!cancelled.current && !finalized.current) {
+        setState((cur) => (cur === "recording" ? "idle" : cur));
+      }
+    };
+
+    recognition.current = rec;
+    try {
+      rec.start();
+    } catch {
+      recognition.current = null;
+      return false;
+    }
+    setState("recording");
+    timer.current = setTimeout(() => {
+      try {
+        recognition.current?.stop();
+      } catch {
+        /* already stopped */
+      }
+    }, MAX_RECORDING_MS);
+    return true;
+  }, [lang, startCloud]);
+
+  const start = useCallback(async () => {
+    if (hasBrowserSpeech()) {
+      if (startBrowser()) return;
+    }
+    await startCloud();
+  }, [startBrowser, startCloud]);
 
   const stop = useCallback(() => {
+    if (recognition.current) {
+      try {
+        recognition.current.stop();
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
     if (recorder.current?.state === "recording") recorder.current.stop();
   }, []);
 
   const cancel = useCallback(() => {
     cancelled.current = true;
-    stop();
+    clearTimer();
+    if (recognition.current) {
+      try {
+        recognition.current.abort();
+      } catch {
+        try {
+          recognition.current.stop();
+        } catch {
+          /* ignore */
+        }
+      }
+      recognition.current = null;
+    }
+    if (recorder.current?.state === "recording") recorder.current.stop();
     setState("idle");
-  }, [stop]);
+  }, []);
 
   useEffect(() => () => cancel(), [cancel]);
 

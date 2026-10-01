@@ -79,11 +79,11 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
     <div className="flex flex-col gap-5">
       {(phase.kind === "idle" || phase.kind === "error") && (
         <>
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-teal-600/50 bg-white px-6 py-14 text-center hover:border-teal-600 hover:bg-teal-50/50">
-            <span aria-hidden className="grid h-16 w-16 place-items-center rounded-2xl bg-teal-50 text-teal-800">
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-md border-2 border-dashed border-pine-600/50 bg-white px-6 py-14 text-center hover:border-pine-600 hover:bg-pine-50/50">
+            <span aria-hidden className="grid h-16 w-16 place-items-center rounded-md bg-pine-50 text-pine-800">
               <CameraIcon size={34} />
             </span>
-            <span className="text-lg font-semibold text-teal-900">{t.letterChoose}</span>
+            <span className="text-lg font-semibold text-pine-900">{t.letterChoose}</span>
             <span className="text-sm text-stone-500">JPG · PNG · PDF</span>
             <input
               ref={inputRef}
@@ -94,7 +94,7 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
             />
           </label>
           {phase.kind === "error" && (
-            <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
+            <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-800">
               {phase.message}
             </p>
           )}
@@ -105,26 +105,26 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
         <div className="flex flex-col gap-4">
           {phase.preview ? (
             // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
-            <img src={phase.preview} alt="" className="max-h-80 w-full rounded-2xl border border-stone-200 object-contain bg-white" />
+            <img src={phase.preview} alt="" className="max-h-80 w-full rounded-md border border-stone-300 object-contain bg-white" />
           ) : (
-            <p className="rounded-2xl border border-stone-200 bg-white px-4 py-6 text-center text-stone-600">PDF</p>
+            <p className="rounded-md border border-stone-300 bg-white px-4 py-6 text-center text-stone-600">PDF</p>
           )}
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
               onClick={analyze}
               disabled={phase.kind === "analyzing"}
-              className="rounded-full bg-teal-700 px-6 py-3 text-lg font-semibold text-white hover:bg-teal-800 disabled:opacity-60"
+              className="rounded-md bg-pine-800 px-6 py-3 text-lg font-semibold text-white hover:bg-pine-900 disabled:opacity-60"
             >
               {phase.kind === "analyzing" ? t.letterAnalyzing : t.letterAnalyze}
             </button>
             {phase.kind === "ready" && (
-              <button type="button" onClick={reset} className="rounded-full px-5 py-3 text-stone-600 hover:text-stone-900">
+              <button type="button" onClick={reset} className="rounded-md px-5 py-3 text-stone-600 hover:text-stone-900">
                 {l.back}
               </button>
             )}
           </div>
-          {phase.kind === "analyzing" && <div className="h-1.5 overflow-hidden rounded-full bg-stone-200"><div className="h-full w-1/3 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-teal-600" /></div>}
+          {phase.kind === "analyzing" && <div className="h-1.5 overflow-hidden rounded-full bg-stone-200"><div className="h-full w-1/3 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-pine-600" /></div>}
         </div>
       )}
 
@@ -137,7 +137,7 @@ function DeadlineBadge({ days, label, lang }: { days: number | null; label: stri
   const l = LETTER_UI[lang];
   const urgent = days !== null && days <= 10;
   return (
-    <div className={`rounded-2xl p-4 ${urgent ? "bg-red-50 text-red-900" : "bg-amber-50 text-amber-950"}`}>
+    <div className={`rounded-md p-4 ${urgent ? "bg-red-50 text-red-900" : "bg-amber-50 text-amber-950"}`}>
       <p className="text-xs font-semibold uppercase tracking-wide opacity-70">{UI[lang].deadline}</p>
       <p className="mt-1 text-lg font-semibold">{label}</p>
       {days !== null && (
@@ -156,10 +156,10 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
   if (!result.ok) {
     return (
       <div className="flex flex-col gap-4">
-        <p role="alert" className="rounded-xl bg-amber-50 px-4 py-3 text-amber-900">
+        <p role="alert" className="rounded-md bg-amber-50 px-4 py-3 text-amber-900">
           {result.reason === "unreadable" ? l.unreadable : l.notLetter}
         </p>
-        <button type="button" onClick={onReset} className="self-start rounded-full bg-teal-700 px-5 py-3 font-semibold text-white">
+        <button type="button" onClick={onReset} className="self-start rounded-md bg-pine-800 px-5 py-3 font-semibold text-white">
           {l.another}
         </button>
       </div>
@@ -169,8 +169,8 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
   const { explanation: e, extraction: x } = result;
   return (
     <div className="flex flex-col gap-4" aria-live="polite">
-      <section className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-teal-800">{t.whatThisMeans}</h2>
+      <section className="rounded-md border border-stone-300 bg-white p-5 sm:p-6">
+        <h2 className="font-sans text-[13px] font-semibold uppercase tracking-wider text-poppy-700">{t.whatThisMeans}</h2>
         <p className="mt-2 text-lg leading-relaxed text-stone-900">{e.whatThisMeans}</p>
       </section>
 
@@ -181,12 +181,12 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
         </div>
       )}
 
-      <section className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-teal-800">{t.whatToDo}</h2>
+      <section className="rounded-md border border-stone-300 bg-white p-5 sm:p-6">
+        <h2 className="font-sans text-[13px] font-semibold uppercase tracking-wider text-poppy-700">{t.whatToDo}</h2>
         <ol className="mt-3 flex flex-col gap-3">
           {e.whatToDo.map((step, i) => (
             <li key={i} className="flex gap-3 text-stone-900">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-teal-700 text-sm font-bold text-white">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-pine-800 text-sm font-bold text-white">
                 {i + 1}
               </span>
               <span className="pt-0.5 leading-relaxed">{step}</span>
@@ -197,19 +197,19 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
       </section>
 
       {e.uncertainty && (
-        <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+        <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
           <strong>{l.uncertain}</strong> {e.uncertainty}
         </p>
       )}
 
-      <details className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700">
+      <details className="rounded-md border border-stone-300 bg-stone-50 px-4 py-3 text-sm text-stone-700">
         <summary className="cursor-pointer font-medium">{l.fromLetter}</summary>
         <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
           {x.agency && (<><dt className="text-stone-500">Agency</dt><dd>{x.agency}</dd></>)}
           {x.formNumber && (<><dt className="text-stone-500">Form</dt><dd>{x.formNumber}</dd></>)}
           {x.deadline && (<><dt className="text-stone-500">Date</dt><dd>{x.deadline}{x.deadlineMeaning ? ` (${x.deadlineMeaning})` : ""}</dd></>)}
           {x.documentsRequested.length > 0 && (<><dt className="text-stone-500">Documents</dt><dd>{x.documentsRequested.join("; ")}</dd></>)}
-          {x.contactPhone && (<><dt className="text-stone-500">Phone</dt><dd><a className="text-teal-800 underline" href={`tel:${x.contactPhone.replace(/[^\d+]/g, "")}`}>{x.contactPhone}</a></dd></>)}
+          {x.contactPhone && (<><dt className="text-stone-500">Phone</dt><dd><a className="text-pine-800 underline" href={`tel:${x.contactPhone.replace(/[^\d+]/g, "")}`}>{x.contactPhone}</a></dd></>)}
         </dl>
       </details>
 
@@ -222,11 +222,11 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
               target="_blank"
               rel="noreferrer"
               title={`Last verified ${s.lastVerified}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs text-teal-900 hover:bg-teal-100"
+              className="inline-flex items-center gap-1.5 rounded-full border border-pine-200 bg-pine-50 px-3 py-1 text-xs text-pine-900 hover:bg-pine-100"
             >
               <span aria-hidden>✓</span>
               <span className="font-medium">{s.agency}</span>
-              <span className="text-teal-700">· {s.title}</span>
+              <span className="text-pine-700">· {s.title}</span>
             </a>
           ))}
         </div>
@@ -234,7 +234,7 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
 
       <section className="flex flex-col gap-3">
         <div>
-          <h2 className="text-xl font-bold">{t.needHelp}</h2>
+          <h2 className="text-[21px] text-pine-950">{t.needHelp}</h2>
           <p className="text-[15px] text-stone-600">{t.needHelpBody}</p>
         </div>
         <PersonRequest
@@ -249,7 +249,7 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
         />
       </section>
 
-      <button type="button" onClick={onReset} className="self-start rounded-full px-1 py-2 text-teal-800 underline underline-offset-4">
+      <button type="button" onClick={onReset} className="self-start rounded-full px-1 py-2 text-pine-800 underline underline-offset-4">
         {l.another}
       </button>
     </div>
@@ -272,14 +272,14 @@ function SaveDeadline({ result, lang }: { result: Extract<LetterResult, { ok: tr
           addReminder(reminder.title, reminder.date);
           setSaved(true);
         }}
-        className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-amber-900 px-3 text-[15px] font-semibold text-white disabled:bg-amber-100 disabled:text-amber-950"
+        className="flex min-h-12 items-center justify-center gap-1.5 rounded-md bg-amber-900 px-3 text-[15px] font-semibold text-white disabled:bg-amber-100 disabled:text-amber-950"
       >
         {saved ? <CheckIcon size={18} /> : <CalendarIcon size={18} />} {saved ? a.letter.deadlineSaved : a.letter.saveDeadline}
       </button>
       <button
         type="button"
         onClick={() => downloadIcs(reminder, result.explanation.whatToDo.join("\n"))}
-        className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border-2 border-amber-900/30 px-3 text-[15px] font-semibold text-amber-950"
+        className="flex min-h-12 items-center justify-center gap-1.5 rounded-md border-2 border-amber-900/30 px-3 text-[15px] font-semibold text-amber-950"
       >
         <PlusIcon size={18} /> {a.home.addToCalendar}
       </button>

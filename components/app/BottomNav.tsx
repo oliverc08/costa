@@ -20,7 +20,7 @@ export function BottomNav({ labels }: { labels: AppStrings["nav"] }) {
   return (
     <nav
       aria-label="Costa"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-300 bg-paper pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-5">
         {ITEMS.map(({ href, key, Icon }) => {
@@ -30,13 +30,12 @@ export function BottomNav({ labels }: { labels: AppStrings["nav"] }) {
               <Link
                 href={href}
                 aria-current={on ? "page" : undefined}
-                className={`flex h-16 flex-col items-center justify-center gap-0.5 text-[12px] font-medium leading-tight ${
-                  on ? "text-teal-800" : "text-stone-500 active:text-stone-800"
+                className={`relative flex h-16 flex-col items-center justify-center gap-1 text-[12px] leading-tight ${
+                  on ? "font-bold text-pine-900" : "font-medium text-stone-500 active:text-stone-800"
                 }`}
               >
-                <span className={`grid h-8 w-14 place-items-center rounded-full ${on ? "bg-teal-100" : ""}`}>
-                  <Icon size={22} strokeWidth={on ? 2.4 : 2} />
-                </span>
+                {on && <span aria-hidden className="absolute inset-x-3 top-0 h-[3px] bg-poppy-500" />}
+                <Icon size={22} strokeWidth={on ? 2.4 : 1.8} />
                 <span className="max-w-full truncate px-0.5">{labels[key]}</span>
               </Link>
             </li>

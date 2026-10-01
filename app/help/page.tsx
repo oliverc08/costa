@@ -12,14 +12,6 @@ export const metadata: Metadata = { title: "Free help · Costa" };
 
 const CITIES = ["Half Moon Bay", "Pescadero", "Redwood City", "East Palo Alto", "San José", "Gilroy"];
 const TOPICS: HelpTopic[] = ["medi-cal", "calfresh", "wic", "caleitc", "disaster", "other"];
-const KIND_TONE: Record<ProviderCard["kind"], string> = {
-  county: "bg-sky-100 text-sky-900",
-  state: "bg-stone-200 text-stone-800",
-  legal: "bg-violet-100 text-violet-900",
-  community: "bg-lime-100 text-lime-900",
-  federal: "bg-stone-200 text-stone-800",
-};
-
 function languagesLine(p: ProviderCard, lang: LanguageCode) {
   const a = APP[lang];
   if (p.languages === "interpreters") return a.help.interpreters;
@@ -30,9 +22,9 @@ function Provider({ p, lang }: { p: ProviderCard; lang: LanguageCode }) {
   const a = APP[lang];
   const tel = p.phone?.replace(/[^\d+]/g, "");
   return (
-    <li className="flex flex-col gap-3 rounded-3xl border border-stone-200 bg-white p-4 shadow-sm">
+    <li className="flex flex-col gap-3 py-4">
       <div className="flex flex-col gap-1">
-        <span className={`self-start rounded-full px-2.5 py-0.5 text-[12px] font-bold ${KIND_TONE[p.kind]}`}>{a.help.kinds[p.kind]}</span>
+        <span className="text-[12px] font-semibold uppercase tracking-wider text-poppy-700">{a.help.kinds[p.kind]}</span>
         <p className="text-[17px] font-bold leading-snug">{p.name}</p>
         {p.address && <p className="text-[15px] text-stone-600">{p.address}</p>}
         {p.hours && <p className="text-[15px] text-stone-600">{p.hours}</p>}
@@ -40,7 +32,7 @@ function Provider({ p, lang }: { p: ProviderCard; lang: LanguageCode }) {
       </div>
       <div className="flex gap-2">
         {p.phone && tel && (
-          <a href={`tel:${tel}`} className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-teal-700 px-3 font-semibold text-white active:bg-teal-800">
+          <a href={`tel:${tel}`} className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-md bg-pine-800 px-3 font-semibold text-white active:bg-pine-900">
             <PhoneIcon size={18} /> <span className="whitespace-nowrap">{p.phone}</span>
           </a>
         )}
@@ -49,12 +41,12 @@ function Provider({ p, lang }: { p: ProviderCard; lang: LanguageCode }) {
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.name}, ${p.address}, CA`)}`}
             target="_blank"
             rel="noreferrer"
-            className="flex min-h-12 items-center justify-center gap-1.5 rounded-xl border-2 border-stone-200 px-3 font-semibold active:bg-stone-50"
+            className="flex min-h-12 items-center justify-center gap-1.5 rounded-md border border-stone-400 bg-white px-3 font-semibold active:bg-stone-100"
           >
             <MapPinIcon size={18} /> {a.common.map}
           </a>
         )}
-        <a href={p.url} target="_blank" rel="noreferrer" aria-label={`${a.common.website}: ${p.name}`} className="flex min-h-12 items-center justify-center rounded-xl border-2 border-stone-200 px-3 active:bg-stone-50">
+        <a href={p.url} target="_blank" rel="noreferrer" aria-label={`${a.common.website}: ${p.name}`} className="flex min-h-12 items-center justify-center rounded-md border border-stone-400 bg-white px-3 active:bg-stone-100">
           <ExternalIcon size={18} />
         </a>
       </div>
@@ -77,7 +69,7 @@ export default async function HelpPage({ searchParams }: PageProps<"/help">) {
     <AppShell lang={lang}>
       <div className="flex flex-col gap-6">
         <header className="flex flex-col gap-2">
-          <h1 className="text-[28px] font-bold leading-tight">{a.help.title}</h1>
+          <h1 className="text-[30px] leading-tight text-pine-950">{a.help.title}</h1>
           <p className="text-[16px] leading-relaxed text-stone-700">{a.help.intro}</p>
         </header>
 
@@ -94,18 +86,18 @@ export default async function HelpPage({ searchParams }: PageProps<"/help">) {
               placeholder={a.help.wherePlaceholder}
               autoComplete="address-level2"
               enterKeyHint="search"
-              className="min-h-13 min-w-0 flex-1 rounded-xl border border-stone-300 bg-white px-3.5 text-[17px] outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
+              className="min-h-13 min-w-0 flex-1 rounded-md border border-stone-400 bg-white px-3.5 text-[17px] outline-none focus:border-pine-800 focus:ring-2 focus:ring-pine-800/15"
             />
-            <button type="submit" className="min-h-13 rounded-xl bg-stone-900 px-4 font-semibold text-white active:bg-stone-700">
+            <button type="submit" className="min-h-13 rounded-md bg-stone-900 px-4 font-semibold text-white active:bg-stone-700">
               {a.help.search}
             </button>
           </div>
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+          <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
             {CITIES.map((c) => (
               <Link
                 key={c}
                 href={`/help?area=${encodeURIComponent(c)}${topic !== "other" ? `&topic=${topic}` : ""}`}
-                className={`min-h-10 shrink-0 rounded-full border px-3.5 py-2 text-[15px] font-medium ${area === c ? "border-teal-700 bg-teal-50 text-teal-900" : "border-stone-300 bg-white"}`}
+                className={`min-h-10 shrink-0 rounded-md border px-3.5 py-2 text-[15px] font-medium ${area === c ? "border-pine-800 bg-pine-800 text-white" : "border-stone-400 bg-white"}`}
               >
                 {c}
               </Link>
@@ -115,28 +107,28 @@ export default async function HelpPage({ searchParams }: PageProps<"/help">) {
 
         {county && (
           <section className="flex flex-col gap-3">
-            <h2 className="text-xl font-bold">{a.help.localTitle}</h2>
-            <p className="-mt-1 text-[15px] font-medium text-teal-800">{a.help.showingFor[county]}</p>
-            <ul className="flex flex-col gap-3">
+            <h2 className="text-[21px] text-pine-950">{a.help.localTitle}</h2>
+            <p className="-mt-1 text-[15px] font-medium text-pine-800">{a.help.showingFor[county]}</p>
+            <ul className="divide-y divide-stone-300 border-y border-stone-300">
               {local.map((p) => (
                 <Provider key={p.id} p={p} lang={lang} />
               ))}
             </ul>
           </section>
         )}
-        {area && !county && <p className="rounded-2xl bg-amber-50 px-4 py-3 text-[15px] leading-relaxed text-amber-950">{a.help.outside}</p>}
+        {area && !county && <p className="rounded-md bg-amber-50 px-4 py-3 text-[15px] leading-relaxed text-amber-950">{a.help.outside}</p>}
 
         <section id="person" className="flex scroll-mt-20 flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-bold">{a.help.personTitle}</h2>
+            <h2 className="text-[21px] text-pine-950">{a.help.personTitle}</h2>
             <p className="text-[15px] text-stone-600">{a.help.personBody}</p>
           </div>
           <PersonRequest lang={lang} defaultTopic={topic} defaultArea={area} />
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-xl font-bold">{a.help.statewideTitle}</h2>
-          <ul className="flex flex-col gap-3">
+          <h2 className="text-[21px] text-pine-950">{a.help.statewideTitle}</h2>
+          <ul className="divide-y divide-stone-300 border-y border-stone-300">
             {statewide.map((p) => (
               <Provider key={p.id} p={p} lang={lang} />
             ))}

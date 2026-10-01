@@ -12,8 +12,8 @@ export default async function PartnerLogin() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center gap-6 px-5 py-12">
       <div>
-        <p className="flex items-center gap-2 text-lg font-bold text-teal-800">
-          <span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-teal-700 text-sm text-white">
+        <p className="flex items-center gap-2 text-lg font-bold text-pine-800">
+          <span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-pine-700 text-sm text-white">
             C
           </span>
           Costa Partners
@@ -24,7 +24,7 @@ export default async function PartnerLogin() {
       {enabled ? (
         <LoginForm devHint={usingDevPasscode() ? "costa-demo" : null} />
       ) : (
-        <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
+        <p className="rounded-md bg-amber-50 p-4 text-sm text-amber-900">
           The dashboard is disabled. Set PARTNER_PASSCODE to enable it.
         </p>
       )}

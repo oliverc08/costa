@@ -1,14 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans } from "next/font/google";
+import { Public_Sans, Source_Serif_4 } from "next/font/google";
 import { cookies } from "next/headers";
 import { isLanguageCode } from "@/lib/languages";
 import { UI_LANG_COOKIE } from "@/lib/ui-language";
 import "./globals.css";
 
-const noto = Noto_Sans({
-  variable: "--font-noto",
+const body = Public_Sans({
+  variable: "--font-body",
   subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["400", "500", "600", "700"],
+});
+
+const serif = Source_Serif_4({
+  variable: "--font-serif",
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fbfaf7",
+  themeColor: "#f7f4ed",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -30,8 +36,8 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const saved = (await cookies()).get(UI_LANG_COOKIE)?.value;
   return (
-    <html lang={isLanguageCode(saved) ? saved : "en"} className={`${noto.variable} h-full antialiased`}>
-      <body className="min-h-full bg-[#fbfaf7] text-stone-900">{children}</body>
+    <html lang={isLanguageCode(saved) ? saved : "en"} className={`${body.variable} ${serif.variable} h-full antialiased`}>
+      <body className="min-h-full bg-paper text-stone-900">{children}</body>
     </html>
   );
 }

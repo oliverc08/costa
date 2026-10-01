@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Free help with Medi-Cal, CalFresh, WIC, tax credits, and disaster aid.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fbfaf7",
-    theme_color: "#0f766e",
+    background_color: "#f7f4ed",
+    theme_color: "#233e32",
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
       { src: "/apple-icon", sizes: "180x180", type: "image/png" },

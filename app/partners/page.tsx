@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { readEvalSummary } from "@/lib/eval-summary";
 import { LANGUAGES, LANGUAGE_CODES, isLanguageCode } from "@/lib/languages";
 import { requirePartner } from "@/lib/partner-auth";
 import { getStore, type HandoffStatus } from "@/lib/store";
@@ -31,7 +32,7 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
   const topic = typeof sp.topic === "string" && sp.topic in TOPIC_LABELS ? sp.topic : undefined;
 
   const store = getStore();
-  const [all, rows] = await Promise.all([store.listHandoffs(), store.listHandoffs({ status, language, topic })]);
+  const [all, rows, evals] = await Promise.all([store.listHandoffs(), store.listHandoffs({ status, language, topic }), readEvalSummary()]);
   const counts = Object.fromEntries(STATUSES.map((s) => [s, all.filter((h) => h.status === s).length])) as Record<
     HandoffStatus,
     number
@@ -49,13 +50,18 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="flex items-center gap-2 font-bold text-teal-800">
-            <span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-teal-700 text-sm text-white">
+          <p className="flex items-center gap-2 font-bold text-pine-800">
+            <span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-pine-700 text-sm text-white">
               C
             </span>
             Costa Partners
           </p>
           <h1 className="mt-2 text-2xl font-bold tracking-tight">Help requests</h1>
+          {evals && (
+            <p className="mt-1 text-sm text-stone-600">
+              Safety eval: {evals.passed}/{evals.total} passing
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-3 text-sm text-stone-600">
           Signed in as <strong className="text-stone-900">{partner.name}</strong>
@@ -68,7 +74,7 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
       <nav aria-label="Status" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Link
           href={href({ status: undefined })}
-          className={`rounded-2xl border p-4 ${!status ? "border-stone-900 bg-white" : "border-stone-200 bg-stone-50 hover:bg-white"}`}
+          className={`rounded-lg border p-4 ${!status ? "border-stone-900 bg-white" : "border-stone-200 bg-stone-50 hover:bg-white"}`}
         >
           <p className="text-sm text-stone-600">All</p>
           <p className="text-3xl font-bold">{all.length}</p>
@@ -77,7 +83,7 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
           <Link
             key={s}
             href={href({ status: s })}
-            className={`rounded-2xl border p-4 ${status === s ? "border-stone-900 bg-white" : "border-stone-200 bg-stone-50 hover:bg-white"}`}
+            className={`rounded-lg border p-4 ${status === s ? "border-stone-900 bg-white" : "border-stone-200 bg-stone-50 hover:bg-white"}`}
           >
             <p className="text-sm capitalize text-stone-600">{s}</p>
             <p className="text-3xl font-bold">{counts[s]}</p>
@@ -118,7 +124,7 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
       </form>
 
       {rows.length === 0 ? (
-        <div className="flex flex-col items-start gap-3 rounded-2xl border border-dashed border-stone-300 p-8 text-stone-600">
+        <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-stone-300 p-8 text-stone-600">
           <p>No help requests{status ? ` with status “${status}”` : ""} yet.</p>
           {all.length === 0 && (
             <form action={addSampleRequests}>
@@ -129,7 +135,7 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
           )}
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-stone-200 bg-white">
+        <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white">
           <table className="w-full min-w-[56rem] text-left text-sm">
             <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
               <tr>
@@ -148,7 +154,7 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
                 return (
                   <tr key={h.id} className="align-top hover:bg-stone-50/60">
                     <td className="px-4 py-3">
-                      <Link href={`/partners/${h.id}`} className="font-mono font-semibold text-teal-800 underline-offset-2 hover:underline">
+                      <Link href={`/partners/${h.id}`} className="font-mono font-semibold text-pine-800 underline-offset-2 hover:underline">
                         {h.reference}
                       </Link>
                       <p className={`text-xs ${stale ? "font-medium text-red-700" : "text-stone-500"}`}>
