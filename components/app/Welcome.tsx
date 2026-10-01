@@ -1,6 +1,6 @@
 "use client";
 
-import { APP } from "@/lib/i18n-app";
+import { app } from "@/lib/i18n-app";
 import { LANGUAGES, LANGUAGE_CODES, type LanguageCode } from "@/lib/languages";
 import { ArrowRightIcon } from "./Icons";
 import { Logo } from "./AppShell";
@@ -10,7 +10,8 @@ import { useSwitchLanguage } from "./SettingsSheet";
 export function Welcome({ suggested }: { suggested: LanguageCode }) {
   const switchLanguage = useSwitchLanguage();
   const ordered = [suggested, ...LANGUAGE_CODES.filter((c) => c !== suggested)];
-  const w = APP[suggested].welcome;
+  const copy = app(suggested);
+  const w = copy.welcome;
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-6 pb-10 pt-[calc(2.5rem+env(safe-area-inset-top))]">
@@ -26,7 +27,7 @@ export function Welcome({ suggested }: { suggested: LanguageCode }) {
 
       <section className="flex flex-col gap-5 pt-8" aria-labelledby="welcome-lang">
         <h1 id="welcome-lang" lang={suggested} className="text-[26px] leading-tight text-pine-950">
-          {APP[suggested].common.chooseLanguage}
+          {copy.common.chooseLanguage}
         </h1>
 
         <ul className="flex flex-col gap-3">
@@ -43,7 +44,7 @@ export function Welcome({ suggested }: { suggested: LanguageCode }) {
                 <span className="flex flex-col gap-0.5">
                   <span>{LANGUAGES[code].native}</span>
                   {code !== suggested && (
-                    <span className="text-[13px] font-medium text-stone-500">{APP[suggested].languageNames[code]}</span>
+                    <span className="text-[13px] font-medium text-stone-500">{copy.languageNames[code]}</span>
                   )}
                 </span>
                 <ArrowRightIcon className="shrink-0 text-pine-800" />
@@ -54,7 +55,7 @@ export function Welcome({ suggested }: { suggested: LanguageCode }) {
       </section>
 
       <p className="mt-auto pt-10 text-center text-sm leading-relaxed text-stone-500" lang={suggested}>
-        {APP[suggested].common.stayPrivate}
+        {copy.common.stayPrivate}
       </p>
     </main>
   );

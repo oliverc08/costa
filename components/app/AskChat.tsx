@@ -5,8 +5,8 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CHAT_STORAGE_KEY } from "@/lib/device";
-import { LETTER_UI, UI } from "@/lib/i18n";
-import { APP } from "@/lib/i18n-app";
+import { letterUi, ui, LETTER_UI, UI } from "@/lib/i18n";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { redact } from "@/lib/safety/redact";
 import { useReadAloud, isAppleWebKit } from "@/lib/speech";
@@ -14,12 +14,7 @@ import { HoldToSpeak } from "./HoldToSpeak";
 import { PENDING_VOICE_KEY } from "./VoiceHome";
 import {
   ArrowRightIcon,
-  BasketIcon,
-  ChatIcon,
   CheckIcon,
-  FlameIcon,
-  HeartIcon,
-  HomeIcon,
   PeopleIcon,
   PhoneIcon,
   RefreshIcon,
@@ -45,7 +40,7 @@ interface HelpResult {
 }
 
 function ToolCard({ part, lang }: { part: UIMessage["parts"][number]; lang: LanguageCode }) {
-  const t = UI[lang];
+  const t = ui(lang);
   if (!("state" in part) || part.state !== "output-available") return null;
   const output = (part as { output: unknown }).output as Record<string, unknown>;
 
@@ -107,21 +102,11 @@ function ToolCard({ part, lang }: { part: UIMessage["parts"][number]; lang: Lang
 
 const textOf = (m: UIMessage) => m.parts.map((p) => (p.type === "text" ? p.text : "")).join("\n").trim();
 
-const BIG = [
-  { key: "food" as const, href: "/topics/food", Icon: BasketIcon },
-  { key: "health" as const, href: "/topics/health", Icon: HeartIcon },
-  { key: "housing" as const, href: "/help?topic=other", Icon: HomeIcon },
-  { key: "family" as const, href: "/check", Icon: PeopleIcon },
-  { key: "disaster" as const, href: "/topics/disaster", Icon: FlameIcon },
-  { key: "other" as const, prompt: true, Icon: ChatIcon },
-];
-
 export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; suggestions: string[]; micHint: boolean }) {
-  const t = UI[lang];
-  const a = APP[lang];
+  const t = ui(lang);
+  const a = app(lang);
   const [input, setInput] = useState("");
   const [redactedNotice, setRedactedNotice] = useState(false);
-  const [showType, setShowType] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const spokenIds = useRef(new Set<string>());
   const transport = useMemo(() => new DefaultChatTransport({ api: "/api/chat", body: { language: lang } }), [lang]);
@@ -143,7 +128,6 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
       read.stop();
       void sendMessage({ text: r.text });
       setInput("");
-      setShowType(false);
     },
     [read, sendMessage],
   );
@@ -192,10 +176,42 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
     setRedactedNotice(false);
   }
 
+  const composer = (
+    <div className="flex flex-col gap-2">
+      {redactedNotice && <p className="rounded-md bg-amber-50 px-3 py-2 text-[13px] text-amber-900">{t.redactedWarning}</p>}
+      <form
+        className="flex items-center gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          send(input);
+        }}
+      >
+        <HoldToSpeak lang={lang} onText={send} size="bar" />
+        <label htmlFor="costa-input" className="sr-only">
+          {t.askPlaceholder}
+        </label>
+        <input
+          id="costa-input"
+          value={input}
+          onChange={(e) => setInput(e.currentTarget.value)}
+          placeholder={t.askPlaceholder}
+          autoComplete="off"
+          enterKeyHint="send"
+          disabled={busy}
+          className="min-h-12 min-w-0 flex-1 rounded-md border border-stone-400 bg-white px-3.5 text-[17px] outline-none focus:border-pine-800 focus:ring-2 focus:ring-pine-800/15"
+        />
+        <button type="submit" disabled={busy || !input.trim()} className="grid h-12 w-12 shrink-0 place-items-center rounded-md bg-stone-900 text-white disabled:opacity-25" aria-label={t.send}>
+          <SendIcon size={20} />
+        </button>
+      </form>
+      <p className="text-center text-[12px] text-stone-500">{t.privacyNote}</p>
+    </div>
+  );
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-between pb-3">
-        <h1 className="text-[28px] leading-tight text-pine-950">{messages.length ? a.ask.title : a.home.voicePrompt}</h1>
+        <h1 className="text-[28px] leading-tight text-pine-950">{messages.length ? a.ask.title : a.ask.emptyTitle}</h1>
         {messages.length > 0 && (
           <button type="button" onClick={newChat} className="flex min-h-11 items-center gap-1.5 rounded-md px-3 text-[15px] font-semibold text-pine-800 active:bg-pine-50">
             <RefreshIcon size={18} /> {a.ask.newChat}
@@ -205,71 +221,28 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
 
       <div className="flex flex-1 flex-col gap-4" aria-live="polite">
         {messages.length === 0 && (
-          <div className="flex flex-col gap-6">
-            <HoldToSpeak lang={lang} onText={send} />
-            {!showType ? (
-              <button type="button" onClick={() => setShowType(true)} className="text-center text-[16px] font-medium text-pine-800 underline decoration-pine-300 underline-offset-4">
-                {a.home.orType}
-              </button>
-            ) : (
-              <form
-                className="flex gap-2"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  send(input);
-                }}
-              >
-                <input
-                  value={input}
-                  onChange={(e) => setInput(e.currentTarget.value)}
-                  placeholder={t.askPlaceholder}
-                  autoFocus
-                  className="min-h-12 min-w-0 flex-1 rounded-md border border-stone-400 bg-white px-3.5 text-[17px] outline-none focus:border-pine-800"
-                />
-                <button type="submit" disabled={!input.trim()} className="grid h-12 w-12 place-items-center rounded-md bg-stone-900 text-white disabled:opacity-25" aria-label={t.send}>
-                  <SendIcon size={20} />
-                </button>
-              </form>
-            )}
+          <div className="flex flex-col gap-5">
+            <p className="text-[17px] leading-relaxed text-stone-600">{a.ask.emptyBody}</p>
 
-            <div className="flex flex-col gap-3">
-              <p className="text-[17px] font-semibold text-pine-950">{a.home.topicsTitle}</p>
-              <ul className="grid grid-cols-2 gap-3">
-                {BIG.map(({ key, href, Icon, prompt }) => (
-                  <li key={key}>
-                    {prompt ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowType(true)}
-                        className="flex min-h-[5.5rem] w-full flex-col items-start justify-between gap-2 rounded-md border border-stone-400 bg-white p-3 text-left active:bg-stone-100"
-                      >
-                        <Icon size={24} strokeWidth={1.8} className="text-pine-800" />
-                        <span className="text-[16px] font-semibold">{a.home.bigTopics[key]}</span>
-                      </button>
-                    ) : (
-                      <Link href={href!} className="flex min-h-[5.5rem] flex-col items-start justify-between gap-2 rounded-md border border-stone-400 bg-white p-3 active:bg-stone-100">
-                        <Icon size={24} strokeWidth={1.8} className="text-pine-800" />
-                        <span className="text-[16px] font-semibold">{a.home.bigTopics[key]}</span>
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <div className="rounded-md border border-stone-300 bg-white p-3">{composer}</div>
 
-            <div className="flex flex-col">
-              <p className="pb-1 text-[13px] font-semibold uppercase tracking-wider text-stone-500">{t.commonQuestions}</p>
-              <ul className="divide-y divide-stone-300 border-y border-stone-300">
-                {suggestions.slice(0, 4).map((s) => (
+            <div className="flex flex-col gap-2">
+              <p className="text-[13px] font-semibold uppercase tracking-wider text-stone-500">{t.commonQuestions}</p>
+              <ul className="flex flex-col gap-2">
+                {suggestions.slice(0, 8).map((s) => (
                   <li key={s}>
-                    <button type="button" onClick={() => send(s)} className="-mx-2 flex min-h-14 w-[calc(100%+1rem)] items-center gap-3 px-2 py-3 text-left text-[16px] leading-snug active:bg-stone-200/50">
+                    <button
+                      type="button"
+                      onClick={() => send(s)}
+                      className="flex min-h-12 w-full items-center gap-3 rounded-md border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-left text-[15px] leading-snug text-stone-900 active:bg-stone-100"
+                    >
                       <span className="flex-1">{s}</span>
-                      <ArrowRightIcon size={18} className="shrink-0 text-stone-400" />
+                      <ArrowRightIcon size={16} className="shrink-0 text-stone-400" />
                     </button>
                   </li>
                 ))}
               </ul>
-              <Link href="/help#person" className="mt-4 flex min-h-12 items-center gap-2 text-[16px] font-semibold text-pine-800 underline decoration-pine-300 underline-offset-4">
+              <Link href="/help#person" className="mt-2 flex min-h-12 items-center gap-2 text-[16px] font-semibold text-pine-800 underline decoration-pine-300 underline-offset-4">
                 <PeopleIcon size={20} /> {a.ask.talkToPerson}
               </Link>
             </div>
@@ -314,7 +287,7 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
         )}
         {error && (
           <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-[15px] text-red-800">
-            {error.message.includes("configured") ? t.notConfigured : LETTER_UI[lang].error}
+            {error.message.includes("configured") ? t.notConfigured : letterUi(lang).error}
           </p>
         )}
         <div ref={bottomRef} className="h-28 shrink-0" />
@@ -322,35 +295,7 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
 
       {messages.length > 0 && (
         <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 border-t border-stone-300 bg-paper">
-          <div className="mx-auto flex max-w-lg flex-col gap-2 px-5 py-2.5">
-            {redactedNotice && <p className="rounded-md bg-amber-50 px-3 py-2 text-[13px] text-amber-900">{t.redactedWarning}</p>}
-            <form
-              className="flex items-center gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                send(input);
-              }}
-            >
-              <HoldToSpeak lang={lang} onText={send} size="bar" />
-              <label htmlFor="costa-input" className="sr-only">
-                {t.askPlaceholder}
-              </label>
-              <input
-                id="costa-input"
-                value={input}
-                onChange={(e) => setInput(e.currentTarget.value)}
-                placeholder={t.askPlaceholder}
-                autoComplete="off"
-                enterKeyHint="send"
-                disabled={busy}
-                className="min-h-12 min-w-0 flex-1 rounded-md border border-stone-400 bg-white px-3.5 text-[17px] outline-none focus:border-pine-800 focus:ring-2 focus:ring-pine-800/15"
-              />
-              <button type="submit" disabled={busy || !input.trim()} className="grid h-12 w-12 shrink-0 place-items-center rounded-md bg-stone-900 text-white disabled:opacity-25" aria-label={t.send}>
-                <SendIcon size={20} />
-              </button>
-            </form>
-            <p className="text-center text-[12px] text-stone-500">{t.privacyNote}</p>
-          </div>
+          <div className="mx-auto max-w-lg px-5 py-2.5">{composer}</div>
         </div>
       )}
     </div>

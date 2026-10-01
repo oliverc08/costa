@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { APP } from "@/lib/i18n-app";
+import { app, APP } from "@/lib/i18n-app";
 import { clearDeviceData } from "@/lib/device";
 import { LANGUAGES, LANGUAGE_CODES, type LanguageCode } from "@/lib/languages";
 import { CheckIcon, CloseIcon, GlobeIcon, ShieldIcon, TrashIcon } from "./Icons";
@@ -25,7 +25,7 @@ export function useSwitchLanguage() {
 
 /** Language picker plus privacy controls, opened from the globe button in the top bar. */
 export function SettingsSheet({ lang }: { lang: LanguageCode }) {
-  const a = APP[lang];
+  const a = app(lang);
   const dialog = useRef<HTMLDialogElement>(null);
   const switchLanguage = useSwitchLanguage();
   const [deleted, setDeleted] = useState(false);

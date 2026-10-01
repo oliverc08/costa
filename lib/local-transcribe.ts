@@ -14,6 +14,8 @@ const WHISPER_LANG: Record<LanguageCode, string> = {
   zh: "chinese",
   tl: "tagalog",
   vi: "vietnamese",
+  ko: "korean",
+  pt: "portuguese",
 };
 
 let pipelinePromise: Promise<AsrPipeline> | null = null;

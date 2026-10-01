@@ -1,5 +1,5 @@
 import { searchBenefits, type SearchHit } from "@/lib/knowledge/search";
-import type { LanguageCode } from "@/lib/languages";
+import { isTranslatedUiLang, type LanguageCode, type TranslatedUiLang } from "@/lib/languages";
 import {
   daysUntil,
   type LetterAnalysis,
@@ -174,7 +174,7 @@ type Template = {
   uncertainty: string;
 };
 
-const TEMPLATES: Record<LanguageCode, Record<NoticeType | "fallback", Template>> = {
+const TEMPLATES: Record<TranslatedUiLang, Record<NoticeType | "fallback", Template>> = {
   en: {
     renewal: {
       whatThisMeans: "This looks like a benefits renewal. You need to update your information so your coverage can continue.",
@@ -507,7 +507,7 @@ const TEMPLATES: Record<LanguageCode, Record<NoticeType | "fallback", Template>>
 };
 
 function buildExplanation(extraction: LetterExtraction, language: LanguageCode, hit: SearchHit | undefined): LetterExplanation {
-  const pack = TEMPLATES[language];
+  const pack = isTranslatedUiLang(language) ? TEMPLATES[language] : TEMPLATES.en;
   const t = pack[extraction.noticeType] ?? pack.fallback;
   const deadline =
     extraction.deadline && extraction.deadlineMeaning

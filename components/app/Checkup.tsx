@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { APPLY, runCheckup, type CheckupAnswers, type CheckupResult, type IncomePeriod, type ProgramResult } from "@/lib/checkup";
 import { addSteps, saveCheckup } from "@/lib/device";
-import { APP, type ScreenStatus } from "@/lib/i18n-app";
+import { app, type ScreenStatus } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { isAppleWebKit, useReadAloud } from "@/lib/speech";
 import { NearbyHelp } from "./NearbyHelp";
@@ -72,7 +72,7 @@ function Stepper({ value, onChange, min, max }: { value: number; onChange: (n: n
 }
 
 export function Checkup({ lang }: { lang: LanguageCode }) {
-  const a = APP[lang];
+  const a = app(lang);
   const c = a.check;
   const [answers, setAnswers] = useState<CheckupAnswers>(START);
   const [step, setStep] = useState<StepId>("intro");
@@ -319,7 +319,7 @@ function Question({ q, hint, children }: { q: string; hint?: string; children: R
   );
 }
 
-function whyFor(p: ProgramResult, c: (typeof APP)[LanguageCode]["check"]) {
+function whyFor(p: ProgramResult, c: ReturnType<typeof app>["check"]) {
   if (p.status === "likely") return c.whyLikely;
   if (p.status === "possibly") return c.whyPossibly;
   return c.whyUnlikely;
@@ -344,7 +344,7 @@ function ResultsScreen({
   onSave: () => void;
   onRestart: () => void;
 }) {
-  const a = APP[lang];
+  const a = app(lang);
   const c = a.check;
   const read = useReadAloud(lang);
   const headline = worth.length === 0 ? c.mayQualifyNone : c.mayQualify(worth.length);
@@ -433,7 +433,7 @@ function ResultsScreen({
 }
 
 function ProgramCard({ p, lang, monthly, county, open }: { p: ProgramResult; lang: LanguageCode; monthly: number; county: CheckupAnswers["county"]; open: boolean }) {
-  const a = APP[lang];
+  const a = app(lang);
   const c = a.check;
   const name = c.programs[p.program];
   const apply = APPLY[p.program];

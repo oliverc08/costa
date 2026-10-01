@@ -8,6 +8,8 @@ const TESS_LANG: Record<LanguageCode, string> = {
   zh: "eng+chi_sim",
   tl: "eng",
   vi: "eng+vie",
+  ko: "eng+kor",
+  pt: "eng+por",
 };
 
 let workerPromise: Promise<{

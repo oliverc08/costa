@@ -11,6 +11,8 @@ const VOICE_PREFIX: Record<LanguageCode, string[]> = {
   zh: ["zh", "cmn"],
   tl: ["fil", "tl"],
   vi: ["vi"],
+  ko: ["ko"],
+  pt: ["pt"],
 };
 
 /** Preferred locales within each language family. */
@@ -20,6 +22,8 @@ const VOICE_LOCALE: Record<LanguageCode, string[]> = {
   zh: ["zh-cn", "zh_cn", "zh-hans", "cmn-hans"],
   tl: ["fil-ph", "fil_ph", "tl-ph", "tl_ph"],
   vi: ["vi-vn", "vi_vn"],
+  ko: ["ko-kr", "ko_kr"],
+  pt: ["pt-br", "pt_br", "pt-pt", "pt_pt"],
 };
 
 /**
@@ -32,6 +36,8 @@ export const BROWSER_STT: Record<LanguageCode, string> = {
   zh: "zh-CN",
   tl: "fil-PH",
   vi: "vi-VN",
+  ko: "ko-KR",
+  pt: "pt-BR",
 };
 
 type SpeechRec = {

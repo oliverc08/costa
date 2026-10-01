@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { APP } from "@/lib/i18n-app";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import {
-  ArrowRightIcon,
   BasketIcon,
-  CameraIcon,
   FlameIcon,
   HeartIcon,
   HomeIcon,
@@ -15,7 +13,6 @@ import {
   ChatIcon,
 } from "./Icons";
 import { HoldToSpeak } from "./HoldToSpeak";
-import { MyPlan } from "./MyPlan";
 
 const BIG = [
   { key: "food" as const, href: "/topics/food", Icon: BasketIcon },
@@ -28,9 +25,9 @@ const BIG = [
 
 export const PENDING_VOICE_KEY = "costa_pending_voice";
 
-/** Voice-first home: huge mic, big topic tiles, checkup, plan. */
+/** Voice-first home: huge mic + topic tiles. Letter, checkup, and plan live on their own tabs. */
 export function VoiceHome({ lang }: { lang: LanguageCode }) {
-  const a = APP[lang];
+  const a = app(lang);
   const router = useRouter();
 
   function onSpeech(text: string) {
@@ -66,30 +63,6 @@ export function VoiceHome({ lang }: { lang: LanguageCode }) {
           ))}
         </ul>
       </section>
-
-      <section className="flex flex-col gap-3 border-l-4 border-poppy-500 bg-white py-5 pl-4 pr-5">
-        <h2 className="text-[21px] leading-snug text-pine-950">{a.home.topics.letter.title}</h2>
-        <p className="text-[15px] leading-relaxed text-stone-600">{a.home.topics.letter.sub}</p>
-        <Link
-          href="/letter"
-          className="flex min-h-13 items-center justify-center gap-2 self-start rounded-md bg-poppy-600 px-5 py-3 text-[17px] font-semibold text-white active:bg-poppy-700"
-        >
-          {a.topics.doLetter} <CameraIcon size={20} />
-        </Link>
-      </section>
-
-      <section className="flex flex-col gap-3 border-l-4 border-pine-700 bg-white py-5 pl-4 pr-5">
-        <h2 className="text-[21px] leading-snug text-pine-950">{a.home.checkTitle}</h2>
-        <p className="text-[15px] leading-relaxed text-stone-600">{a.home.checkBody}</p>
-        <Link
-          href="/check"
-          className="flex min-h-13 items-center justify-center gap-2 self-start rounded-md bg-pine-800 px-5 py-3 text-[17px] font-semibold text-white active:bg-pine-900"
-        >
-          {a.home.checkCta} <ArrowRightIcon size={20} />
-        </Link>
-      </section>
-
-      <MyPlan lang={lang} />
 
       <Link href="/how" className="text-center text-[14px] font-medium text-stone-500 underline underline-offset-2">
         {a.home.howItWorks}

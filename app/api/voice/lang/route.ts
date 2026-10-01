@@ -1,4 +1,4 @@
-import { VOICE } from "@/lib/i18n";
+import { voice, VOICE } from "@/lib/i18n";
 import { readTwilioWebhook, twimlResponse } from "@/lib/twilio";
 import { DIGIT_LANGUAGES, gatherSpeech, redirect, response, say } from "@/lib/voice";
 
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const lang = DIGIT_LANGUAGES[hook.params.Digits ?? ""];
   if (!lang) return twimlResponse(response(redirect("/api/voice")));
 
-  const v = VOICE[lang];
+  const v = voice(lang);
   return twimlResponse(
     response(gatherSpeech(lang, v.howCanIHelp), say(lang, v.didntHear), gatherSpeech(lang, v.howCanIHelp), say(lang, v.goodbye), "<Hangup/>"),
   );

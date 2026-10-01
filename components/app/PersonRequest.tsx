@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useDevice } from "@/lib/device";
-import { LETTER_UI, UI } from "@/lib/i18n";
-import { APP } from "@/lib/i18n-app";
+import { letterUi, ui, LETTER_UI, UI } from "@/lib/i18n";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { CheckIcon, MessageIcon, PhoneIcon } from "./Icons";
 
@@ -34,9 +34,9 @@ export function PersonRequest({
   defaultArea?: string;
   letter?: LetterContext;
 }) {
-  const t = UI[lang];
-  const l = LETTER_UI[lang];
-  const a = APP[lang];
+  const t = ui(lang);
+  const l = letterUi(lang);
+  const a = app(lang);
   const { checkup } = useDevice();
   const [topic, setTopic] = useState<HelpTopic>(defaultTopic);
   const [phone, setPhone] = useState("");

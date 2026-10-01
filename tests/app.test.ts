@@ -3,7 +3,7 @@ import { POST as handoff } from "@/app/api/handoff/route";
 import { monthlyIncome, runCheckup, type CheckupAnswers } from "@/lib/checkup";
 import { daysFromToday, reminderIcs } from "@/lib/device";
 import { FAQS, faqsForTopic } from "@/lib/faq";
-import { APP } from "@/lib/i18n-app";
+import { app, APP } from "@/lib/i18n-app";
 import { LANGUAGE_CODES } from "@/lib/languages";
 import { listProviders } from "@/lib/local-help";
 import { auditReply } from "@/lib/safety/output";
@@ -28,13 +28,13 @@ const base: CheckupAnswers = {
 
 describe("app strings", () => {
   it.each(LANGUAGE_CODES)("%s strings pass the output safety audit", (lang) => {
-    for (const s of allStrings(APP[lang])) expect(auditReply(s), s).toEqual([]);
+    for (const s of allStrings(app(lang))) expect(auditReply(s), s).toEqual([]);
   });
 
   it.each(LANGUAGE_CODES)("%s has the same shape as English", (lang) => {
     const keys = (o: object, prefix = ""): string[] =>
       Object.entries(o).flatMap(([k, v]) => (v && typeof v === "object" && !Array.isArray(v) ? keys(v, `${prefix}${k}.`) : [`${prefix}${k}`]));
-    expect(keys(APP[lang]).sort()).toEqual(keys(APP.en).sort());
+    expect(keys(app(lang)).sort()).toEqual(keys(APP.en).sort());
   });
 
   it("every topic has verified answers", () => {

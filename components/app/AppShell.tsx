@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { APP } from "@/lib/i18n-app";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { BottomNav } from "./BottomNav";
 import { ArrowLeftIcon } from "./Icons";
@@ -29,7 +29,7 @@ export function AppShell({
   back?: string;
   title?: string;
 }) {
-  const a = APP[lang];
+  const a = app(lang);
   return (
     <div lang={lang} className="mx-auto flex min-h-dvh w-full max-w-lg flex-col">
       <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-stone-300 bg-paper px-5 pt-[env(safe-area-inset-top)]">

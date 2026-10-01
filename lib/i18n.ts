@@ -1,4 +1,5 @@
-import type { LanguageCode } from "@/lib/languages";
+import type { LanguageCode, TranslatedUiLang } from "@/lib/languages";
+import { isTranslatedUiLang } from "@/lib/languages";
 
 export interface UiStrings {
   tagline: string;
@@ -33,7 +34,7 @@ export interface UiStrings {
   notConfigured: string;
 }
 
-export const UI: Record<LanguageCode, UiStrings> = {
+export const UI: Record<TranslatedUiLang, UiStrings> = {
   en: {
     tagline: "Benefits help in your language.",
     subtitle: "Call. Text. Ask. Free help with Medi-Cal, CalFresh, WIC, tax credits, and disaster aid. No account. No app.",
@@ -232,7 +233,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
 };
 
 /** First-message notice for SMS, sent once per phone number. */
-export const SMS_CONSENT: Record<LanguageCode, string> = {
+export const SMS_CONSENT: Record<TranslatedUiLang, string> = {
   en: "Costa: free benefits help. Info comes from official sources; Costa can't decide eligibility. Never text your SSN or Medi-Cal ID. Msgs deleted after 30 days. Reply STOP to stop.",
   es: "Costa: ayuda gratis con beneficios. La información viene de fuentes oficiales; Costa no decide si califica. Nunca envíe su Seguro Social ni número de Medi-Cal. Mensajes se borran en 30 días. Responda STOP para parar.",
   zh: "Costa：免费福利帮助。信息来自官方资料；Costa 不能决定您的资格。请勿发送社会安全号码或 Medi-Cal 卡号。消息 30 天后删除。回复 STOP 停止。",
@@ -241,7 +242,7 @@ export const SMS_CONSENT: Record<LanguageCode, string> = {
 };
 
 export const VOICE: Record<
-  LanguageCode,
+  TranslatedUiLang,
   { howCanIHelp: string; anythingElse: string; didntHear: string; goodbye: string; oneMoment: string }
 > = {
   en: {
@@ -281,7 +282,7 @@ export const VOICE: Record<
   },
 };
 
-export const DISCLAIMER: Record<LanguageCode, { site: string; letter: string }> = {
+export const DISCLAIMER: Record<TranslatedUiLang, { site: string; letter: string }> = {
   en: {
     site: "Costa is a student project, not a government agency. It gives general information from official sources and cannot decide eligibility. For emergencies, call 911.",
     letter: "Costa explains letters in plain language but is not a government agency. Your county makes all decisions.",
@@ -322,7 +323,7 @@ export interface LetterStrings {
   fromLetter: string;
 }
 
-export const LETTER_UI: Record<LanguageCode, LetterStrings> = {
+export const LETTER_UI: Record<TranslatedUiLang, LetterStrings> = {
   en: {
     unreadable: "Costa couldn't read that photo. Try again with the whole page, flat, in good light.",
     notLetter: "That doesn't look like a benefits letter. Try a photo of the letter itself.",
@@ -409,3 +410,23 @@ export const LETTER_UI: Record<LanguageCode, LetterStrings> = {
     fromLetter: "Đọc từ thư của bạn",
   },
 };
+
+export function smsConsent(lang: LanguageCode): string {
+  return isTranslatedUiLang(lang) ? SMS_CONSENT[lang] : SMS_CONSENT.en;
+}
+
+export function voice(lang: LanguageCode): (typeof VOICE)["en"] {
+  return isTranslatedUiLang(lang) ? VOICE[lang] : VOICE.en;
+}
+
+export function ui(lang: LanguageCode): UiStrings {
+  return isTranslatedUiLang(lang) ? UI[lang] : UI.en;
+}
+
+export function letterUi(lang: LanguageCode): LetterStrings {
+  return isTranslatedUiLang(lang) ? LETTER_UI[lang] : LETTER_UI.en;
+}
+
+export function disclaimer(lang: LanguageCode): { site: string; letter: string } {
+  return isTranslatedUiLang(lang) ? DISCLAIMER[lang] : DISCLAIMER.en;
+}

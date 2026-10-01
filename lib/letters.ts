@@ -2,7 +2,7 @@ import { generateText, Output } from "ai";
 import { z } from "zod";
 import { models } from "@/lib/config";
 import { searchBenefits, type SearchHit } from "@/lib/knowledge/search";
-import { LANGUAGES, type LanguageCode } from "@/lib/languages";
+import { LANGUAGES, isTranslatedUiLang, type LanguageCode, type TranslatedUiLang } from "@/lib/languages";
 import { redact } from "@/lib/safety/redact";
 
 export const MAX_LETTER_BYTES = 8 * 1024 * 1024;
@@ -163,7 +163,7 @@ If there is a denial or discontinuance, mention the right to ask for a State Hea
   return { ok: true, language: opts.language, extraction, explanation, daysUntilDeadline: days, sources };
 }
 
-const SMS_LABELS: Record<LanguageCode, { means: string; todo: string; deadline: string; help: string; source: string; unreadable: string; notLetter: string }> = {
+const SMS_LABELS: Record<TranslatedUiLang, { means: string; todo: string; deadline: string; help: string; source: string; unreadable: string; notLetter: string }> = {
   en: { means: "What this means", todo: "What to do", deadline: "Deadline", help: "Help", source: "Source", unreadable: "Costa couldn't read that photo. Please send a clear photo of the whole page in good light.", notLetter: "That doesn't look like a benefits letter. Send a photo of the letter, or text your question." },
   es: { means: "Qué significa", todo: "Qué hacer", deadline: "Fecha límite", help: "Ayuda", source: "Fuente", unreadable: "Costa no pudo leer la foto. Envíe una foto clara de toda la página con buena luz.", notLetter: "No parece una carta de beneficios. Envíe una foto de la carta o escriba su pregunta." },
   zh: { means: "这是什么意思", todo: "该怎么做", deadline: "截止日期", help: "帮助", source: "来源", unreadable: "Costa 无法看清这张照片。请在光线充足处拍一张完整清晰的照片。", notLetter: "这看起来不像福利信件。请发送信件照片，或直接输入您的问题。" },
@@ -172,7 +172,7 @@ const SMS_LABELS: Record<LanguageCode, { means: string; todo: string; deadline: 
 };
 
 export function formatLetterSms(result: LetterResult, language: LanguageCode): string {
-  const L = SMS_LABELS[language];
+  const L = isTranslatedUiLang(language) ? SMS_LABELS[language] : SMS_LABELS.en;
   if (!result.ok) return result.reason === "unreadable" ? L.unreadable : L.notLetter;
   const e = result.explanation;
   const lines = [

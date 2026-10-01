@@ -2,7 +2,7 @@ import { after } from "next/server";
 import twilio from "twilio";
 import { hasAiGateway, hasTwilio } from "@/lib/config";
 import { loadOrCreateSession, phoneSessionId, runPhoneTurn } from "@/lib/conversation";
-import { SMS_CONSENT, UI } from "@/lib/i18n";
+import { smsConsent, SMS_CONSENT, UI } from "@/lib/i18n";
 import { detectLanguage } from "@/lib/languages";
 import { analyzeLetter, formatLetterSms, LETTER_MEDIA_TYPES, MAX_LETTER_BYTES } from "@/lib/letters";
 import { getStore } from "@/lib/store";
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     const language = (body && detectLanguage(body)) || session.language || "en";
     const out: string[] = [];
     if (!session.consentShown) {
-      out.push(SMS_CONSENT[language]);
+      out.push(smsConsent(language));
       session.consentShown = true;
     }
 

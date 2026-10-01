@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app/AppShell";
 import { ArrowRightIcon, BasketIcon, CameraIcon, ChatIcon, ChecklistIcon, CheckIcon, CoinsIcon, FlameIcon, HeartIcon, PeopleIcon, PlusIcon } from "@/components/app/Icons";
 import { RichText } from "@/components/app/RichText";
-import { faqSources, faqsForTopic } from "@/lib/faq";
-import { APP, type TopicId } from "@/lib/i18n-app";
+import { faqAnswer, faqQuestion, faqSources, faqsForTopic } from "@/lib/faq";
+import { app, APP, type TopicId } from "@/lib/i18n-app";
 import { resolveUiLanguage } from "@/lib/ui-language";
 
 const TOPICS: Record<TopicId, { Icon: typeof HeartIcon; helpTopic: string; actions: ("check" | "letter" | "help" | "ask")[] }> = {
@@ -21,14 +21,14 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/top
   const { topic } = await params;
   if (!isTopic(topic)) return {};
   const lang = await resolveUiLanguage((await searchParams).lang);
-  return { title: `${APP[lang].topics[topic].title} · Costa` };
+  return { title: `${app(lang).topics[topic].title} · Costa` };
 }
 
 export default async function TopicPage({ params, searchParams }: PageProps<"/topics/[topic]">) {
   const { topic } = await params;
   if (!isTopic(topic)) notFound();
   const lang = await resolveUiLanguage((await searchParams).lang);
-  const a = APP[lang];
+  const a = app(lang);
   const { Icon, helpTopic, actions } = TOPICS[topic];
   const faqs = faqsForTopic(topic);
 
@@ -55,11 +55,11 @@ export default async function TopicPage({ params, searchParams }: PageProps<"/to
               <li key={f.id}>
                 <details open={i === 0} className="group">
                   <summary className="flex min-h-16 cursor-pointer items-center gap-3 py-3">
-                    <span className="flex-1 text-[17px] font-semibold leading-snug">{f.question[lang]}</span>
+                    <span className="flex-1 text-[17px] font-semibold leading-snug">{faqQuestion(f, lang)}</span>
                     <PlusIcon size={20} className="shrink-0 text-pine-800 transition-transform group-open:rotate-45" />
                   </summary>
                   <div className="flex flex-col gap-3 pb-5">
-                    <RichText text={f.answer[lang]} className="text-[16px]" />
+                    <RichText text={faqAnswer(f, lang)} className="text-[16px]" />
                     <div className="flex flex-col gap-1.5 border-t border-dashed border-stone-300 pt-3">
                       {faqSources(f).map((s) => (
                         <a key={s.sourceId} href={s.url} target="_blank" rel="noreferrer" className="flex items-start gap-2 text-[13px] leading-snug text-stone-600">

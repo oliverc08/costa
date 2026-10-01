@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { addReminder, downloadIcs } from "@/lib/device";
-import { LETTER_UI, UI } from "@/lib/i18n";
-import { APP } from "@/lib/i18n-app";
+import { letterUi, ui, LETTER_UI, UI } from "@/lib/i18n";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import type { LetterResult } from "@/lib/letters";
 import { CalendarIcon, CameraIcon, CheckIcon, ExternalIcon, PhoneIcon, PlusIcon, SpeakerIcon, StopIcon } from "./app/Icons";
@@ -50,8 +50,8 @@ async function prepareImage(file: File): Promise<Prepared | null> {
 }
 
 export function LetterUpload({ lang }: { lang: LanguageCode }) {
-  const t = UI[lang];
-  const l = LETTER_UI[lang];
+  const t = ui(lang);
+  const l = letterUi(lang);
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   const inputRef = useRef<HTMLInputElement>(null);
   const analyzing = useRef(false);
@@ -179,11 +179,11 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
 }
 
 function DeadlineBadge({ days, label, lang }: { days: number | null; label: string; lang: LanguageCode }) {
-  const l = LETTER_UI[lang];
+  const l = letterUi(lang);
   const urgent = days !== null && days <= 10;
   return (
     <div className={`rounded-md p-4 ${urgent ? "bg-red-50 text-red-900" : "bg-amber-50 text-amber-950"}`}>
-      <p className="text-xs font-semibold uppercase tracking-wide opacity-70">{UI[lang].deadline}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide opacity-70">{ui(lang).deadline}</p>
       <p className="mt-1 text-lg font-semibold">{label}</p>
       {days !== null && (
         <p className="mt-1 text-sm font-medium">
@@ -195,9 +195,9 @@ function DeadlineBadge({ days, label, lang }: { days: number | null; label: stri
 }
 
 function LetterResultView({ result, lang, onReset }: { result: LetterResult; lang: LanguageCode; onReset: () => void }) {
-  const t = UI[lang];
-  const l = LETTER_UI[lang];
-  const a = APP[lang];
+  const t = ui(lang);
+  const l = letterUi(lang);
+  const a = app(lang);
   const letter = a.letter;
   const read = useReadAloud(lang);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
@@ -427,7 +427,7 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
 }
 
 function SaveDeadline({ result, lang }: { result: Extract<LetterResult, { ok: true }>; lang: LanguageCode }) {
-  const a = APP[lang];
+  const a = app(lang);
   const [saved, setSaved] = useState(false);
   const x = result.extraction;
   if (!x.deadline || !/^\d{4}-\d{2}-\d{2}$/.test(x.deadline) || (result.daysUntilDeadline ?? -1) < 0) return null;

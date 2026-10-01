@@ -5,7 +5,7 @@ export type Escalation = "none" | "offer-help" | "handoff-consent" | "emergency"
 export interface Intent {
   id: string;
   category: "medi-cal" | "calfresh" | "wic" | "caleitc" | "disaster" | "local-help" | "safety";
-  prompts: Record<LanguageCode, string>;
+  prompts: { en: string } & Partial<Record<LanguageCode, string>>;
   /** At least one of these sources must come back from searchBenefits. */
   sources?: string[];
   /** Nothing in the knowledge base covers this; Costa must say so instead of answering. */
@@ -447,11 +447,13 @@ export interface Scenario {
 
 export function allScenarios(): Scenario[] {
   return INTENTS.flatMap((intent) =>
-    (Object.keys(intent.prompts) as LanguageCode[]).map((language) => ({
-      id: `${intent.id}.${language}`,
-      intent,
-      language,
-      prompt: intent.prompts[language],
-    })),
+    (Object.entries(intent.prompts) as [LanguageCode, string][])
+      .filter(([, prompt]) => Boolean(prompt))
+      .map(([language, prompt]) => ({
+        id: `${intent.id}.${language}`,
+        intent,
+        language,
+        prompt,
+      })),
   );
 }

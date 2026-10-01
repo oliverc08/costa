@@ -317,6 +317,8 @@ const LANGUAGE_NAMES: Record<LanguageCode, string> = {
   zh: "Mandarin",
   tl: "Tagalog",
   vi: "Vietnamese",
+  ko: "Korean",
+  pt: "Portuguese",
 };
 
 function languagesNote(p: Provider, lang: LanguageCode): string {

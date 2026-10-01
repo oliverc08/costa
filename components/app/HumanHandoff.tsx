@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { APP } from "@/lib/i18n-app";
+import { app } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { BagIcon, MapPinIcon, PhoneIcon } from "./Icons";
 
@@ -12,6 +12,8 @@ const DEFAULT_BRING: Record<LanguageCode, string[]> = {
   zh: ["带照片的身份证件", "收入证明（工资单或雇主信）", "住址证明（租约或水电账单）", "您收到的那封信"],
   tl: ["Photo ID", "Patunay ng kita (pay stubs o sulat mula sa trabaho)", "Patunay ng address (lease o utility bill)", "Ang sulat na natanggap mo"],
   vi: ["Giấy tờ tùy thân có ảnh", "Giấy chứng thu nhập (phiếu lương hoặc thư từ chủ)", "Giấy chứng địa chỉ (hợp đồng thuê hoặc hóa đơn)", "Lá thư bạn nhận được"],
+  ko: ["사진이 있는 신분증", "소득 증명(급여명세 또는 직장 확인서)", "주소 증명(임대계약서 또는 공과금 고지서)", "받으신 편지"],
+  pt: ["Documento com foto", "Comprovante de renda (contracheques ou carta do trabalho)", "Comprovante de endereço (contrato ou conta)", "A carta que você recebeu"],
 };
 
 /**
@@ -29,7 +31,7 @@ export function HumanHandoff({
   documents?: string[];
   letterPhone?: string | null;
 }) {
-  const h = APP[lang].handoff;
+  const h = app(lang).handoff;
   const [showBring, setShowBring] = useState(false);
   const bring = documents.length > 0 ? documents : DEFAULT_BRING[lang];
   const topic = program && program !== "unknown" && program !== "other" ? program : "other";

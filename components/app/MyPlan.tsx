@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { APP } from "@/lib/i18n-app";
-import { LETTER_UI } from "@/lib/i18n";
+import { app } from "@/lib/i18n-app";
+import { letterUi } from "@/lib/i18n";
 import type { LanguageCode } from "@/lib/languages";
 import { addReminder, daysFromToday, downloadIcs, removeReminder, removeStep, toggleStep, useDevice } from "@/lib/device";
 import { CalendarIcon, CheckIcon, CloseIcon, PlusIcon } from "./Icons";
@@ -10,12 +10,13 @@ import { RichText } from "./RichText";
 
 function formatDate(date: string, lang: LanguageCode) {
   const [y, m, d] = date.split("-").map(Number);
-  const locale = { en: "en-US", es: "es-US", zh: "zh-CN", tl: "fil-PH", vi: "vi-VN" }[lang];
+  const locale =
+    { en: "en-US", es: "es-US", zh: "zh-CN", tl: "fil-PH", vi: "vi-VN", ko: "ko-KR", pt: "pt-BR" }[lang] ?? "en-US";
   return new Date(y, m - 1, d).toLocaleDateString(locale, { weekday: "short", month: "long", day: "numeric" });
 }
 
 export function DaysLeft({ date, lang }: { date: string; lang: LanguageCode }) {
-  const l = LETTER_UI[lang];
+  const l = letterUi(lang);
   const days = daysFromToday(date);
   const tone = days < 0 ? "text-stone-500" : days <= 7 ? "text-red-700" : days <= 21 ? "text-poppy-700" : "text-pine-800";
   return (
@@ -26,7 +27,7 @@ export function DaysLeft({ date, lang }: { date: string; lang: LanguageCode }) {
 }
 
 export function MyPlan({ lang }: { lang: LanguageCode }) {
-  const a = APP[lang];
+  const a = app(lang);
   const { reminders, steps } = useDevice();
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");

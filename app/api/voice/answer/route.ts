@@ -1,4 +1,4 @@
-import { VOICE } from "@/lib/i18n";
+import { voice, VOICE } from "@/lib/i18n";
 import { isLanguageCode } from "@/lib/languages";
 import { getStore } from "@/lib/store";
 import { readTwilioWebhook, twimlResponse } from "@/lib/twilio";
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
 
   const l = lang ?? "en";
   if (n + 1 >= MAX_ROUNDS) {
-    return twimlResponse(response(say(l, VOICE[l].goodbye), "<Hangup/>"));
+    return twimlResponse(response(say(l, voice(l).goodbye), "<Hangup/>"));
   }
   const next = `/api/voice/answer?key=${encodeURIComponent(key)}&n=${n + 1}${lang ? `&lang=${lang}` : ""}`;
-  return twimlResponse(response(lang ? say(lang, VOICE[lang].oneMoment) : pause(1), redirect(next)));
+  return twimlResponse(response(lang ? say(lang, voice(lang).oneMoment) : pause(1), redirect(next)));
 }

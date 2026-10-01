@@ -1,4 +1,5 @@
-import type { LanguageCode } from "@/lib/languages";
+import type { LanguageCode, TranslatedUiLang } from "@/lib/languages";
+import { isTranslatedUiLang } from "@/lib/languages";
 
 export type TopicId = "health" | "food" | "money" | "disaster";
 export type ProgramId = "medi-cal" | "calfresh" | "wic" | "caleitc";
@@ -220,7 +221,7 @@ export interface AppStrings {
   languageNames: Record<LanguageCode, string>;
 }
 
-export const APP: Record<LanguageCode, AppStrings> = {
+export const APP: Record<TranslatedUiLang, AppStrings> = {
   en: {
     nav: { home: "Home", ask: "Ask", check: "Check", letter: "Letter", help: "Help" },
     common: {
@@ -414,7 +415,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Ask Costa",
       emptyTitle: "Ask anything about benefits",
-      emptyBody: "Tap the microphone and talk, or pick a topic below.",
+      emptyBody: "Type a question, tap the mic, or pick a common question below.",
       micStart: "Tap to speak",
       micStop: "Listening… tap to stop",
       transcribing: "Writing down your words…",
@@ -482,7 +483,15 @@ export const APP: Record<LanguageCode, AppStrings> = {
       whatToBringTitle: "What to bring",
       whatToBringNote: "Offices may ask for more. Call ahead if you are missing something.",
     },
-    languageNames: { en: "English", es: "Spanish", zh: "Chinese", tl: "Tagalog", vi: "Vietnamese" },
+    languageNames: {
+      en: "English",
+      es: "Spanish",
+      zh: "Chinese",
+      tl: "Tagalog",
+      vi: "Vietnamese",
+      ko: "Korean",
+      pt: "Portuguese",
+    },
   },
 
   es: {
@@ -674,7 +683,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Pregúntele a Costa",
       emptyTitle: "Pregunte lo que quiera sobre beneficios",
-      emptyBody: "Toque el micrófono y hable, o elija un tema abajo.",
+      emptyBody: "Escriba una pregunta, toque el micrófono, o elija una pregunta común abajo.",
       micStart: "Toque para hablar",
       micStop: "Escuchando… toque para parar",
       transcribing: "Escribiendo sus palabras…",
@@ -742,7 +751,15 @@ export const APP: Record<LanguageCode, AppStrings> = {
       whatToBringTitle: "Qué llevar",
       whatToBringNote: "La oficina puede pedir más. Llame antes si le falta algo.",
     },
-    languageNames: { en: "inglés", es: "español", zh: "chino", tl: "tagalo", vi: "vietnamita" },
+    languageNames: {
+      en: "inglés",
+      es: "español",
+      zh: "chino",
+      tl: "tagalo",
+      vi: "vietnamita",
+      ko: "coreano",
+      pt: "portugués",
+    },
   },
 
   zh: {
@@ -934,7 +951,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "问 Costa",
       emptyTitle: "关于福利，什么都可以问",
-      emptyBody: "打字，或点麦克风用您的语言说话。",
+      emptyBody: "输入问题、点麦克风，或从下方常见问题中选择。",
       micStart: "点一下说话",
       micStop: "正在听…点一下停止",
       transcribing: "正在记下您的话…",
@@ -1002,7 +1019,15 @@ export const APP: Record<LanguageCode, AppStrings> = {
       whatToBringTitle: "请携带",
       whatToBringNote: "办公室可能还需要其他材料。如有缺少请先致电。",
     },
-    languageNames: { en: "英语", es: "西班牙语", zh: "中文", tl: "他加禄语", vi: "越南语" },
+    languageNames: {
+      en: "英语",
+      es: "西班牙语",
+      zh: "中文",
+      tl: "他加禄语",
+      vi: "越南语",
+      ko: "韩语",
+      pt: "葡萄牙语",
+    },
   },
 
   tl: {
@@ -1194,7 +1219,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Magtanong kay Costa",
       emptyTitle: "Magtanong ng kahit ano tungkol sa benepisyo",
-      emptyBody: "Mag-type, o i-tap ang mikropono at magsalita sa iyong wika.",
+      emptyBody: "Mag-type ng tanong, i-tap ang mic, o pumili ng karaniwang tanong sa ibaba.",
       micStart: "I-tap para magsalita",
       micStop: "Nakikinig… i-tap para huminto",
       transcribing: "Isinusulat ang mga sinabi mo…",
@@ -1262,7 +1287,15 @@ export const APP: Record<LanguageCode, AppStrings> = {
       whatToBringTitle: "Ano ang dadalhin",
       whatToBringNote: "Maaaring humingi pa ang opisina. Tumawag muna kung may kulang.",
     },
-    languageNames: { en: "English", es: "Spanish", zh: "Chinese", tl: "Tagalog", vi: "Vietnamese" },
+    languageNames: {
+      en: "English",
+      es: "Spanish",
+      zh: "Chinese",
+      tl: "Tagalog",
+      vi: "Vietnamese",
+      ko: "Korean",
+      pt: "Portuguese",
+    },
   },
 
   vi: {
@@ -1454,7 +1487,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Hỏi Costa",
       emptyTitle: "Hỏi bất cứ điều gì về phúc lợi",
-      emptyBody: "Chạm micrô và nói, hoặc chọn chủ đề bên dưới.",
+      emptyBody: "Gõ câu hỏi, chạm mic, hoặc chọn một câu hỏi thường gặp bên dưới.",
       micStart: "Chạm để nói",
       micStop: "Đang nghe… chạm để dừng",
       transcribing: "Đang ghi lại lời bạn nói…",
@@ -1522,6 +1555,36 @@ export const APP: Record<LanguageCode, AppStrings> = {
       whatToBringTitle: "Mang theo",
       whatToBringNote: "Văn phòng có thể yêu cầu thêm. Hãy gọi trước nếu thiếu gì.",
     },
-    languageNames: { en: "tiếng Anh", es: "tiếng Tây Ban Nha", zh: "tiếng Trung", tl: "tiếng Tagalog", vi: "tiếng Việt" },
+    languageNames: {
+      en: "tiếng Anh",
+      es: "tiếng Tây Ban Nha",
+      zh: "tiếng Trung",
+      tl: "tiếng Tagalog",
+      vi: "tiếng Việt",
+      ko: "tiếng Hàn",
+      pt: "tiếng Bồ Đào Nha",
+    },
   },
+};
+
+/** UI copy for any LanguageCode — falls back to English for Korean/Portuguese until fully translated. */
+export function app(lang: LanguageCode): AppStrings {
+  if (isTranslatedUiLang(lang)) return APP[lang];
+  return {
+    ...APP.en,
+    languageNames: {
+      ...APP.en.languageNames,
+      [lang]: LANGUAGES_NATIVE[lang],
+    },
+  };
+}
+
+const LANGUAGES_NATIVE: Record<LanguageCode, string> = {
+  en: "English",
+  es: "Español",
+  zh: "中文",
+  tl: "Tagalog",
+  vi: "Tiếng Việt",
+  ko: "한국어",
+  pt: "Português",
 };

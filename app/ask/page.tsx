@@ -11,7 +11,7 @@ export default async function AskPage({ searchParams }: PageProps<"/ask">) {
   const lang = await resolveUiLanguage(params.lang);
   return (
     <AppShell lang={lang}>
-      <AskChat lang={lang} suggestions={faqQuestions(lang).slice(0, 6)} micHint={params.mic === "1"} />
+      <AskChat lang={lang} suggestions={faqQuestions(lang).slice(0, 8)} micHint={params.mic === "1"} />
     </AppShell>
   );
 }

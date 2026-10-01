@@ -2,7 +2,7 @@
 
 import type { MouseEvent } from "react";
 import { useVoiceInput } from "@/lib/speech";
-import { APP } from "@/lib/i18n-app";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { MicIcon, StopIcon } from "./Icons";
 
@@ -22,7 +22,7 @@ export function HoldToSpeak({
   onText: (text: string) => void;
   size?: "hero" | "bar";
 }) {
-  const a = APP[lang];
+  const a = app(lang);
   const voice = useVoiceInput(lang, onText);
 
   if (!voice.supported) return null;

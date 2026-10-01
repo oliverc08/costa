@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AppShell } from "@/components/app/AppShell";
 import { ExternalIcon, MapPinIcon, PhoneIcon } from "@/components/app/Icons";
 import { PersonRequest, type HelpTopic } from "@/components/app/PersonRequest";
-import { APP } from "@/lib/i18n-app";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { listProviders, normalizeArea, type HelpProgram, type ProviderCard } from "@/lib/local-help";
 import { resolveUiLanguage } from "@/lib/ui-language";
@@ -13,13 +13,13 @@ export const metadata: Metadata = { title: "Free help · Costa" };
 const CITIES = ["Half Moon Bay", "Pescadero", "Redwood City", "East Palo Alto", "San José", "Gilroy"];
 const TOPICS: HelpTopic[] = ["medi-cal", "calfresh", "wic", "caleitc", "disaster", "other"];
 function languagesLine(p: ProviderCard, lang: LanguageCode) {
-  const a = APP[lang];
+  const a = app(lang);
   if (p.languages === "interpreters") return a.help.interpreters;
   return a.help.speaks(p.languages.map((l) => a.languageNames[l]).join(lang === "zh" ? "、" : ", "));
 }
 
 function Provider({ p, lang }: { p: ProviderCard; lang: LanguageCode }) {
-  const a = APP[lang];
+  const a = app(lang);
   const tel = p.phone?.replace(/[^\d+]/g, "");
   return (
     <li className="flex flex-col gap-3 py-4">
@@ -57,7 +57,7 @@ function Provider({ p, lang }: { p: ProviderCard; lang: LanguageCode }) {
 export default async function HelpPage({ searchParams }: PageProps<"/help">) {
   const params = await searchParams;
   const lang = await resolveUiLanguage(params.lang);
-  const a = APP[lang];
+  const a = app(lang);
   const area = typeof params.area === "string" ? params.area.trim().slice(0, 80) : "";
   const topicParam = typeof params.topic === "string" ? params.topic : "";
   const topic: HelpTopic = (TOPICS as string[]).includes(topicParam) ? (topicParam as HelpTopic) : "other";

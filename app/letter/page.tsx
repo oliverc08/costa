@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { AppShell } from "@/components/app/AppShell";
 import { ShieldIcon } from "@/components/app/Icons";
 import { LetterUpload } from "@/components/LetterUpload";
-import { DISCLAIMER, UI } from "@/lib/i18n";
+import { disclaimer, ui, DISCLAIMER, UI } from "@/lib/i18n";
 import { resolveUiLanguage } from "@/lib/ui-language";
 
 export const metadata: Metadata = { title: "Understand a letter · Costa" };
 
 export default async function LetterPage({ searchParams }: PageProps<"/letter">) {
   const lang = await resolveUiLanguage((await searchParams).lang);
-  const t = UI[lang];
+  const t = ui(lang);
 
   return (
     <AppShell lang={lang}>
@@ -25,7 +25,7 @@ export default async function LetterPage({ searchParams }: PageProps<"/letter">)
 
         <LetterUpload lang={lang} />
 
-        <footer className="text-[13px] leading-relaxed text-stone-500">{DISCLAIMER[lang].letter}</footer>
+        <footer className="text-[13px] leading-relaxed text-stone-500">{disclaimer(lang).letter}</footer>
       </div>
     </AppShell>
   );

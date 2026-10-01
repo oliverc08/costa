@@ -1,4 +1,4 @@
-import { VOICE } from "@/lib/i18n";
+import { voice, VOICE } from "@/lib/i18n";
 import { LANGUAGES, type LanguageCode } from "@/lib/languages";
 
 function esc(s: string): string {
@@ -36,7 +36,7 @@ export function gatherSpeech(lang: LanguageCode, prompt: string): string {
 
 /** Speaks an answer, asks if there's anything else, and hangs up politely on silence. */
 export function answerAndListen(lang: LanguageCode, text: string, endCall = false): string {
-  const v = VOICE[lang];
+  const v = voice(lang);
   if (endCall) return response(say(lang, text), say(lang, v.goodbye), "<Hangup/>");
   return response(say(lang, text), gatherSpeech(lang, v.anythingElse), say(lang, v.goodbye), "<Hangup/>");
 }
@@ -60,6 +60,16 @@ export const GREETING = {
   zh: "中文请按3。",
   tl: "Para sa Tagalog, pindutin ang 4.",
   vi: "Tiếng Việt, xin bấm 5.",
+  ko: "한국어는 6번을 누르세요.",
+  pt: "Para português, pressione 7.",
 } satisfies Record<LanguageCode, string>;
 
-export const DIGIT_LANGUAGES: Record<string, LanguageCode> = { "1": "en", "2": "es", "3": "zh", "4": "tl", "5": "vi" };
+export const DIGIT_LANGUAGES: Record<string, LanguageCode> = {
+  "1": "en",
+  "2": "es",
+  "3": "zh",
+  "4": "tl",
+  "5": "vi",
+  "6": "ko",
+  "7": "pt",
+};

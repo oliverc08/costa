@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { listProviders, type ProviderCard } from "@/lib/local-help";
-import { APP } from "@/lib/i18n-app";
+import { app, APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import type { County } from "@/lib/checkup";
 import { ExternalIcon, MapPinIcon, PhoneIcon } from "./Icons";
 
 function Row({ p, lang }: { p: ProviderCard; lang: LanguageCode }) {
-  const a = APP[lang];
+  const a = app(lang);
   const tel = p.phone?.replace(/[^\d+]/g, "");
   return (
     <li className="flex flex-col gap-2 py-4">
@@ -41,7 +41,7 @@ function Row({ p, lang }: { p: ProviderCard; lang: LanguageCode }) {
 
 /** Local orgs for checkup results — one-tap call / map. */
 export function NearbyHelp({ lang, county }: { lang: LanguageCode; county: County }) {
-  const a = APP[lang];
+  const a = app(lang);
   const resolved = county === "other" ? null : county;
   const { local, statewide } = listProviders(resolved, lang, "any");
   const rows = (resolved ? local : statewide).slice(0, 4);
