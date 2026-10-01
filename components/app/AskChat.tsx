@@ -9,7 +9,7 @@ import { LETTER_UI, UI } from "@/lib/i18n";
 import { APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { redact } from "@/lib/safety/redact";
-import { useReadAloud } from "@/lib/speech";
+import { useReadAloud, isAppleWebKit } from "@/lib/speech";
 import { HoldToSpeak } from "./HoldToSpeak";
 import { PENDING_VOICE_KEY } from "./VoiceHome";
 import {
@@ -128,11 +128,16 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
   const { messages, sendMessage, status, error, setMessages, stop: stopStream } = useChat({ transport });
   const read = useReadAloud(lang);
   const busy = status === "submitted" || status === "streaming";
+  const busyRef = useRef(busy);
+  useEffect(() => {
+    busyRef.current = busy;
+  }, [busy]);
 
   const send = useCallback(
     (text: string) => {
       const trimmed = text.trim();
-      if (!trimmed || busy) return;
+      // Use ref so voice callbacks aren't stuck with a stale busy=true after a failed reply.
+      if (!trimmed || busyRef.current) return;
       const r = redact(trimmed);
       setRedactedNotice(r.redacted);
       read.stop();
@@ -140,7 +145,7 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
       setInput("");
       setShowType(false);
     },
-    [busy, read, sendMessage],
+    [read, sendMessage],
   );
 
   useEffect(() => {
@@ -157,16 +162,19 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
     } catch {
       sessionStorage.removeItem(CHAT_STORAGE_KEY);
     }
-  }, [send, setMessages]);
+    // Restore once on mount — do not re-run when `send` identity changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only chat restore / pending voice
+  }, [setMessages]);
 
   useEffect(() => {
     if (messages.length) sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, status]);
 
-  // Auto-speak finished assistant replies so the journey works without reading.
+  // Auto-speak finished replies — skip on Apple WebKit (TTS breaks the next mic session).
   useEffect(() => {
     if (!read.available || status === "streaming" || status === "submitted") return;
+    if (isAppleWebKit(navigator.userAgent, navigator.maxTouchPoints ?? 0, navigator.platform ?? "")) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return;
     const text = textOf(last);

@@ -2,7 +2,7 @@
 
 @theme inline {
   --font-sans: var(--font-body), "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
-  --font-display: var(--font-serif), "Songti SC", "Noto Serif SC", Georgia, serif;
+  --font-display: var(--font-display-face), "Songti SC", "Noto Serif SC", Georgia, serif;
 }
 
 @theme {

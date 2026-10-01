@@ -6,8 +6,9 @@ import { APPLY, runCheckup, type CheckupAnswers, type CheckupResult, type Income
 import { addSteps, saveCheckup } from "@/lib/device";
 import { APP, type ScreenStatus } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
-import { useReadAloud } from "@/lib/speech";
+import { isAppleWebKit, useReadAloud } from "@/lib/speech";
 import { NearbyHelp } from "./NearbyHelp";
+import { HumanHandoff } from "./HumanHandoff";
 import { ArrowRightIcon, CheckIcon, ExternalIcon, PhoneIcon, RefreshIcon, ShieldIcon, SpeakerIcon, StopIcon } from "./Icons";
 
 type StepId = "intro" | "county" | "size" | "who" | "kids" | "income" | "work" | "benefits" | "results";
@@ -351,12 +352,13 @@ function ResultsScreen({
 
   useEffect(() => {
     if (!read.available) return;
+    if (isAppleWebKit(navigator.userAgent, navigator.maxTouchPoints ?? 0, navigator.platform ?? "")) return;
     const t = window.setTimeout(() => read.speak("results-summary", speakText), 400);
     return () => {
       window.clearTimeout(t);
       read.stop();
     };
-    // Speak once when results appear.
+    // Speak once when results appear (skipped on Apple — TTS breaks mic).
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional mount-only speak
   }, []);
 
@@ -407,6 +409,12 @@ function ResultsScreen({
       )}
 
       <NearbyHelp lang={lang} county={answers.county} />
+
+      <HumanHandoff
+        lang={lang}
+        program={worth[0]?.program ?? "other"}
+        documents={worth.flatMap((p) => [c.needs[p.program]]).slice(0, 4)}
+      />
 
       <Link
         href={`/help?topic=${worth[0]?.program ?? "other"}#person`}

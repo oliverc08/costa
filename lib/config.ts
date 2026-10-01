@@ -16,6 +16,14 @@ export function hasAiGateway(): boolean {
   return Boolean(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || process.env.VERCEL === "1");
 }
 
+/** AI Gateway free tier is locked until the team adds a payment method. */
+export function isGatewayBillingError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  const cause =
+    error && typeof error === "object" && "cause" in error && error.cause instanceof Error ? error.cause.message : "";
+  return /credit card|customer_verification/i.test(`${message}\n${cause}`);
+}
+
 export function hasDatabase(): boolean {
   return Boolean(process.env.DATABASE_URL);
 }

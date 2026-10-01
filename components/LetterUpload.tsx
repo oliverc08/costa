@@ -6,8 +6,11 @@ import { LETTER_UI, UI } from "@/lib/i18n";
 import { APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import type { LetterResult } from "@/lib/letters";
-import { CalendarIcon, CameraIcon, CheckIcon, PlusIcon } from "./app/Icons";
+import { CalendarIcon, CameraIcon, CheckIcon, ExternalIcon, PhoneIcon, PlusIcon, SpeakerIcon, StopIcon } from "./app/Icons";
+import { HumanHandoff } from "./app/HumanHandoff";
 import { PersonRequest } from "./app/PersonRequest";
+import { APPLY } from "@/lib/checkup";
+import { useReadAloud } from "@/lib/speech";
 
 type Phase =
   | { kind: "idle" }
@@ -18,9 +21,14 @@ type Phase =
 
 const MAX_EDGE = 2000;
 
+type Prepared = { blob: Blob; filename: string };
+
 /** Shrinks large phone photos and converts them to JPEG (also handles HEIC where the browser can decode it). */
-async function prepareImage(file: File): Promise<Blob> {
-  if (file.type === "application/pdf") return file;
+async function prepareImage(file: File): Promise<Prepared | null> {
+  const name = file.name.toLowerCase();
+  if (file.type === "application/pdf" || name.endsWith(".pdf")) {
+    return { blob: file, filename: "letter.pdf" };
+  }
   try {
     const bitmap = await createImageBitmap(file);
     const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
@@ -29,11 +37,15 @@ async function prepareImage(file: File): Promise<Blob> {
     canvas.height = Math.round(bitmap.height * scale);
     canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     bitmap.close();
-    return await new Promise<Blob>((resolve, reject) =>
-      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("encode failed"))), "image/jpeg", 0.85),
-    );
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+    if (!blob) return null;
+    return { blob, filename: "letter.jpg" };
   } catch {
-    return file;
+    // Already a gateway-friendly type (no HEIC convert needed).
+    if (/^image\/(jpeg|png|webp|gif)$/i.test(file.type)) {
+      return { blob: file, filename: name.endsWith(".png") ? "letter.png" : "letter.jpg" };
+    }
+    return null;
   }
 }
 
@@ -42,32 +54,71 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
   const l = LETTER_UI[lang];
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   const inputRef = useRef<HTMLInputElement>(null);
+  const analyzing = useRef(false);
 
   const preview = "preview" in phase ? phase.preview : null;
   useEffect(() => () => void (preview && URL.revokeObjectURL(preview)), [preview]);
 
-  function choose(file: File | undefined) {
-    if (!file) return;
-    const isImage = file.type.startsWith("image/");
-    setPhase({ kind: "ready", file, preview: isImage ? URL.createObjectURL(file) : null });
-  }
-
-  async function analyze() {
-    if (phase.kind !== "ready") return;
-    const { file, preview } = phase;
-    setPhase({ kind: "analyzing", preview });
+  async function runAnalyze(file: File, previewUrl: string | null) {
+    if (analyzing.current) return;
+    analyzing.current = true;
+    setPhase({ kind: "analyzing", preview: previewUrl });
     try {
-      const blob = await prepareImage(file);
+      const prepared = await prepareImage(file);
+      if (!prepared) {
+        setPhase({ kind: "error", message: l.unreadable });
+        return;
+      }
       const body = new FormData();
-      body.append("file", blob, file.type === "application/pdf" ? "letter.pdf" : "letter.jpg");
+      body.append("file", prepared.blob, prepared.filename);
       body.append("language", lang);
       const res = await fetch("/api/letter", { method: "POST", body });
+      if (res.ok) {
+        setPhase({ kind: "done", result: (await res.json()) as LetterResult, preview: previewUrl });
+        return;
+      }
+      // Gateway billing / missing key → on-device OCR + heuristic explain (images only).
+      if (res.status === 503 && prepared.filename !== "letter.pdf") {
+        try {
+          const { ocrLetterImage } = await import("@/lib/letter-ocr");
+          const text = await ocrLetterImage(prepared.blob, lang);
+          if (!text || text.length < 20) {
+            setPhase({ kind: "error", message: l.unreadable });
+            return;
+          }
+          const local = await fetch("/api/letter-text", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ text, language: lang }),
+          });
+          if (!local.ok) {
+            setPhase({ kind: "error", message: l.error });
+            return;
+          }
+          setPhase({ kind: "done", result: (await local.json()) as LetterResult, preview: previewUrl });
+          return;
+        } catch (error) {
+          console.error("[letter] offline OCR failed", error);
+          setPhase({ kind: "error", message: l.error });
+          return;
+        }
+      }
       if (res.status === 503) return setPhase({ kind: "error", message: t.notConfigured });
-      if (!res.ok) return setPhase({ kind: "error", message: res.status === 415 ? l.unreadable : l.error });
-      setPhase({ kind: "done", result: (await res.json()) as LetterResult, preview });
+      setPhase({ kind: "error", message: res.status === 415 ? l.unreadable : l.error });
     } catch {
       setPhase({ kind: "error", message: l.error });
+    } finally {
+      analyzing.current = false;
     }
+  }
+
+  function choose(file: File | undefined) {
+    if (!file) return;
+    const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(file.name);
+    const previewUrl = isImage ? URL.createObjectURL(file) : null;
+    setPhase({ kind: "ready", file, preview: previewUrl });
+    // Mobile: don't make people find a second button — start reading right away.
+    void runAnalyze(file, previewUrl);
   }
 
   function reset() {
@@ -84,11 +135,12 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
               <CameraIcon size={34} />
             </span>
             <span className="text-lg font-semibold text-pine-900">{t.letterChoose}</span>
-            <span className="text-sm text-stone-500">JPG · PNG · PDF</span>
+            <span className="text-sm text-stone-500">JPG · PNG · HEIC · PDF</span>
             <input
               ref={inputRef}
               type="file"
-              accept="image/*,application/pdf"
+              accept="image/*,image/heic,image/heif,application/pdf"
+              capture="environment"
               className="sr-only"
               onChange={(e) => choose(e.currentTarget.files?.[0])}
             />
@@ -109,22 +161,15 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
           ) : (
             <p className="rounded-md border border-stone-300 bg-white px-4 py-6 text-center text-stone-600">PDF</p>
           )}
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={analyze}
-              disabled={phase.kind === "analyzing"}
-              className="rounded-md bg-pine-800 px-6 py-3 text-lg font-semibold text-white hover:bg-pine-900 disabled:opacity-60"
-            >
-              {phase.kind === "analyzing" ? t.letterAnalyzing : t.letterAnalyze}
-            </button>
-            {phase.kind === "ready" && (
-              <button type="button" onClick={reset} className="rounded-md px-5 py-3 text-stone-600 hover:text-stone-900">
-                {l.back}
-              </button>
-            )}
+          <p className="text-center text-[16px] font-medium text-pine-900">{t.letterAnalyzing}</p>
+          <div className="h-1.5 overflow-hidden rounded-full bg-stone-200">
+            <div className="h-full w-1/3 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-pine-600" />
           </div>
-          {phase.kind === "analyzing" && <div className="h-1.5 overflow-hidden rounded-full bg-stone-200"><div className="h-full w-1/3 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-pine-600" /></div>}
+          {phase.kind === "ready" && (
+            <button type="button" onClick={reset} className="self-center rounded-md px-5 py-3 text-stone-600 hover:text-stone-900">
+              {l.back}
+            </button>
+          )}
         </div>
       )}
 
@@ -152,6 +197,10 @@ function DeadlineBadge({ days, label, lang }: { days: number | null; label: stri
 function LetterResultView({ result, lang, onReset }: { result: LetterResult; lang: LanguageCode; onReset: () => void }) {
   const t = UI[lang];
   const l = LETTER_UI[lang];
+  const a = APP[lang];
+  const letter = a.letter;
+  const read = useReadAloud(lang);
+  const [checked, setChecked] = useState<Record<number, boolean>>({});
 
   if (!result.ok) {
     return (
@@ -167,10 +216,47 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
   }
 
   const { explanation: e, extraction: x } = result;
+  const noticeKey = x.noticeType in letter.noticeTypes ? x.noticeType : "other";
+  const speakText = [e.whatThisMeans, e.deadline, e.whatToDo.join(". "), e.needHelp].filter(Boolean).join(". ");
+  const speaking = read.speakingId === "letter-explain";
+  const programKey = x.program === "medi-cal" || x.program === "calfresh" || x.program === "wic" || x.program === "caleitc" ? x.program : null;
+  const apply = programKey ? APPLY[programKey] : null;
+
+  useEffect(() => {
+    if (!read.available) return;
+    // Letter page: auto-speak is the demo win (Spanish parent hears the explanation).
+    const timer = window.setTimeout(() => read.speak("letter-explain", speakText), 500);
+    return () => {
+      window.clearTimeout(timer);
+      read.stop();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- speak once when this result mounts
+  }, []);
+
   return (
     <div className="flex flex-col gap-4" aria-live="polite">
+      <p className="rounded-md bg-pine-800 px-4 py-3 text-[15px] font-medium leading-snug text-white">
+        <span className="block text-[12px] font-semibold uppercase tracking-wider text-pine-200">{letter.noticeLabel}</span>
+        <span className="mt-1 block text-[17px] font-semibold">{letter.noticeTypes[noticeKey]}</span>
+        {x.formNumber && <span className="mt-1 block text-[13px] text-pine-100">{x.formNumber}{x.agency ? ` · ${x.agency}` : ""}</span>}
+      </p>
+
       <section className="rounded-md border border-stone-300 bg-white p-5 sm:p-6">
-        <h2 className="font-sans text-[13px] font-semibold uppercase tracking-wider text-poppy-700">{t.whatThisMeans}</h2>
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="font-sans text-[13px] font-semibold uppercase tracking-wider text-poppy-700">{t.whatThisMeans}</h2>
+          {read.available && (
+            <button
+              type="button"
+              onClick={() => (speaking ? read.stop() : read.speak("letter-explain", speakText))}
+              className={`flex min-h-11 shrink-0 items-center gap-1.5 rounded-md border px-3 text-[14px] font-semibold ${
+                speaking ? "border-pine-800 bg-pine-800 text-white" : "border-stone-400 text-pine-950 active:bg-stone-100"
+              }`}
+            >
+              {speaking ? <StopIcon size={16} /> : <SpeakerIcon size={18} />}
+              {speaking ? a.common.stop : a.common.listen}
+            </button>
+          )}
+        </div>
         <p className="mt-2 text-lg leading-relaxed text-stone-900">{e.whatThisMeans}</p>
       </section>
 
@@ -181,18 +267,61 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
         </div>
       )}
 
+      <section className="rounded-md border-2 border-pine-800 bg-white p-5 sm:p-6">
+        <h2 className="font-sans text-[13px] font-semibold uppercase tracking-wider text-pine-800">{letter.requiredAction}</h2>
+        <p className="mt-2 text-[18px] font-semibold leading-snug text-pine-950">{x.requestedAction}</p>
+        {(apply || x.contactPhone) && (
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {apply && (
+              <a
+                href={apply.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-h-12 items-center justify-center gap-1.5 rounded-md bg-pine-800 px-3 text-[15px] font-semibold text-white active:bg-pine-900"
+              >
+                {letter.applyOnline} <ExternalIcon size={16} />
+              </a>
+            )}
+            {x.contactPhone && (
+              <a
+                href={`tel:${x.contactPhone.replace(/[^\d+]/g, "")}`}
+                className="flex min-h-12 items-center justify-center gap-1.5 rounded-md border-2 border-pine-800/40 px-3 text-[15px] font-semibold text-pine-950"
+              >
+                <PhoneIcon size={18} /> {letter.callAgency}
+              </a>
+            )}
+          </div>
+        )}
+      </section>
+
       <section className="rounded-md border border-stone-300 bg-white p-5 sm:p-6">
-        <h2 className="font-sans text-[13px] font-semibold uppercase tracking-wider text-poppy-700">{t.whatToDo}</h2>
-        <ol className="mt-3 flex flex-col gap-3">
-          {e.whatToDo.map((step, i) => (
-            <li key={i} className="flex gap-3 text-stone-900">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-pine-800 text-sm font-bold text-white">
-                {i + 1}
-              </span>
-              <span className="pt-0.5 leading-relaxed">{step}</span>
-            </li>
-          ))}
-        </ol>
+        <h2 className="font-sans text-[13px] font-semibold uppercase tracking-wider text-poppy-700">{letter.checklist}</h2>
+        <ul className="mt-3 flex flex-col gap-2">
+          {e.whatToDo.map((step, i) => {
+            const on = !!checked[i];
+            return (
+              <li key={i}>
+                <button
+                  type="button"
+                  onClick={() => setChecked((prev) => ({ ...prev, [i]: !prev[i] }))}
+                  aria-pressed={on}
+                  className={`flex w-full items-start gap-3 rounded-md border px-3 py-3 text-left ${
+                    on ? "border-pine-700 bg-pine-50" : "border-stone-300 bg-white active:bg-stone-50"
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-sm border-2 ${
+                      on ? "border-pine-800 bg-pine-800 text-white" : "border-stone-400"
+                    }`}
+                  >
+                    {on ? <CheckIcon size={16} strokeWidth={3} /> : <span className="text-sm font-bold text-stone-500">{i + 1}</span>}
+                  </span>
+                  <span className={`pt-0.5 leading-relaxed ${on ? "text-stone-500 line-through" : "text-stone-900"}`}>{step}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
         <p className="mt-4 text-stone-700">{e.needHelp}</p>
       </section>
 
@@ -205,32 +334,73 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
       <details className="rounded-md border border-stone-300 bg-stone-50 px-4 py-3 text-sm text-stone-700">
         <summary className="cursor-pointer font-medium">{l.fromLetter}</summary>
         <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
-          {x.agency && (<><dt className="text-stone-500">Agency</dt><dd>{x.agency}</dd></>)}
-          {x.formNumber && (<><dt className="text-stone-500">Form</dt><dd>{x.formNumber}</dd></>)}
-          {x.deadline && (<><dt className="text-stone-500">Date</dt><dd>{x.deadline}{x.deadlineMeaning ? ` (${x.deadlineMeaning})` : ""}</dd></>)}
-          {x.documentsRequested.length > 0 && (<><dt className="text-stone-500">Documents</dt><dd>{x.documentsRequested.join("; ")}</dd></>)}
-          {x.contactPhone && (<><dt className="text-stone-500">Phone</dt><dd><a className="text-pine-800 underline" href={`tel:${x.contactPhone.replace(/[^\d+]/g, "")}`}>{x.contactPhone}</a></dd></>)}
+          {x.agency && (
+            <>
+              <dt className="text-stone-500">Agency</dt>
+              <dd>{x.agency}</dd>
+            </>
+          )}
+          {x.formNumber && (
+            <>
+              <dt className="text-stone-500">Form</dt>
+              <dd>{x.formNumber}</dd>
+            </>
+          )}
+          {x.deadline && (
+            <>
+              <dt className="text-stone-500">Date</dt>
+              <dd>
+                {x.deadline}
+                {x.deadlineMeaning ? ` (${x.deadlineMeaning})` : ""}
+              </dd>
+            </>
+          )}
+          {x.documentsRequested.length > 0 && (
+            <>
+              <dt className="text-stone-500">Documents</dt>
+              <dd>{x.documentsRequested.join("; ")}</dd>
+            </>
+          )}
+          {x.contactPhone && (
+            <>
+              <dt className="text-stone-500">Phone</dt>
+              <dd>
+                <a className="text-pine-800 underline" href={`tel:${x.contactPhone.replace(/[^\d+]/g, "")}`}>
+                  {x.contactPhone}
+                </a>
+              </dd>
+            </>
+          )}
         </dl>
       </details>
 
-      {result.sources.length > 0 && (
-        <div className="flex flex-wrap gap-2" aria-label={t.sources}>
-          {result.sources.slice(0, 3).map((s) => (
-            <a
-              key={s.sourceId}
-              href={s.url}
-              target="_blank"
-              rel="noreferrer"
-              title={`Last verified ${s.lastVerified}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-pine-200 bg-pine-50 px-3 py-1 text-xs text-pine-900 hover:bg-pine-100"
-            >
-              <span aria-hidden>✓</span>
-              <span className="font-medium">{s.agency}</span>
-              <span className="text-pine-700">· {s.title}</span>
-            </a>
-          ))}
-        </div>
-      )}
+      <section className="flex flex-col gap-2">
+        <h2 className="text-[13px] font-semibold uppercase tracking-wider text-pine-800">{letter.trustedTitle}</h2>
+        {result.sources.length > 0 ? (
+          <ul className="flex flex-col gap-2">
+            {result.sources.slice(0, 3).map((s) => (
+              <li key={s.sourceId}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-col gap-0.5 rounded-md border border-pine-200 bg-pine-50 px-4 py-3 active:bg-pine-100"
+                >
+                  <span className="text-[15px] font-semibold text-pine-950">
+                    {s.agency} · {s.title}
+                  </span>
+                  <span className="text-[13px] text-pine-800">{letter.sourceLine(s.agency, s.lastVerified)}</span>
+                  <span className="text-[12px] text-stone-500">{letter.whyThisSource}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="rounded-md bg-stone-100 px-3 py-2 text-[13px] text-stone-600">{letter.whyThisSource}</p>
+        )}
+      </section>
+
+      <HumanHandoff lang={lang} program={x.program} documents={x.documentsRequested} letterPhone={x.contactPhone} />
 
       <section className="flex flex-col gap-3">
         <div>
@@ -262,7 +432,11 @@ function SaveDeadline({ result, lang }: { result: Extract<LetterResult, { ok: tr
   const x = result.extraction;
   if (!x.deadline || !/^\d{4}-\d{2}-\d{2}$/.test(x.deadline) || (result.daysUntilDeadline ?? -1) < 0) return null;
   const program = x.program in a.check.programs ? a.check.programs[x.program as keyof typeof a.check.programs].name : null;
-  const reminder = { id: `letter-${x.deadline}`, title: [a.letter.reminderTitle, program, x.formNumber].filter(Boolean).join(" · "), date: x.deadline };
+  const reminder = {
+    id: `letter-${x.deadline}`,
+    title: [a.letter.reminderTitle, program, x.formNumber].filter(Boolean).join(" · "),
+    date: x.deadline,
+  };
   return (
     <div className="grid grid-cols-2 gap-2">
       <button

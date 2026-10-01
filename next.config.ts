@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/": ["./public/eval-results.json"],
   },
+  // Transformers.js / ONNX are browser-only; keep them out of the Node server bundle.
+  serverExternalPackages: ["@huggingface/transformers", "onnxruntime-node"],
 };
 
 export default nextConfig;

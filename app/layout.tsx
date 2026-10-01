@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Public_Sans, Source_Serif_4 } from "next/font/google";
+import { Fraunces, Nunito_Sans } from "next/font/google";
 import { cookies } from "next/headers";
 import { isLanguageCode } from "@/lib/languages";
 import { UI_LANG_COOKIE } from "@/lib/ui-language";
 import "./globals.css";
 
-const body = Public_Sans({
+const body = Nunito_Sans({
   variable: "--font-body",
   subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const serif = Source_Serif_4({
-  variable: "--font-serif",
+const display = Fraunces({
+  variable: "--font-display-face",
   subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["600", "700"],
 });
@@ -36,7 +36,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const saved = (await cookies()).get(UI_LANG_COOKIE)?.value;
   return (
-    <html lang={isLanguageCode(saved) ? saved : "en"} className={`${body.variable} ${serif.variable} h-full antialiased`}>
+    <html lang={isLanguageCode(saved) ? saved : "en"} className={`${body.variable} ${display.variable} h-full antialiased`}>
       <body className="min-h-full bg-paper text-stone-900">{children}</body>
     </html>
   );

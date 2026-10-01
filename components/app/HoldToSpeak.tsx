@@ -1,13 +1,18 @@
 "use client";
 
-import type { PointerEvent } from "react";
-import { useRef } from "react";
+import type { MouseEvent } from "react";
+import { useVoiceInput } from "@/lib/speech";
 import { APP } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
-import { useVoiceInput } from "@/lib/speech";
 import { MicIcon, StopIcon } from "./Icons";
 
-/** Large hold-to-speak control. Pointer down starts; release stops. */
+const noSelect =
+  "select-none [-webkit-touch-callout:none] [-webkit-user-select:none] [user-select:none] touch-manipulation";
+
+/**
+ * Tap-to-talk mic. Hold-to-speak was unreliable on phones (selection highlight,
+ * pointer leave, race with async permission / SpeechRecognition start).
+ */
 export function HoldToSpeak({
   lang,
   onText,
@@ -19,40 +24,44 @@ export function HoldToSpeak({
 }) {
   const a = APP[lang];
   const voice = useVoiceInput(lang, onText);
-  const holding = useRef(false);
 
   if (!voice.supported) return null;
 
-  const recording = voice.state === "recording" || voice.state === "transcribing";
+  const recording = voice.state === "recording" || voice.state === "transcribing" || voice.state === "loading-model";
   const note =
-    voice.state === "error" ? a.ask.micError : voice.state === "blocked" ? a.ask.micBlocked : voice.state === "unavailable" ? a.ask.micError : null;
+    voice.state === "error"
+      ? a.ask.micError
+      : voice.state === "blocked"
+        ? a.ask.micBlocked
+        : voice.state === "unavailable"
+          ? a.ask.micError
+          : null;
 
-  function down(e: PointerEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    holding.current = true;
-    e.currentTarget.setPointerCapture(e.pointerId);
+  function toggle() {
+    if (voice.state === "transcribing" || voice.state === "loading-model") return;
+    if (recording) {
+      voice.stop();
+      return;
+    }
     voice.reset();
     void voice.start();
   }
 
-  function up() {
-    if (!holding.current) return;
-    holding.current = false;
-    voice.stop();
+  function onContextMenu(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
   }
 
   if (size === "bar") {
     return (
-      <div className="flex flex-col gap-1">
+      <div className={`flex flex-col gap-1 ${noSelect}`}>
         <button
           type="button"
-          onPointerDown={down}
-          onPointerUp={up}
-          onPointerCancel={up}
-          onPointerLeave={() => holding.current && up()}
-          disabled={voice.state === "transcribing"}
+          onClick={toggle}
+          onContextMenu={onContextMenu}
+          disabled={voice.state === "transcribing" || voice.state === "loading-model"}
+          aria-pressed={recording}
           aria-label={recording ? a.ask.micStop : a.ask.micStart}
-          className={`grid h-14 w-14 shrink-0 place-items-center rounded-md text-white ${
+          className={`grid h-14 w-14 shrink-0 place-items-center rounded-md text-white ${noSelect} ${
             recording ? "bg-red-600" : "bg-pine-800 active:bg-pine-900"
           } disabled:opacity-40`}
           style={voice.state === "recording" ? { animation: "pulse-ring 1.2s ease-out infinite" } : undefined}
@@ -65,16 +74,15 @@ export function HoldToSpeak({
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className={`flex flex-col items-center gap-3 ${noSelect}`}>
       <button
         type="button"
-        onPointerDown={down}
-        onPointerUp={up}
-        onPointerCancel={up}
-        onPointerLeave={() => holding.current && up()}
-        disabled={voice.state === "transcribing"}
+        onClick={toggle}
+        onContextMenu={onContextMenu}
+        disabled={voice.state === "transcribing" || voice.state === "loading-model"}
+        aria-pressed={recording}
         aria-label={recording ? a.ask.micStop : a.ask.micStart}
-        className={`grid h-36 w-36 place-items-center rounded-full text-white shadow-none transition-transform active:scale-[0.98] ${
+        className={`grid h-36 w-36 place-items-center rounded-full text-white shadow-none transition-transform active:scale-[0.98] ${noSelect} ${
           recording ? "bg-red-600" : "bg-pine-800"
         } disabled:opacity-50`}
         style={voice.state === "recording" ? { animation: "pulse-ring 1.2s ease-out infinite" } : undefined}
@@ -82,9 +90,22 @@ export function HoldToSpeak({
         {recording ? <StopIcon size={40} /> : <MicIcon size={48} />}
       </button>
       <p className="text-center text-[17px] font-semibold text-pine-950">
-        {voice.state === "transcribing" ? a.ask.transcribing : recording ? a.ask.micStop : a.home.holdToSpeak}
+        {voice.state === "loading-model"
+          ? a.ask.loadingModel
+          : voice.state === "transcribing"
+            ? a.ask.transcribing
+            : recording
+              ? a.ask.micStop
+              : a.home.holdToSpeak}
       </p>
-      {note && <p role="alert" className="max-w-xs text-center text-[14px] text-amber-900">{note}</p>}
+      {voice.partial ? (
+        <p className="max-w-sm text-center text-[15px] leading-snug text-stone-600">{voice.partial}</p>
+      ) : null}
+      {note && (
+        <p role="alert" className="max-w-xs text-center text-[14px] text-amber-900">
+          {note}
+        </p>
+      )}
     </div>
   );
 }

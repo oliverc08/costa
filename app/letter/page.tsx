@@ -5,7 +5,7 @@ import { LetterUpload } from "@/components/LetterUpload";
 import { DISCLAIMER, UI } from "@/lib/i18n";
 import { resolveUiLanguage } from "@/lib/ui-language";
 
-export const metadata: Metadata = { title: "Explain a letter · Costa" };
+export const metadata: Metadata = { title: "Understand a letter · Costa" };
 
 export default async function LetterPage({ searchParams }: PageProps<"/letter">) {
   const lang = await resolveUiLanguage((await searchParams).lang);

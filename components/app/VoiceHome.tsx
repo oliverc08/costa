@@ -7,6 +7,7 @@ import type { LanguageCode } from "@/lib/languages";
 import {
   ArrowRightIcon,
   BasketIcon,
+  CameraIcon,
   FlameIcon,
   HeartIcon,
   HomeIcon,
@@ -39,7 +40,7 @@ export function VoiceHome({ lang }: { lang: LanguageCode }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <section className="flex flex-col items-center gap-5 pt-2">
+      <section className="flex flex-col items-center gap-5 pt-2 select-none [-webkit-touch-callout:none]">
         <h1 className="text-center text-[28px] leading-tight text-pine-950">{a.home.voicePrompt}</h1>
         <HoldToSpeak lang={lang} onText={onSpeech} />
         <Link href="/ask" className="text-[16px] font-medium text-pine-800 underline decoration-pine-300 underline-offset-4">
@@ -51,12 +52,12 @@ export function VoiceHome({ lang }: { lang: LanguageCode }) {
         <h2 id="topics-title" className="text-[21px] text-pine-950">
           {a.home.topicsTitle}
         </h2>
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className="grid grid-cols-2 gap-3.5">
           {BIG.map(({ key, href, Icon }) => (
             <li key={key}>
               <Link
                 href={href}
-                className="flex min-h-[6.5rem] flex-col items-start justify-between gap-3 rounded-md border border-stone-400 bg-white p-4 active:bg-stone-100"
+                className="flex min-h-[6.75rem] flex-col items-start justify-between gap-3 rounded-md border border-stone-400 bg-white p-4 active:bg-stone-100"
               >
                 <Icon size={28} strokeWidth={1.8} className="text-pine-800" />
                 <span className="text-[18px] font-semibold leading-snug text-pine-950">{a.home.bigTopics[key]}</span>
@@ -67,6 +68,17 @@ export function VoiceHome({ lang }: { lang: LanguageCode }) {
       </section>
 
       <section className="flex flex-col gap-3 border-l-4 border-poppy-500 bg-white py-5 pl-4 pr-5">
+        <h2 className="text-[21px] leading-snug text-pine-950">{a.home.topics.letter.title}</h2>
+        <p className="text-[15px] leading-relaxed text-stone-600">{a.home.topics.letter.sub}</p>
+        <Link
+          href="/letter"
+          className="flex min-h-13 items-center justify-center gap-2 self-start rounded-md bg-poppy-600 px-5 py-3 text-[17px] font-semibold text-white active:bg-poppy-700"
+        >
+          {a.topics.doLetter} <CameraIcon size={20} />
+        </Link>
+      </section>
+
+      <section className="flex flex-col gap-3 border-l-4 border-pine-700 bg-white py-5 pl-4 pr-5">
         <h2 className="text-[21px] leading-snug text-pine-950">{a.home.checkTitle}</h2>
         <p className="text-[15px] leading-relaxed text-stone-600">{a.home.checkBody}</p>
         <Link

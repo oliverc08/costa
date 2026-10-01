@@ -23,7 +23,7 @@ describe("SMS webhook", () => {
   it("explains when the AI is not configured", async () => {
     const xml = await (await POST(sms({ From: "+16505550100", Body: "hola", NumMedia: "0" }))).text();
     expect(xml).toContain("<Message>");
-    expect(xml).toMatch(/not configured/);
+    expect(xml).toMatch(/isn't set up|not configured/i);
   });
 
   it("rejects requests without a sender", async () => {

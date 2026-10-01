@@ -152,6 +152,7 @@ export interface AppStrings {
     micStart: string;
     micStop: string;
     transcribing: string;
+    loadingModel: string;
     micError: string;
     micBlocked: string;
     newChat: string;
@@ -180,7 +181,42 @@ export interface AppStrings {
     includeCheckup: string;
     partners: string;
   };
-  letter: { saveDeadline: string; deadlineSaved: string; reminderTitle: string };
+  letter: {
+    saveDeadline: string;
+    deadlineSaved: string;
+    reminderTitle: string;
+    noticeLabel: string;
+    noticeTypes: Record<
+      | "renewal"
+      | "request-for-information"
+      | "approval"
+      | "denial"
+      | "discontinuance"
+      | "change-in-benefits"
+      | "appointment"
+      | "overpayment"
+      | "other",
+      string
+    >;
+    requiredAction: string;
+    checklist: string;
+    trustedTitle: string;
+    sourceLine: (agency: string, date: string) => string;
+    whyThisSource: string;
+    applyOnline: string;
+    callAgency: string;
+  };
+  handoff: {
+    title: string;
+    body: string;
+    call211: string;
+    call211Body: string;
+    callLetter: string;
+    findEnrollment: string;
+    whatToBring: string;
+    whatToBringTitle: string;
+    whatToBringNote: string;
+  };
   languageNames: Record<LanguageCode, string>;
 }
 
@@ -222,7 +258,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       greeting: "Help with Medi-Cal, food, and money",
       intro: "Free, in your language. Every answer comes from an official government source.",
       voicePrompt: "What can I help you with?",
-      holdToSpeak: "Hold to speak",
+      holdToSpeak: "Tap to speak",
       orType: "or type a question",
       askCta: "Ask a question…",
       talkCta: "Talk",
@@ -239,7 +275,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
         health: { title: "Health care", sub: "Medi-Cal" },
         food: { title: "Food", sub: "CalFresh, WIC" },
         money: { title: "Money back", sub: "Tax credits" },
-        letter: { title: "A letter", sub: "Take a photo" },
+        letter: { title: "Confusing letter?", sub: "Photo → plain explanation" },
         disaster: { title: "Fire, flood, outage", sub: "Disaster help" },
         person: { title: "A real person", sub: "Free local help" },
       },
@@ -378,10 +414,11 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Ask Costa",
       emptyTitle: "Ask anything about benefits",
-      emptyBody: "Hold the microphone and talk, or pick a topic below.",
-      micStart: "Hold to speak",
-      micStop: "Listening… release to stop",
+      emptyBody: "Tap the microphone and talk, or pick a topic below.",
+      micStart: "Tap to speak",
+      micStop: "Listening… tap to stop",
       transcribing: "Writing down your words…",
+      loadingModel: "First time: loading speech model…",
       micError: "Costa couldn't hear that. Try again, or type your question.",
       micBlocked: "Allow the microphone in your browser settings to talk to Costa.",
       newChat: "New chat",
@@ -410,7 +447,41 @@ export const APP: Record<LanguageCode, AppStrings> = {
       includeCheckup: "Share my checkup results (no names or numbers)",
       partners: "For partner organizations",
     },
-    letter: { saveDeadline: "Save to my deadlines", deadlineSaved: "Saved to your deadlines", reminderTitle: "Letter deadline" },
+    letter: {
+      saveDeadline: "Save to my deadlines",
+      deadlineSaved: "Saved to your deadlines",
+      reminderTitle: "Letter deadline",
+      noticeLabel: "This notice is",
+      noticeTypes: {
+        renewal: "a renewal — your benefits need updating",
+        "request-for-information": "a request for more information",
+        approval: "an approval",
+        denial: "a denial",
+        discontinuance: "a notice that benefits may stop",
+        "change-in-benefits": "a change in your benefits",
+        appointment: "an appointment notice",
+        overpayment: "an overpayment notice",
+        other: "a benefits letter",
+      },
+      requiredAction: "What you must do",
+      checklist: "Your checklist",
+      trustedTitle: "Trusted government sources",
+      sourceLine: (agency, date) => `${agency} · checked ${date}`,
+      whyThisSource: "Costa used this page because it matches your letter’s program and notice type.",
+      applyOnline: "Apply or renew online",
+      callAgency: "Call the agency",
+    },
+    handoff: {
+      title: "Need help from a person?",
+      body: "Costa explains letters and benefits. A real helper can sit with you and finish the paperwork.",
+      call211: "Call 211",
+      call211Body: "Free local help with food, health care, and housing.",
+      callLetter: "Call the number on your letter",
+      findEnrollment: "Find enrollment help near me",
+      whatToBring: "Show me what to bring",
+      whatToBringTitle: "What to bring",
+      whatToBringNote: "Offices may ask for more. Call ahead if you are missing something.",
+    },
     languageNames: { en: "English", es: "Spanish", zh: "Chinese", tl: "Tagalog", vi: "Vietnamese" },
   },
 
@@ -451,7 +522,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       greeting: "Ayuda con Medi-Cal, comida y dinero",
       intro: "Gratis y en su idioma. Cada respuesta viene de una fuente oficial del gobierno.",
       voicePrompt: "¿En qué le puedo ayudar?",
-      holdToSpeak: "Mantenga para hablar",
+      holdToSpeak: "Toque para hablar",
       orType: "o escriba una pregunta",
       askCta: "Haga una pregunta…",
       talkCta: "Hablar",
@@ -603,10 +674,11 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Pregúntele a Costa",
       emptyTitle: "Pregunte lo que quiera sobre beneficios",
-      emptyBody: "Mantenga el micrófono y hable, o elija un tema abajo.",
-      micStart: "Mantenga para hablar",
-      micStop: "Escuchando… suelte para parar",
+      emptyBody: "Toque el micrófono y hable, o elija un tema abajo.",
+      micStart: "Toque para hablar",
+      micStop: "Escuchando… toque para parar",
       transcribing: "Escribiendo sus palabras…",
+      loadingModel: "Primera vez: cargando el modelo de voz…",
       micError: "Costa no le escuchó bien. Intente otra vez o escriba su pregunta.",
       micBlocked: "Permita el micrófono en la configuración del navegador para hablar con Costa.",
       newChat: "Nuevo chat",
@@ -635,7 +707,41 @@ export const APP: Record<LanguageCode, AppStrings> = {
       includeCheckup: "Compartir mis resultados de la revisión (sin nombres ni números)",
       partners: "Para organizaciones aliadas",
     },
-    letter: { saveDeadline: "Guardar en mis fechas límite", deadlineSaved: "Guardado en sus fechas límite", reminderTitle: "Fecha límite de la carta" },
+    letter: {
+      saveDeadline: "Guardar en mis fechas límite",
+      deadlineSaved: "Guardado en sus fechas límite",
+      reminderTitle: "Fecha límite de la carta",
+      noticeLabel: "Este aviso es",
+      noticeTypes: {
+        renewal: "una renovación — hay que actualizar sus beneficios",
+        "request-for-information": "una solicitud de más información",
+        approval: "una aprobación",
+        denial: "una denegación",
+        discontinuance: "un aviso de que los beneficios pueden terminar",
+        "change-in-benefits": "un cambio en sus beneficios",
+        appointment: "un aviso de cita",
+        overpayment: "un aviso de pago de más",
+        other: "una carta de beneficios",
+      },
+      requiredAction: "Lo que tiene que hacer",
+      checklist: "Su lista de pasos",
+      trustedTitle: "Fuentes oficiales de confianza",
+      sourceLine: (agency, date) => `${agency} · verificado ${date}`,
+      whyThisSource: "Costa usó esta página porque coincide con el programa y el tipo de aviso de su carta.",
+      applyOnline: "Solicitar o renovar en línea",
+      callAgency: "Llamar a la agencia",
+    },
+    handoff: {
+      title: "¿Necesita ayuda de una persona?",
+      body: "Costa explica cartas y beneficios. Una persona real puede ayudarle a terminar el papeleo.",
+      call211: "Llamar al 211",
+      call211Body: "Ayuda local gratis con comida, salud y vivienda.",
+      callLetter: "Llamar al número de su carta",
+      findEnrollment: "Encontrar ayuda para inscribirse cerca",
+      whatToBring: "Qué debo llevar",
+      whatToBringTitle: "Qué llevar",
+      whatToBringNote: "La oficina puede pedir más. Llame antes si le falta algo.",
+    },
     languageNames: { en: "inglés", es: "español", zh: "chino", tl: "tagalo", vi: "vietnamita" },
   },
 
@@ -676,7 +782,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       greeting: "Medi-Cal、食物和现金福利帮助",
       intro: "免费，使用您的语言。每个回答都来自政府官方资料。",
       voicePrompt: "我能帮您什么？",
-      holdToSpeak: "按住说话",
+      holdToSpeak: "点一下说话",
       orType: "或输入问题",
       askCta: "输入问题…",
       talkCta: "说话",
@@ -832,6 +938,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       micStart: "点一下说话",
       micStop: "正在听…点一下停止",
       transcribing: "正在记下您的话…",
+      loadingModel: "首次使用：正在加载语音模型…",
       micError: "Costa 没听清楚。请再试一次，或打字提问。",
       micBlocked: "请在浏览器设置中允许使用麦克风，才能和 Costa 说话。",
       newChat: "新对话",
@@ -860,7 +967,41 @@ export const APP: Record<LanguageCode, AppStrings> = {
       includeCheckup: "分享我的查询结果（不含姓名或号码）",
       partners: "合作机构入口",
     },
-    letter: { saveDeadline: "存到我的截止日期", deadlineSaved: "已存到您的截止日期", reminderTitle: "信件截止日期" },
+    letter: {
+      saveDeadline: "存到我的截止日期",
+      deadlineSaved: "已存到您的截止日期",
+      reminderTitle: "信件截止日期",
+      noticeLabel: "这封通知是",
+      noticeTypes: {
+        renewal: "续保通知 — 需要更新您的福利信息",
+        "request-for-information": "要求补充材料",
+        approval: "批准通知",
+        denial: "拒绝通知",
+        discontinuance: "福利可能停止的通知",
+        "change-in-benefits": "福利变更通知",
+        appointment: "预约通知",
+        overpayment: "多付通知",
+        other: "福利信件",
+      },
+      requiredAction: "您必须做的事",
+      checklist: "您的清单",
+      trustedTitle: "可信的政府来源",
+      sourceLine: (agency, date) => `${agency} · 核对于 ${date}`,
+      whyThisSource: "Costa 选用此页，因为它与您信件中的项目和通知类型相符。",
+      applyOnline: "在线申请或续保",
+      callAgency: "致电机构",
+    },
+    handoff: {
+      title: "需要真人帮助吗？",
+      body: "Costa 解释信件和福利。真人协助者可以陪您完成手续。",
+      call211: "拨打 211",
+      call211Body: "免费本地帮助：食品、医疗、住房。",
+      callLetter: "拨打信上的电话",
+      findEnrollment: "查找附近的报名协助",
+      whatToBring: "需要带什么",
+      whatToBringTitle: "请携带",
+      whatToBringNote: "办公室可能还需要其他材料。如有缺少请先致电。",
+    },
     languageNames: { en: "英语", es: "西班牙语", zh: "中文", tl: "他加禄语", vi: "越南语" },
   },
 
@@ -901,7 +1042,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       greeting: "Tulong sa Medi-Cal, pagkain, at pera",
       intro: "Libre, sa iyong wika. Bawat sagot ay galing sa opisyal na source ng gobyerno.",
       voicePrompt: "Ano ang matutulungan ko sa iyo?",
-      holdToSpeak: "Pindutin nang matagal para magsalita",
+      holdToSpeak: "I-tap para magsalita",
       orType: "o i-type ang tanong",
       askCta: "Magtanong…",
       talkCta: "Magsalita",
@@ -1057,6 +1198,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       micStart: "I-tap para magsalita",
       micStop: "Nakikinig… i-tap para huminto",
       transcribing: "Isinusulat ang mga sinabi mo…",
+      loadingModel: "Unang beses: niloload ang speech model…",
       micError: "Hindi ka narinig ni Costa. Subukan ulit, o i-type ang tanong mo.",
       micBlocked: "Payagan ang mikropono sa settings ng browser para makausap si Costa.",
       newChat: "Bagong chat",
@@ -1085,7 +1227,41 @@ export const APP: Record<LanguageCode, AppStrings> = {
       includeCheckup: "Ibahagi ang resulta ng checkup ko (walang pangalan o numero)",
       partners: "Para sa mga partner na organisasyon",
     },
-    letter: { saveDeadline: "I-save sa mga deadline ko", deadlineSaved: "Naka-save sa mga deadline mo", reminderTitle: "Deadline ng sulat" },
+    letter: {
+      saveDeadline: "I-save sa mga deadline ko",
+      deadlineSaved: "Naka-save sa mga deadline mo",
+      reminderTitle: "Deadline ng sulat",
+      noticeLabel: "Ang notice na ito ay",
+      noticeTypes: {
+        renewal: "isang renewal — kailangang i-update ang benepisyo",
+        "request-for-information": "isang request para sa higit pang impormasyon",
+        approval: "isang approval",
+        denial: "isang denial",
+        discontinuance: "isang notice na maaaring tumigil ang benepisyo",
+        "change-in-benefits": "isang pagbabago sa benepisyo",
+        appointment: "isang appointment notice",
+        overpayment: "isang overpayment notice",
+        other: "isang sulat tungkol sa benepisyo",
+      },
+      requiredAction: "Ang dapat mong gawin",
+      checklist: "Ang iyong checklist",
+      trustedTitle: "Mga opisyal na pinagkakatiwalaang source",
+      sourceLine: (agency, date) => `${agency} · na-check noong ${date}`,
+      whyThisSource: "Ginamit ni Costa ang page na ito dahil tumutugma ito sa program at uri ng notice sa sulat mo.",
+      applyOnline: "Mag-apply o mag-renew online",
+      callAgency: "Tawagan ang ahensya",
+    },
+    handoff: {
+      title: "Kailangan mo ba ng tulong mula sa tao?",
+      body: "Ipinaliliwanag ni Costa ang mga sulat at benepisyo. Makakatulong ang totoong tao sa paperwork.",
+      call211: "Tawagan ang 211",
+      call211Body: "Libreng lokal na tulong sa pagkain, kalusugan, at pabahay.",
+      callLetter: "Tawagan ang numero sa sulat",
+      findEnrollment: "Hanapin ang enrollment help malapit sa akin",
+      whatToBring: "Ipakita kung ano ang dadalhin",
+      whatToBringTitle: "Ano ang dadalhin",
+      whatToBringNote: "Maaaring humingi pa ang opisina. Tumawag muna kung may kulang.",
+    },
     languageNames: { en: "English", es: "Spanish", zh: "Chinese", tl: "Tagalog", vi: "Vietnamese" },
   },
 
@@ -1126,7 +1302,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       greeting: "Trợ giúp về Medi-Cal, thực phẩm và tiền",
       intro: "Miễn phí, bằng ngôn ngữ của bạn. Mọi câu trả lời đều từ nguồn chính thức của chính phủ.",
       voicePrompt: "Tôi có thể giúp gì cho bạn?",
-      holdToSpeak: "Giữ để nói",
+      holdToSpeak: "Chạm để nói",
       orType: "hoặc gõ câu hỏi",
       askCta: "Đặt câu hỏi…",
       talkCta: "Nói",
@@ -1278,10 +1454,11 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Hỏi Costa",
       emptyTitle: "Hỏi bất cứ điều gì về phúc lợi",
-      emptyBody: "Giữ micrô và nói, hoặc chọn chủ đề bên dưới.",
-      micStart: "Giữ để nói",
-      micStop: "Đang nghe… thả để dừng",
+      emptyBody: "Chạm micrô và nói, hoặc chọn chủ đề bên dưới.",
+      micStart: "Chạm để nói",
+      micStop: "Đang nghe… chạm để dừng",
       transcribing: "Đang ghi lại lời bạn nói…",
+      loadingModel: "Lần đầu: đang tải mô hình giọng nói…",
       micError: "Costa nghe không rõ. Hãy thử lại hoặc gõ câu hỏi.",
       micBlocked: "Hãy cho phép micrô trong cài đặt trình duyệt để nói chuyện với Costa.",
       newChat: "Trò chuyện mới",
@@ -1310,7 +1487,41 @@ export const APP: Record<LanguageCode, AppStrings> = {
       includeCheckup: "Chia sẻ kết quả kiểm tra (không có tên hay số)",
       partners: "Dành cho tổ chức đối tác",
     },
-    letter: { saveDeadline: "Lưu vào hạn chót của tôi", deadlineSaved: "Đã lưu vào hạn chót", reminderTitle: "Hạn chót của thư" },
+    letter: {
+      saveDeadline: "Lưu vào hạn chót của tôi",
+      deadlineSaved: "Đã lưu vào hạn chót",
+      reminderTitle: "Hạn chót của thư",
+      noticeLabel: "Thông báo này là",
+      noticeTypes: {
+        renewal: "gia hạn — cần cập nhật phúc lợi",
+        "request-for-information": "yêu cầu thêm thông tin",
+        approval: "phê duyệt",
+        denial: "từ chối",
+        discontinuance: "thông báo phúc lợi có thể dừng",
+        "change-in-benefits": "thay đổi phúc lợi",
+        appointment: "thông báo cuộc hẹn",
+        overpayment: "thông báo trả thừa",
+        other: "thư phúc lợi",
+      },
+      requiredAction: "Việc bạn phải làm",
+      checklist: "Danh sách việc cần làm",
+      trustedTitle: "Nguồn chính phủ đáng tin",
+      sourceLine: (agency, date) => `${agency} · kiểm tra ${date}`,
+      whyThisSource: "Costa dùng trang này vì khớp với chương trình và loại thông báo trên thư của bạn.",
+      applyOnline: "Nộp đơn hoặc gia hạn trực tuyến",
+      callAgency: "Gọi cơ quan",
+    },
+    handoff: {
+      title: "Cần người thật giúp?",
+      body: "Costa giải thích thư và phúc lợi. Người hỗ trợ thật có thể giúp bạn hoàn tất giấy tờ.",
+      call211: "Gọi 211",
+      call211Body: "Trợ giúp địa phương miễn phí về thực phẩm, y tế và nhà ở.",
+      callLetter: "Gọi số trên thư",
+      findEnrollment: "Tìm hỗ trợ đăng ký gần tôi",
+      whatToBring: "Cần mang theo gì",
+      whatToBringTitle: "Mang theo",
+      whatToBringNote: "Văn phòng có thể yêu cầu thêm. Hãy gọi trước nếu thiếu gì.",
+    },
     languageNames: { en: "tiếng Anh", es: "tiếng Tây Ban Nha", zh: "tiếng Trung", tl: "tiếng Tagalog", vi: "tiếng Việt" },
   },
 };

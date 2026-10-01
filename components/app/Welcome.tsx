@@ -13,48 +13,47 @@ export function Welcome({ suggested }: { suggested: LanguageCode }) {
   const w = APP[suggested].welcome;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col gap-7 px-6 pb-10 pt-[calc(2.5rem+env(safe-area-inset-top))]">
-      <div className="flex flex-col gap-3">
+    <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col px-6 pb-10 pt-[calc(2.5rem+env(safe-area-inset-top))]">
+      <header className="flex flex-col gap-4 border-b border-stone-300 pb-8">
         <Logo />
-        <p lang={suggested} className="text-[20px] font-semibold leading-snug text-pine-950">
+        <p lang={suggested} className="max-w-[22rem] text-[22px] font-semibold leading-snug text-pine-950">
           {w.tagline}
         </p>
-        <p lang={suggested} className="text-[14px] font-medium tracking-wide text-stone-600">
+        <p lang={suggested} className="text-[14px] font-semibold tracking-wide text-stone-500">
           {w.trust}
         </p>
-      </div>
+      </header>
 
-      <div className="flex flex-col gap-1">
-        {ordered.map((code) =>
-          code === suggested ? (
-            <h1 key={code} lang={code} className="text-[28px] leading-tight text-pine-950">
-              {APP[code].common.chooseLanguage}
-            </h1>
-          ) : (
-            <p key={code} lang={code} className="text-lg text-stone-500">
-              {APP[code].common.chooseLanguage}
-            </p>
-          ),
-        )}
-      </div>
+      <section className="flex flex-col gap-5 pt-8" aria-labelledby="welcome-lang">
+        <h1 id="welcome-lang" lang={suggested} className="text-[26px] leading-tight text-pine-950">
+          {APP[suggested].common.chooseLanguage}
+        </h1>
 
-      <ul className="divide-y divide-stone-300 border-y border-stone-300">
-        {ordered.map((code) => (
-          <li key={code}>
-            <button
-              type="button"
-              lang={code}
-              onClick={() => switchLanguage(code)}
-              className="flex min-h-16 w-full items-center justify-between text-left text-[21px] font-semibold active:bg-stone-200/50"
-            >
-              {LANGUAGES[code].native}
-              <ArrowRightIcon className="text-pine-800" />
-            </button>
-          </li>
-        ))}
-      </ul>
+        <ul className="flex flex-col gap-3">
+          {ordered.map((code) => (
+            <li key={code}>
+              <button
+                type="button"
+                lang={code}
+                onClick={() => switchLanguage(code)}
+                className={`flex min-h-[3.75rem] w-full items-center justify-between rounded-md border bg-white px-4 text-left text-[20px] font-bold active:bg-stone-100 ${
+                  code === suggested ? "border-pine-800 ring-1 ring-pine-800" : "border-stone-400"
+                }`}
+              >
+                <span className="flex flex-col gap-0.5">
+                  <span>{LANGUAGES[code].native}</span>
+                  {code !== suggested && (
+                    <span className="text-[13px] font-medium text-stone-500">{APP[suggested].languageNames[code]}</span>
+                  )}
+                </span>
+                <ArrowRightIcon className="shrink-0 text-pine-800" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <p className="mt-auto text-center text-sm leading-relaxed text-stone-500" lang={suggested}>
+      <p className="mt-auto pt-10 text-center text-sm leading-relaxed text-stone-500" lang={suggested}>
         {APP[suggested].common.stayPrivate}
       </p>
     </main>

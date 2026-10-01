@@ -85,6 +85,13 @@ export const PhoneIcon = (p: IconProps) => (
   </Svg>
 );
 
+export const BagIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 8h12l-1 12H7z" />
+    <path d="M9 8V6.5a3 3 0 0 1 6 0V8" />
+  </Svg>
+);
+
 export const MessageIcon = (p: IconProps) => (
   <Svg {...p}>
     <rect x="3" y="5" width="18" height="14" rx="2" />

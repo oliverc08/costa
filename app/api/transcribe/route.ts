@@ -1,5 +1,5 @@
 import { gateway, transcribe } from "ai";
-import { hasAiGateway, models } from "@/lib/config";
+import { hasAiGateway, isGatewayBillingError, models } from "@/lib/config";
 import { normalizeLanguage } from "@/lib/languages";
 
 export const maxDuration = 30;
@@ -24,9 +24,16 @@ export async function POST(req: Request) {
       model: gateway.transcriptionModel(models.transcription),
       audio: new Uint8Array(await audio.arrayBuffer()),
     });
-    return Response.json({ text: result.text.trim(), language: normalizeLanguage(result.language) });
+    const text = result.text?.trim() ?? "";
+    if (!text) {
+      return Response.json({ error: "empty-transcript" }, { status: 422 });
+    }
+    return Response.json({ text, language: normalizeLanguage(result.language) });
   } catch (error) {
     console.error("[transcribe] failed", error);
+    if (isGatewayBillingError(error)) {
+      return Response.json({ error: "gateway-billing" }, { status: 503 });
+    }
     return Response.json({ error: "transcription-failed" }, { status: 502 });
   }
 }
