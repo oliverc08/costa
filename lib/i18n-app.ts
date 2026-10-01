@@ -31,13 +31,21 @@ export interface AppStrings {
     stayPrivate: string;
     emergency: string;
   };
+  welcome: {
+    tagline: string;
+    trust: string;
+  };
   privacy: { title: string; body: string; deleteButton: string; confirm: string; done: string };
   home: {
     greeting: string;
     intro: string;
+    voicePrompt: string;
+    holdToSpeak: string;
+    orType: string;
     askCta: string;
     talkCta: string;
     topicsTitle: string;
+    bigTopics: Record<"food" | "health" | "housing" | "family" | "disaster" | "other", string>;
     topics: Record<TopicId | "letter" | "person", { title: string; sub: string }>;
     checkTitle: string;
     checkBody: string;
@@ -52,6 +60,7 @@ export interface AppStrings {
     reminderWhen: string;
     addToCalendar: string;
     reachTitle: string;
+    howItWorks: string;
   };
   topics: Record<TopicId, { title: string; intro: string }> & {
     questions: string;
@@ -96,6 +105,18 @@ export interface AppStrings {
     seeResults: string;
     resultsTitle: string;
     resultsIntro: string;
+    mayQualify: (n: number) => string;
+    mayQualifyNone: string;
+    speakFound: (n: number) => string;
+    whyLabel: string;
+    needLabel: string;
+    nextLabel: string;
+    whyLikely: string;
+    whyPossibly: string;
+    whyUnlikely: string;
+    needs: Record<ProgramId, string>;
+    nearbyTitle: string;
+    sourceLine: (agency: string, date: string) => string;
     status: Record<ScreenStatus, string>;
     programs: Record<ProgramId, { name: string; what: string }>;
     groups: { adults: string; children: string; pregnancy: string; senior: string };
@@ -183,12 +204,16 @@ export const APP: Record<LanguageCode, AppStrings> = {
       listen: "Listen",
       stop: "Stop",
       stepOf: (n, total) => `Step ${n} of ${total}`,
-      stayPrivate: "Your answers stay on this phone.",
+      stayPrivate: "No account required. Costa does not save your answers after your session.",
       emergency: "In an emergency, call 911.",
+    },
+    welcome: {
+      tagline: "Find benefits and local help. Speak naturally, in your language.",
+      trust: "No account · Trusted government sources · Free",
     },
     privacy: {
       title: "Your privacy",
-      body: "Costa never asks about immigration status. Your plan, reminders, and checkup answers are saved only on this phone. Chats are deleted from our server after 30 days.",
+      body: "Costa never asks about immigration status. No account is required. Your checkup and plan stay on this phone. Questions you ask may be processed to answer you, then chats are deleted from our server after 30 days.",
       deleteButton: "Delete everything on this phone",
       confirm: "Delete your chat, plan, and reminders from this phone?",
       done: "Deleted.",
@@ -196,9 +221,20 @@ export const APP: Record<LanguageCode, AppStrings> = {
     home: {
       greeting: "Help with Medi-Cal, food, and money",
       intro: "Free, in your language. Every answer comes from an official government source.",
+      voicePrompt: "What can I help you with?",
+      holdToSpeak: "Hold to speak",
+      orType: "or type a question",
       askCta: "Ask a question…",
       talkCta: "Talk",
-      topicsTitle: "What do you need help with?",
+      topicsTitle: "Or tap what you need",
+      bigTopics: {
+        food: "Food",
+        health: "Health care",
+        housing: "Housing",
+        family: "Family",
+        disaster: "Disaster help",
+        other: "Something else",
+      },
       topics: {
         health: { title: "Health care", sub: "Medi-Cal" },
         food: { title: "Food", sub: "CalFresh, WIC" },
@@ -220,6 +256,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       reminderWhen: "Due date",
       addToCalendar: "Add to calendar",
       reachTitle: "Prefer to call or text?",
+      howItWorks: "How Costa works",
     },
     topics: {
       health: { title: "Health care (Medi-Cal)", intro: "Medi-Cal is free or low-cost health insurance. Get help applying, renewing, or fixing a problem." },
@@ -237,7 +274,11 @@ export const APP: Record<LanguageCode, AppStrings> = {
     check: {
       title: "Benefits checkup",
       intro: "Answer a few questions to see which programs your family may be able to get.",
-      promises: ["We never ask about immigration status.", "No names, no Social Security numbers.", "Your answers stay on this phone."],
+      promises: [
+        "We never ask about immigration status.",
+        "No names, no Social Security numbers.",
+        "No account required. Checkup answers stay on this phone.",
+      ],
       start: "Start",
       county: {
         q: "Where do you live?",
@@ -275,6 +316,27 @@ export const APP: Record<LanguageCode, AppStrings> = {
       seeResults: "See my results",
       resultsTitle: "What your family may be able to get",
       resultsIntro: "Based on your answers. Tap a program to see why and what to do next.",
+      mayQualify: (n) => `You may qualify for ${n} programs`,
+      mayQualifyNone: "We did not find a strong match. A person can still help you.",
+      speakFound: (n) => (n === 1 ? "I found one program that may help." : `I found ${n} programs that may help.`),
+      whyLabel: "Why",
+      needLabel: "You'll need",
+      nextLabel: "Next step",
+      whyLikely: "Your household size and income appear to qualify under published rules.",
+      whyPossibly: "Your answers suggest you may be eligible. The agency decides after you apply.",
+      whyUnlikely: "Based on income or household details, this may not fit right now.",
+      needs: {
+        "medi-cal": "Photo ID and income information (like pay stubs)",
+        calfresh: "Photo ID and income information",
+        wic: "Proof of pregnancy or child's age, and income or Medi-Cal/CalFresh",
+        caleitc: "Tax forms or pay information; free VITA help can file for you",
+      },
+      nearbyTitle: "Nearby help",
+      sourceLine: (agency, date) => {
+        const d = new Date(`${date}T12:00:00`);
+        const formatted = d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+        return `Source: ${agency} · Updated ${formatted}`;
+      },
       status: { likely: "Good chance", possibly: "Worth applying", unlikely: "Probably not by income", "need-more-info": "Need more information" },
       programs: {
         "medi-cal": { name: "Medi-Cal", what: "Free or low-cost health care" },
@@ -316,9 +378,9 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Ask Costa",
       emptyTitle: "Ask anything about benefits",
-      emptyBody: "Type, or tap the microphone and talk in your language.",
-      micStart: "Tap to talk",
-      micStop: "Listening… tap to stop",
+      emptyBody: "Hold the microphone and talk, or pick a topic below.",
+      micStart: "Hold to speak",
+      micStop: "Listening… release to stop",
       transcribing: "Writing down your words…",
       micError: "Costa couldn't hear that. Try again, or type your question.",
       micBlocked: "Allow the microphone in your browser settings to talk to Costa.",
@@ -371,12 +433,16 @@ export const APP: Record<LanguageCode, AppStrings> = {
       listen: "Escuchar",
       stop: "Parar",
       stepOf: (n, total) => `Paso ${n} de ${total}`,
-      stayPrivate: "Sus respuestas se quedan en este teléfono.",
+      stayPrivate: "No se necesita cuenta. Costa no guarda sus respuestas después de esta sesión.",
       emergency: "En una emergencia, llame al 911.",
+    },
+    welcome: {
+      tagline: "Encuentre beneficios y ayuda local. Hable con naturalidad, en su idioma.",
+      trust: "Sin cuenta · Fuentes oficiales · Gratis",
     },
     privacy: {
       title: "Su privacidad",
-      body: "Costa nunca pregunta sobre estatus migratorio. Su plan, recordatorios y respuestas se guardan solo en este teléfono. Los chats se borran de nuestro servidor después de 30 días.",
+      body: "Costa nunca pregunta sobre estatus migratorio. No se necesita cuenta. Su revisión y plan se quedan en este teléfono. Las preguntas que haga pueden procesarse para responderle; los chats se borran de nuestro servidor después de 30 días.",
       deleteButton: "Borrar todo en este teléfono",
       confirm: "¿Borrar su chat, plan y recordatorios de este teléfono?",
       done: "Borrado.",
@@ -384,9 +450,20 @@ export const APP: Record<LanguageCode, AppStrings> = {
     home: {
       greeting: "Ayuda con Medi-Cal, comida y dinero",
       intro: "Gratis y en su idioma. Cada respuesta viene de una fuente oficial del gobierno.",
+      voicePrompt: "¿En qué le puedo ayudar?",
+      holdToSpeak: "Mantenga para hablar",
+      orType: "o escriba una pregunta",
       askCta: "Haga una pregunta…",
       talkCta: "Hablar",
-      topicsTitle: "¿Con qué necesita ayuda?",
+      topicsTitle: "O toque lo que necesita",
+      bigTopics: {
+        food: "Comida",
+        health: "Salud",
+        housing: "Vivienda",
+        family: "Familia",
+        disaster: "Ayuda por desastre",
+        other: "Otra cosa",
+      },
       topics: {
         health: { title: "Salud", sub: "Medi-Cal" },
         food: { title: "Comida", sub: "CalFresh, WIC" },
@@ -408,6 +485,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       reminderWhen: "Fecha límite",
       addToCalendar: "Agregar al calendario",
       reachTitle: "¿Prefiere llamar o enviar un texto?",
+      howItWorks: "Cómo funciona Costa",
     },
     topics: {
       health: { title: "Salud (Medi-Cal)", intro: "Medi-Cal es seguro médico gratis o de bajo costo. Reciba ayuda para solicitar, renovar o arreglar un problema." },
@@ -425,7 +503,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     check: {
       title: "Revisión de beneficios",
       intro: "Conteste unas preguntas para ver qué programas podría recibir su familia.",
-      promises: ["Nunca preguntamos sobre estatus migratorio.", "Sin nombres ni números de Seguro Social.", "Sus respuestas se quedan en este teléfono."],
+      promises: ["Nunca preguntamos sobre estatus migratorio.", "Sin nombres ni números de Seguro Social.", "No se necesita cuenta. Las respuestas de la revisión se quedan en este teléfono."],
       start: "Empezar",
       county: {
         q: "¿Dónde vive?",
@@ -463,6 +541,27 @@ export const APP: Record<LanguageCode, AppStrings> = {
       seeResults: "Ver mis resultados",
       resultsTitle: "Lo que su familia podría recibir",
       resultsIntro: "Según sus respuestas. Toque un programa para ver por qué y qué hacer.",
+      mayQualify: (n) => `Puede calificar para ${n} programas`,
+      mayQualifyNone: "No encontramos una coincidencia fuerte. Una persona aún puede ayudarle.",
+      speakFound: (n) => (n === 1 ? "Encontré un programa que podría ayudarle." : `Encontré ${n} programas que podrían ayudarle.`),
+      whyLabel: "Por qué",
+      needLabel: "Va a necesitar",
+      nextLabel: "Siguiente paso",
+      whyLikely: "El tamaño de su hogar y sus ingresos parecen cumplir las reglas publicadas.",
+      whyPossibly: "Sus respuestas sugieren que podría ser elegible. La agencia decide después de que solicite.",
+      whyUnlikely: "Por ingresos o detalles del hogar, esto tal vez no encaje ahora.",
+      needs: {
+        "medi-cal": "Identificación con foto e información de ingresos (como talones de pago)",
+        calfresh: "Identificación con foto e información de ingresos",
+        wic: "Prueba de embarazo o edad del niño, e ingresos o Medi-Cal/CalFresh",
+        caleitc: "Formularios de impuestos o información de pago; VITA gratis puede declarar por usted",
+      },
+      nearbyTitle: "Ayuda cerca",
+      sourceLine: (agency, date) => {
+        const d = new Date(`${date}T12:00:00`);
+        const formatted = d.toLocaleDateString("es-US", { month: "short", year: "numeric" });
+        return `Fuente: ${agency} · Actualizado ${formatted}`;
+      },
       status: { likely: "Buena posibilidad", possibly: "Vale la pena solicitar", unlikely: "Probablemente no por ingresos", "need-more-info": "Falta información" },
       programs: {
         "medi-cal": { name: "Medi-Cal", what: "Atención médica gratis o de bajo costo" },
@@ -504,9 +603,9 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Pregúntele a Costa",
       emptyTitle: "Pregunte lo que quiera sobre beneficios",
-      emptyBody: "Escriba, o toque el micrófono y hable en su idioma.",
-      micStart: "Toque para hablar",
-      micStop: "Escuchando… toque para parar",
+      emptyBody: "Mantenga el micrófono y hable, o elija un tema abajo.",
+      micStart: "Mantenga para hablar",
+      micStop: "Escuchando… suelte para parar",
       transcribing: "Escribiendo sus palabras…",
       micError: "Costa no le escuchó bien. Intente otra vez o escriba su pregunta.",
       micBlocked: "Permita el micrófono en la configuración del navegador para hablar con Costa.",
@@ -559,12 +658,16 @@ export const APP: Record<LanguageCode, AppStrings> = {
       listen: "朗读",
       stop: "停止",
       stepOf: (n, total) => `第 ${n} 步，共 ${total} 步`,
-      stayPrivate: "您的回答只保存在这部手机上。",
+      stayPrivate: "无需账号。会话结束后 Costa 不会保存您的回答。",
       emergency: "紧急情况请拨打 911。",
+    },
+    welcome: {
+      tagline: "查找福利和本地帮助。用您的语言自然说话即可。",
+      trust: "无需账号 · 政府可信来源 · 免费",
     },
     privacy: {
       title: "您的隐私",
-      body: "Costa 从不询问移民身份。您的计划、提醒和查询回答只保存在这部手机上。聊天记录会在 30 天后从我们的服务器删除。",
+      body: "Costa 从不询问移民身份。无需账号。查询和计划保存在这部手机上。您提出的问题可能会被处理以作答；聊天记录会在 30 天后从我们的服务器删除。",
       deleteButton: "删除这部手机上的所有资料",
       confirm: "要从这部手机删除您的聊天、计划和提醒吗？",
       done: "已删除。",
@@ -572,9 +675,20 @@ export const APP: Record<LanguageCode, AppStrings> = {
     home: {
       greeting: "Medi-Cal、食物和现金福利帮助",
       intro: "免费，使用您的语言。每个回答都来自政府官方资料。",
+      voicePrompt: "我能帮您什么？",
+      holdToSpeak: "按住说话",
+      orType: "或输入问题",
       askCta: "输入问题…",
       talkCta: "说话",
-      topicsTitle: "您需要哪方面的帮助？",
+      topicsTitle: "或点选您需要的帮助",
+      bigTopics: {
+        food: "食物",
+        health: "医疗",
+        housing: "住房",
+        family: "家庭",
+        disaster: "灾后帮助",
+        other: "其他",
+      },
       topics: {
         health: { title: "医疗保险", sub: "Medi-Cal" },
         food: { title: "食物", sub: "CalFresh、WIC" },
@@ -596,6 +710,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       reminderWhen: "截止日期",
       addToCalendar: "加入日历",
       reachTitle: "想打电话或发短信？",
+      howItWorks: "Costa 如何工作",
     },
     topics: {
       health: { title: "医疗保险（Medi-Cal）", intro: "Medi-Cal 是免费或低价的医疗保险。我们可以帮您申请、续保或解决问题。" },
@@ -613,7 +728,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     check: {
       title: "福利查询",
       intro: "回答几个问题，看看您家可能可以获得哪些福利。",
-      promises: ["我们从不询问移民身份。", "不需要姓名或社会安全号码。", "您的回答只保存在这部手机上。"],
+      promises: ["我们从不询问移民身份。", "不需要姓名或社会安全号码。", "无需账号。查询回答保存在这部手机上。"],
       start: "开始",
       county: {
         q: "您住在哪里？",
@@ -651,6 +766,27 @@ export const APP: Record<LanguageCode, AppStrings> = {
       seeResults: "查看结果",
       resultsTitle: "您家可能可以获得的福利",
       resultsIntro: "根据您的回答。点一下项目，看看原因和下一步。",
+      mayQualify: (n) => `您可能符合 ${n} 项福利的条件`,
+      mayQualifyNone: "没有找到很匹配的项目。仍可请人帮助您。",
+      speakFound: (n) => (n === 1 ? "我找到 1 项可能帮到您的福利。" : `我找到 ${n} 项可能帮到您的福利。`),
+      whyLabel: "原因",
+      needLabel: "您需要准备",
+      nextLabel: "下一步",
+      whyLikely: "按公开规则，您的家庭人数和收入看起来符合条件。",
+      whyPossibly: "根据您的回答，您可能符合条件。机构会在您申请后决定。",
+      whyUnlikely: "按收入或家庭情况，这项现在可能不适用。",
+      needs: {
+        "medi-cal": "带照片的身份证明和收入资料（如工资单）",
+        calfresh: "带照片的身份证明和收入资料",
+        wic: "怀孕或孩子年龄证明，以及收入或 Medi-Cal/CalFresh",
+        caleitc: "报税表或工资资料；免费 VITA 可帮您报税",
+      },
+      nearbyTitle: "附近帮助",
+      sourceLine: (agency, date) => {
+        const d = new Date(`${date}T12:00:00`);
+        const formatted = d.toLocaleDateString("zh-CN", { year: "numeric", month: "short" });
+        return `来源：${agency} · 更新于 ${formatted}`;
+      },
       status: { likely: "机会很大", possibly: "值得申请", unlikely: "按收入可能不行", "need-more-info": "需要更多资料" },
       programs: {
         "medi-cal": { name: "Medi-Cal", what: "免费或低价的医疗" },
@@ -747,12 +883,16 @@ export const APP: Record<LanguageCode, AppStrings> = {
       listen: "Pakinggan",
       stop: "Itigil",
       stepOf: (n, total) => `Hakbang ${n} sa ${total}`,
-      stayPrivate: "Nasa teleponong ito lang ang mga sagot mo.",
+      stayPrivate: "Walang account na kailangan. Hindi sine-save ni Costa ang mga sagot mo pagkatapos ng session.",
       emergency: "Sa emergency, tumawag sa 911.",
+    },
+    welcome: {
+      tagline: "Hanapin ang benepisyo at lokal na tulong. Magsalita nang natural, sa iyong wika.",
+      trust: "Walang account · Opisyal na sources · Libre",
     },
     privacy: {
       title: "Ang iyong privacy",
-      body: "Hindi kailanman nagtatanong si Costa tungkol sa immigration status. Ang plano, paalala, at sagot mo sa checkup ay naka-save lang sa teleponong ito. Binubura ang mga chat sa server namin pagkalipas ng 30 araw.",
+      body: "Hindi kailanman nagtatanong si Costa tungkol sa immigration status. Walang account na kailangan. Ang checkup at plano ay nasa teleponong ito. Maaaring i-proseso ang mga tanong para masagot ka; binubura ang mga chat sa server namin pagkalipas ng 30 araw.",
       deleteButton: "Burahin lahat sa teleponong ito",
       confirm: "Burahin ang chat, plano, at mga paalala mo sa teleponong ito?",
       done: "Nabura na.",
@@ -760,9 +900,20 @@ export const APP: Record<LanguageCode, AppStrings> = {
     home: {
       greeting: "Tulong sa Medi-Cal, pagkain, at pera",
       intro: "Libre, sa iyong wika. Bawat sagot ay galing sa opisyal na source ng gobyerno.",
+      voicePrompt: "Ano ang matutulungan ko sa iyo?",
+      holdToSpeak: "Pindutin nang matagal para magsalita",
+      orType: "o i-type ang tanong",
       askCta: "Magtanong…",
       talkCta: "Magsalita",
-      topicsTitle: "Saan mo kailangan ng tulong?",
+      topicsTitle: "O i-tap ang kailangan mo",
+      bigTopics: {
+        food: "Pagkain",
+        health: "Kalusugan",
+        housing: "Pabahay",
+        family: "Pamilya",
+        disaster: "Tulong sa sakuna",
+        other: "Iba pa",
+      },
       topics: {
         health: { title: "Kalusugan", sub: "Medi-Cal" },
         food: { title: "Pagkain", sub: "CalFresh, WIC" },
@@ -784,6 +935,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       reminderWhen: "Petsa ng deadline",
       addToCalendar: "Idagdag sa kalendaryo",
       reachTitle: "Mas gusto mong tumawag o mag-text?",
+      howItWorks: "Paano gumagana ang Costa",
     },
     topics: {
       health: { title: "Kalusugan (Medi-Cal)", intro: "Ang Medi-Cal ay libre o murang health insurance. Humingi ng tulong sa pag-apply, pag-renew, o pag-ayos ng problema." },
@@ -801,7 +953,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     check: {
       title: "Benefits checkup",
       intro: "Sagutin ang ilang tanong para makita kung aling mga programa ang puwedeng makuha ng pamilya mo.",
-      promises: ["Hindi kami nagtatanong tungkol sa immigration status.", "Walang pangalan, walang Social Security number.", "Nasa teleponong ito lang ang mga sagot mo."],
+      promises: ["Hindi kami nagtatanong tungkol sa immigration status.", "Walang pangalan, walang Social Security number.", "Walang account. Ang sagot sa checkup ay nasa teleponong ito."],
       start: "Simulan",
       county: {
         q: "Saan ka nakatira?",
@@ -839,6 +991,27 @@ export const APP: Record<LanguageCode, AppStrings> = {
       seeResults: "Tingnan ang resulta",
       resultsTitle: "Ang puwedeng makuha ng pamilya mo",
       resultsIntro: "Batay sa mga sagot mo. I-tap ang programa para makita kung bakit at ano ang susunod.",
+      mayQualify: (n) => `Maaari kang mag-qualify para sa ${n} na programa`,
+      mayQualifyNone: "Walang malakas na tugma. May tao pa ring makakatulong sa iyo.",
+      speakFound: (n) => (n === 1 ? "May nahanap akong isang programang maaaring tumulong." : `May nahanap akong ${n} na programang maaaring tumulong.`),
+      whyLabel: "Bakit",
+      needLabel: "Kakailanganin mo",
+      nextLabel: "Susunod na hakbang",
+      whyLikely: "Mukhang pasok ang laki ng pamilya at kita mo sa mga published rules.",
+      whyPossibly: "Ayon sa sagot mo, maaaring eligible ka. Ang ahensya ang magpapasya pagkatapos mong mag-apply.",
+      whyUnlikely: "Base sa kita o detalye ng pamilya, maaaring hindi ito bagay ngayon.",
+      needs: {
+        "medi-cal": "Photo ID at impormasyon sa kita (tulad ng pay stub)",
+        calfresh: "Photo ID at impormasyon sa kita",
+        wic: "Patunay ng pagbubuntis o edad ng bata, at kita o Medi-Cal/CalFresh",
+        caleitc: "Tax forms o pay info; libreng VITA ang puwedeng mag-file para sa iyo",
+      },
+      nearbyTitle: "Tulong sa malapit",
+      sourceLine: (agency, date) => {
+        const d = new Date(`${date}T12:00:00`);
+        const formatted = d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+        return `Source: ${agency} · Na-update ${formatted}`;
+      },
       status: { likely: "Malaki ang tsansa", possibly: "Sulit mag-apply", unlikely: "Malamang hindi dahil sa kita", "need-more-info": "Kailangan ng dagdag na impormasyon" },
       programs: {
         "medi-cal": { name: "Medi-Cal", what: "Libre o murang pagpapagamot" },
@@ -935,12 +1108,16 @@ export const APP: Record<LanguageCode, AppStrings> = {
       listen: "Nghe",
       stop: "Dừng",
       stepOf: (n, total) => `Bước ${n}/${total}`,
-      stayPrivate: "Câu trả lời của bạn chỉ lưu trên điện thoại này.",
+      stayPrivate: "Không cần tài khoản. Costa không lưu câu trả lời của bạn sau phiên này.",
       emergency: "Trường hợp khẩn cấp, hãy gọi 911.",
+    },
+    welcome: {
+      tagline: "Tìm phúc lợi và trợ giúp gần bạn. Nói tự nhiên bằng ngôn ngữ của bạn.",
+      trust: "Không cần tài khoản · Nguồn chính phủ · Miễn phí",
     },
     privacy: {
       title: "Quyền riêng tư của bạn",
-      body: "Costa không bao giờ hỏi về tình trạng di trú. Kế hoạch, lời nhắc và câu trả lời của bạn chỉ lưu trên điện thoại này. Tin nhắn trò chuyện được xóa khỏi máy chủ sau 30 ngày.",
+      body: "Costa không bao giờ hỏi về tình trạng di trú. Không cần tài khoản. Kết quả kiểm tra và kế hoạch lưu trên điện thoại này. Câu hỏi của bạn có thể được xử lý để trả lời; tin nhắn trò chuyện được xóa khỏi máy chủ sau 30 ngày.",
       deleteButton: "Xóa hết trên điện thoại này",
       confirm: "Xóa cuộc trò chuyện, kế hoạch và lời nhắc khỏi điện thoại này?",
       done: "Đã xóa.",
@@ -948,9 +1125,20 @@ export const APP: Record<LanguageCode, AppStrings> = {
     home: {
       greeting: "Trợ giúp về Medi-Cal, thực phẩm và tiền",
       intro: "Miễn phí, bằng ngôn ngữ của bạn. Mọi câu trả lời đều từ nguồn chính thức của chính phủ.",
+      voicePrompt: "Tôi có thể giúp gì cho bạn?",
+      holdToSpeak: "Giữ để nói",
+      orType: "hoặc gõ câu hỏi",
       askCta: "Đặt câu hỏi…",
       talkCta: "Nói",
-      topicsTitle: "Bạn cần giúp về việc gì?",
+      topicsTitle: "Hoặc chạm vào điều bạn cần",
+      bigTopics: {
+        food: "Thực phẩm",
+        health: "Y tế",
+        housing: "Nhà ở",
+        family: "Gia đình",
+        disaster: "Trợ giúp thiên tai",
+        other: "Khác",
+      },
       topics: {
         health: { title: "Chăm sóc sức khỏe", sub: "Medi-Cal" },
         food: { title: "Thực phẩm", sub: "CalFresh, WIC" },
@@ -972,6 +1160,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
       reminderWhen: "Ngày hạn chót",
       addToCalendar: "Thêm vào lịch",
       reachTitle: "Bạn muốn gọi hoặc nhắn tin?",
+      howItWorks: "Cách Costa hoạt động",
     },
     topics: {
       health: { title: "Sức khỏe (Medi-Cal)", intro: "Medi-Cal là bảo hiểm sức khỏe miễn phí hoặc chi phí thấp. Nhận trợ giúp để đăng ký, gia hạn hoặc giải quyết vấn đề." },
@@ -989,7 +1178,7 @@ export const APP: Record<LanguageCode, AppStrings> = {
     check: {
       title: "Kiểm tra phúc lợi",
       intro: "Trả lời vài câu hỏi để xem gia đình bạn có thể nhận những chương trình nào.",
-      promises: ["Chúng tôi không bao giờ hỏi về tình trạng di trú.", "Không cần tên, không cần số An Sinh Xã Hội.", "Câu trả lời của bạn chỉ lưu trên điện thoại này."],
+      promises: ["Chúng tôi không bao giờ hỏi về tình trạng di trú.", "Không cần tên, không cần số An Sinh Xã Hội.", "Không cần tài khoản. Câu trả lời kiểm tra lưu trên điện thoại này."],
       start: "Bắt đầu",
       county: {
         q: "Bạn sống ở đâu?",
@@ -1027,6 +1216,27 @@ export const APP: Record<LanguageCode, AppStrings> = {
       seeResults: "Xem kết quả",
       resultsTitle: "Những gì gia đình bạn có thể nhận",
       resultsIntro: "Dựa trên câu trả lời của bạn. Chạm vào chương trình để xem lý do và việc cần làm.",
+      mayQualify: (n) => `Bạn có thể đủ điều kiện cho ${n} chương trình`,
+      mayQualifyNone: "Không tìm thấy kết quả rõ. Vẫn có thể nhờ người giúp bạn.",
+      speakFound: (n) => (n === 1 ? "Tôi tìm thấy một chương trình có thể giúp bạn." : `Tôi tìm thấy ${n} chương trình có thể giúp bạn.`),
+      whyLabel: "Lý do",
+      needLabel: "Bạn sẽ cần",
+      nextLabel: "Bước tiếp theo",
+      whyLikely: "Quy mô hộ và thu nhập của bạn có vẻ phù hợp với quy tắc công bố.",
+      whyPossibly: "Câu trả lời của bạn cho thấy bạn có thể đủ điều kiện. Cơ quan sẽ quyết định sau khi bạn nộp đơn.",
+      whyUnlikely: "Theo thu nhập hoặc chi tiết hộ, chương trình này có thể chưa phù hợp.",
+      needs: {
+        "medi-cal": "Giấy tờ có ảnh và thông tin thu nhập (như phiếu lương)",
+        calfresh: "Giấy tờ có ảnh và thông tin thu nhập",
+        wic: "Bằng chứng mang thai hoặc tuổi trẻ, và thu nhập hoặc Medi-Cal/CalFresh",
+        caleitc: "Tờ khai thuế hoặc thông tin lương; VITA miễn phí có thể khai giúp bạn",
+      },
+      nearbyTitle: "Trợ giúp gần đây",
+      sourceLine: (agency, date) => {
+        const d = new Date(`${date}T12:00:00`);
+        const formatted = d.toLocaleDateString("vi-VN", { month: "short", year: "numeric" });
+        return `Nguồn: ${agency} · Cập nhật ${formatted}`;
+      },
       status: { likely: "Nhiều khả năng", possibly: "Nên nộp đơn", unlikely: "Có lẽ không do thu nhập", "need-more-info": "Cần thêm thông tin" },
       programs: {
         "medi-cal": { name: "Medi-Cal", what: "Chăm sóc sức khỏe miễn phí hoặc chi phí thấp" },
@@ -1068,9 +1278,9 @@ export const APP: Record<LanguageCode, AppStrings> = {
     ask: {
       title: "Hỏi Costa",
       emptyTitle: "Hỏi bất cứ điều gì về phúc lợi",
-      emptyBody: "Gõ chữ, hoặc chạm vào micrô và nói bằng ngôn ngữ của bạn.",
-      micStart: "Chạm để nói",
-      micStop: "Đang nghe… chạm để dừng",
+      emptyBody: "Giữ micrô và nói, hoặc chọn chủ đề bên dưới.",
+      micStart: "Giữ để nói",
+      micStop: "Đang nghe… thả để dừng",
       transcribing: "Đang ghi lại lời bạn nói…",
       micError: "Costa nghe không rõ. Hãy thử lại hoặc gõ câu hỏi.",
       micBlocked: "Hãy cho phép micrô trong cài đặt trình duyệt để nói chuyện với Costa.",

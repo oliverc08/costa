@@ -48,6 +48,8 @@ export interface ProgramResult {
   yctcUpTo: number | null;
   notes: NoteKey[];
   sourceUrl: string;
+  sourceAgency: string;
+  lastVerified: string;
 }
 
 export interface CheckupResult {
@@ -97,6 +99,8 @@ function mediCal(a: CheckupAnswers, income: number): ProgramResult {
     yctcUpTo: null,
     notes,
     sourceUrl: RULE_SOURCES["medi-cal"].url,
+    sourceAgency: RULE_SOURCES["medi-cal"].agency,
+    lastVerified: RULE_SOURCES["medi-cal"].lastVerified,
   };
 }
 
@@ -108,7 +112,7 @@ function calFresh(a: CheckupAnswers, income: number): ProgramResult {
     age: a.who.senior ? 70 : undefined,
     hasDisability: a.who.disability || undefined,
   });
-  return { program: "calfresh", ...r, sizeUsed: a.householdSize, groups: [], upTo: null, yctcUpTo: null, notes: ["calfreshAmount"], sourceUrl: RULE_SOURCES.calfresh.url };
+  return { program: "calfresh", ...r, sizeUsed: a.householdSize, groups: [], upTo: null, yctcUpTo: null, notes: ["calfreshAmount"], sourceUrl: RULE_SOURCES.calfresh.url, sourceAgency: RULE_SOURCES.calfresh.agency, lastVerified: RULE_SOURCES.calfresh.lastVerified };
 }
 
 function wic(a: CheckupAnswers, income: number): ProgramResult {
@@ -128,6 +132,8 @@ function wic(a: CheckupAnswers, income: number): ProgramResult {
     yctcUpTo: null,
     notes,
     sourceUrl: RULE_SOURCES.wic.url,
+    sourceAgency: RULE_SOURCES.wic.agency,
+    lastVerified: RULE_SOURCES.wic.lastVerified,
   };
 }
 
@@ -152,6 +158,8 @@ function calEitc(a: CheckupAnswers, income: number): ProgramResult {
     yctcUpTo: within && hasYoung ? CALEITC_2025.yctcMax : null,
     notes,
     sourceUrl: RULE_SOURCES.caleitc.url,
+    sourceAgency: RULE_SOURCES.caleitc.agency,
+    lastVerified: RULE_SOURCES.caleitc.lastVerified,
   };
 }
 

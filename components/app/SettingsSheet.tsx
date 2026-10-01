@@ -113,6 +113,9 @@ export function SettingsSheet({ lang }: { lang: LanguageCode }) {
               </button>
             )}
           </section>
+          <a href="/how" className="pb-1 text-center text-[14px] font-medium text-stone-500 underline underline-offset-2">
+            {a.home.howItWorks}
+          </a>
         </div>
       </dialog>
     </>

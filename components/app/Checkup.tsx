@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { APPLY, runCheckup, type CheckupAnswers, type IncomePeriod, type ProgramResult } from "@/lib/checkup";
+import { useEffect, useMemo, useState } from "react";
+import { APPLY, runCheckup, type CheckupAnswers, type CheckupResult, type IncomePeriod, type ProgramResult } from "@/lib/checkup";
 import { addSteps, saveCheckup } from "@/lib/device";
 import { APP, type ScreenStatus } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
-import { ArrowRightIcon, CheckIcon, ExternalIcon, PhoneIcon, RefreshIcon, ShieldIcon } from "./Icons";
+import { useReadAloud } from "@/lib/speech";
+import { NearbyHelp } from "./NearbyHelp";
+import { ArrowRightIcon, CheckIcon, ExternalIcon, PhoneIcon, RefreshIcon, ShieldIcon, SpeakerIcon, StopIcon } from "./Icons";
 
 type StepId = "intro" | "county" | "size" | "who" | "kids" | "income" | "work" | "benefits" | "results";
 type WhoKey = keyof CheckupAnswers["who"];
@@ -144,46 +146,19 @@ export function Checkup({ lang }: { lang: LanguageCode }) {
       p.program === "medi-cal" && answers.county !== "other" ? `${c.steps[p.program]} ${APPLY["medi-cal"].phone(answers.county)}` : c.steps[p.program],
     );
     return (
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[30px] leading-tight text-pine-950">{c.resultsTitle}</h1>
-          <p className="text-[15px] text-stone-600">{c.resultsIntro}</p>
-        </div>
-        <ul className="flex flex-col gap-3">
-          {result.programs.map((p, i) => (
-            <li key={p.program}>
-              <ProgramCard p={p} lang={lang} monthly={result.monthlyIncome} county={answers.county} open={i === 0} />
-            </li>
-          ))}
-        </ul>
-
-        {worth.length > 0 && (
-          <button
-            type="button"
-            disabled={savedPlan}
-            onClick={() => {
-              addSteps(stepTexts);
-              setSavedPlan(true);
-            }}
-            className="flex min-h-14 items-center justify-center gap-2 rounded-md bg-pine-800 px-4 text-[17px] font-bold text-white active:bg-pine-900 disabled:bg-pine-100 disabled:text-pine-900"
-          >
-            {savedPlan ? (
-              <>
-                <CheckIcon /> {c.saved}
-              </>
-            ) : (
-              c.savePlan
-            )}
-          </button>
-        )}
-        <Link href={`/help?topic=${worth[0]?.program ?? "other"}#person`} className="flex min-h-14 items-center justify-center rounded-md border border-pine-800 px-4 text-[17px] font-bold text-pine-900 active:bg-pine-50">
-          {c.getHelp}
-        </Link>
-        <button type="button" onClick={restart} className="flex min-h-12 items-center justify-center gap-2 font-semibold text-stone-600">
-          <RefreshIcon size={18} /> {c.startOver}
-        </button>
-        <p className="rounded-md bg-stone-100 px-4 py-3 text-[14px] leading-relaxed text-stone-600">{c.disclaimer}</p>
-      </div>
+      <ResultsScreen
+        lang={lang}
+        result={result}
+        answers={answers}
+        worth={worth}
+        stepTexts={stepTexts}
+        savedPlan={savedPlan}
+        onSave={() => {
+          addSteps(stepTexts);
+          setSavedPlan(true);
+        }}
+        onRestart={restart}
+      />
     );
   }
 
@@ -343,6 +318,112 @@ function Question({ q, hint, children }: { q: string; hint?: string; children: R
   );
 }
 
+function whyFor(p: ProgramResult, c: (typeof APP)[LanguageCode]["check"]) {
+  if (p.status === "likely") return c.whyLikely;
+  if (p.status === "possibly") return c.whyPossibly;
+  return c.whyUnlikely;
+}
+
+function ResultsScreen({
+  lang,
+  result,
+  answers,
+  worth,
+  stepTexts,
+  savedPlan,
+  onSave,
+  onRestart,
+}: {
+  lang: LanguageCode;
+  result: CheckupResult;
+  answers: CheckupAnswers;
+  worth: ProgramResult[];
+  stepTexts: string[];
+  savedPlan: boolean;
+  onSave: () => void;
+  onRestart: () => void;
+}) {
+  const a = APP[lang];
+  const c = a.check;
+  const read = useReadAloud(lang);
+  const headline = worth.length === 0 ? c.mayQualifyNone : c.mayQualify(worth.length);
+  const speakText = worth.length === 0 ? c.mayQualifyNone : `${c.speakFound(worth.length)} ${worth.map((p) => c.programs[p.program].name).join(". ")}`;
+
+  useEffect(() => {
+    if (!read.available) return;
+    const t = window.setTimeout(() => read.speak("results-summary", speakText), 400);
+    return () => {
+      window.clearTimeout(t);
+      read.stop();
+    };
+    // Speak once when results appear.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional mount-only speak
+  }, []);
+
+  const speaking = read.speakingId === "results-summary";
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <h1 className="text-[30px] leading-tight text-pine-950">{headline}</h1>
+        <p className="text-[15px] text-stone-600">{c.resultsIntro}</p>
+        {read.available && (
+          <button
+            type="button"
+            onClick={() => (speaking ? read.stop() : read.speak("results-summary", speakText))}
+            className={`flex min-h-12 items-center justify-center gap-2 self-start rounded-md border px-4 text-[16px] font-semibold ${
+              speaking ? "border-pine-800 bg-pine-800 text-white" : "border-stone-400 text-pine-950 active:bg-stone-100"
+            }`}
+          >
+            {speaking ? <StopIcon size={18} /> : <SpeakerIcon size={22} />}
+            {speaking ? a.common.stop : a.common.listen}
+          </button>
+        )}
+      </div>
+
+      <ul className="flex flex-col gap-4">
+        {(worth.length ? worth : result.programs).map((p, i) => (
+          <li key={p.program}>
+            <ProgramCard p={p} lang={lang} monthly={result.monthlyIncome} county={answers.county} open={i === 0} />
+          </li>
+        ))}
+      </ul>
+
+      {worth.length > 0 && (
+        <button
+          type="button"
+          disabled={savedPlan}
+          onClick={onSave}
+          className="flex min-h-14 items-center justify-center gap-2 rounded-md bg-pine-800 px-4 text-[17px] font-bold text-white active:bg-pine-900 disabled:bg-pine-100 disabled:text-pine-900"
+        >
+          {savedPlan ? (
+            <>
+              <CheckIcon /> {c.saved}
+            </>
+          ) : (
+            c.savePlan
+          )}
+        </button>
+      )}
+
+      <NearbyHelp lang={lang} county={answers.county} />
+
+      <Link
+        href={`/help?topic=${worth[0]?.program ?? "other"}#person`}
+        className="flex min-h-14 items-center justify-center rounded-md border border-pine-800 px-4 text-[17px] font-bold text-pine-900 active:bg-pine-50"
+      >
+        {c.getHelp}
+      </Link>
+      <button type="button" onClick={onRestart} className="flex min-h-12 items-center justify-center gap-2 font-semibold text-stone-600">
+        <RefreshIcon size={18} /> {c.startOver}
+      </button>
+      <p className="rounded-md bg-stone-100 px-4 py-3 text-[14px] leading-relaxed text-stone-600">{c.disclaimer}</p>
+      {/* keep stepTexts referenced for typecheck when worth empty */}
+      <span className="sr-only">{stepTexts.join(" ")}</span>
+    </div>
+  );
+}
+
 function ProgramCard({ p, lang, monthly, county, open }: { p: ProgramResult; lang: LanguageCode; monthly: number; county: CheckupAnswers["county"]; open: boolean }) {
   const a = APP[lang];
   const c = a.check;
@@ -350,52 +431,76 @@ function ProgramCard({ p, lang, monthly, county, open }: { p: ProgramResult; lan
   const apply = APPLY[p.program];
   const phone = apply.phone(county);
   const worth = p.status === "likely" || p.status === "possibly";
+  const read = useReadAloud(lang);
+  const cardId = `program-${p.program}`;
+  const listenText = [name.name, whyFor(p, c), `${c.needLabel}: ${c.needs[p.program]}`, `${c.nextLabel}: ${c.steps[p.program]}`].join(". ");
+  const speaking = read.speakingId === cardId;
 
   return (
     <details open={open} className="group overflow-hidden rounded-md border border-stone-300 bg-white">
       <summary className="flex cursor-pointer items-center gap-3 p-4">
         <span className="min-w-0 flex-1">
-          <span className="block text-[19px] font-bold">{name.name}</span>
+          <span className="block text-[20px] font-bold">{name.name}</span>
           <span className="block text-[14px] text-stone-500">{name.what}</span>
         </span>
         <span className={`shrink-0 rounded-sm border px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wide ${STATUS_TONE[p.status]}`}>{c.status[p.status]}</span>
       </summary>
-      <div className="flex flex-col gap-3 border-t border-stone-100 px-4 pb-4 pt-3 text-[15px]">
-        {p.groups.length > 1 && (
-          <ul className="flex flex-col gap-1.5">
-            {p.groups.map((g) => (
-              <li key={g.group} className="flex items-center justify-between gap-2">
-                <span className="font-medium">{c.groups[g.group]}</span>
-                <span className={`rounded-sm border px-1.5 py-px text-[11px] font-semibold uppercase tracking-wide ${STATUS_TONE[g.status]}`}>{c.status[g.status]}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        {p.limit !== null && (
-          <p className="rounded-md bg-stone-50 px-3 py-2 leading-relaxed text-stone-700">
-            {c.yourIncome(usd(monthly))}
-            <br />
-            {c.limitFor(p.sizeUsed, usd(p.limit))}
-          </p>
-        )}
+      <div className="flex flex-col gap-4 border-t border-stone-200 px-4 pb-4 pt-3 text-[15px]">
+        <div>
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-stone-500">{c.whyLabel}</p>
+          <p className="mt-1 leading-relaxed text-stone-800">{whyFor(p, c)}</p>
+          {p.limit !== null && (
+            <p className="mt-2 rounded-md bg-stone-50 px-3 py-2 text-stone-700">
+              {c.yourIncome(usd(monthly))}
+              <br />
+              {c.limitFor(p.sizeUsed, usd(p.limit))}
+            </p>
+          )}
+          {p.notes.slice(0, 2).map((n) => (
+            <p key={n} className="mt-2 leading-relaxed text-stone-700">
+              {n === "eitcYctc" ? c.notes.eitcYctc(usd(p.yctcUpTo ?? 0)) : c.notes[n]}
+            </p>
+          ))}
+        </div>
+
+        <div>
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-stone-500">{c.needLabel}</p>
+          <p className="mt-1 font-medium text-stone-900">{c.needs[p.program]}</p>
+        </div>
+
+        <div>
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-stone-500">{c.nextLabel}</p>
+          <p className="mt-1 font-medium text-stone-900">{c.steps[p.program]}</p>
+        </div>
+
         {p.upTo !== null && <p className="text-lg font-bold text-pine-900">{c.upTo(usd(p.upTo))}</p>}
-        {p.notes.map((n) => (
-          <p key={n} className="leading-relaxed text-stone-700">
-            {n === "eitcYctc" ? c.notes.eitcYctc(usd(p.yctcUpTo ?? 0)) : c.notes[n]}
-          </p>
-        ))}
-        {worth && (
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <a href={apply.url} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-center gap-1.5 rounded-md bg-pine-800 px-3 font-semibold text-white active:bg-pine-900">
-              {a.common.website} <ExternalIcon size={16} />
-            </a>
+
+        <div className="grid grid-cols-2 gap-2">
+          {read.available && (
+            <button
+              type="button"
+              onClick={() => (speaking ? read.stop() : read.speak(cardId, listenText))}
+              className={`flex min-h-12 items-center justify-center gap-1.5 rounded-md border px-3 font-semibold ${
+                speaking ? "border-pine-800 bg-pine-800 text-white" : "border-stone-400 text-pine-950 active:bg-stone-100"
+              }`}
+            >
+              {speaking ? <StopIcon size={16} /> : <SpeakerIcon size={18} />} {speaking ? a.common.stop : a.common.listen}
+            </button>
+          )}
+          {worth && (
             <a href={`tel:${phone.replace(/\D/g, "")}`} className="flex min-h-12 items-center justify-center gap-1.5 rounded-md border border-pine-800 px-3 font-semibold text-pine-900 active:bg-pine-50">
               <PhoneIcon size={18} /> {a.common.call}
             </a>
-          </div>
-        )}
-        <a href={p.sourceUrl} target="_blank" rel="noreferrer" className="text-[13px] text-stone-500 underline underline-offset-2">
-          {a.topics.sourcesTitle}
+          )}
+          {worth && (
+            <a href={apply.url} target="_blank" rel="noreferrer" className="col-span-2 flex min-h-12 items-center justify-center gap-1.5 rounded-md bg-pine-800 px-3 font-semibold text-white active:bg-pine-900">
+              {c.nextLabel}: {a.common.website} <ExternalIcon size={16} />
+            </a>
+          )}
+        </div>
+
+        <a href={p.sourceUrl} target="_blank" rel="noreferrer" className="text-[13px] leading-snug text-stone-500 underline underline-offset-2">
+          {c.sourceLine(p.sourceAgency, p.lastVerified)}
         </a>
       </div>
     </details>
