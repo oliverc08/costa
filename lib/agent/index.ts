@@ -85,6 +85,7 @@ export async function runAgent(
       text,
       language: ctx.languageHint ?? "en",
       wantsHumanHint: ctx.wantsHuman,
+      redactedThisTurn: ctx.redactedThisTurn,
     });
     logAudit(ctx.channel, local.text);
     return { text: local.text, tools: local.tools };
