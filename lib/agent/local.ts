@@ -242,8 +242,6 @@ export async function runLocalAgent(input: LocalAgentInput): Promise<LocalAgentR
       kind: "faq",
     };
   }
-  const softOk = soft && soft.score >= SOFT_FAQ && IN_SCOPE.test(text);
-
   // Out-of-scope: admit no source + offer help — do not invent limits.
   // Ignore weak FAQ near-misses for non-benefits questions (e.g. weather → letter FAQ).
   if (!IN_SCOPE.test(text)) {
