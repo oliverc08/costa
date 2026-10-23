@@ -17,7 +17,7 @@ Built for the **2026 Congressional App Challenge** in CA-16, whose district them
 
 | Channel | How |
 | --- | --- |
-| Web | Speak or type. Browser speech is used where available; an on-device Whisper-tiny path is available in supported browsers. |
+| Web | Speak or type. Browser-provided speech recognition is used where available; recorded fallback runs Whisper-tiny in the browser after its model files download. Costa does not send audio to an app or AI Gateway service. |
 | Ask | Multilingual FAQ matching first, then a deterministic local agent backed by curated benefit sources. |
 | Letter | OCR runs in the browser; redacted extracted text is sent to the Costa app server for a heuristic explanation. Redaction may miss details, so use a fabricated or carefully reviewed sample for demos. |
 | Checkup + My Plan | Screening math runs in TypeScript; plan and checkup details are saved on the device. |

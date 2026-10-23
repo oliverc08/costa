@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const STEPS = [
-  { title: "Speech in", body: "Uses browser speech recognition where available, with an on-device Whisper-tiny path in supported browsers. Costa does not send audio to an AI Gateway." },
+  { title: "Speech in", body: "Uses browser-provided speech recognition where available. Recorded fallback runs Whisper-tiny in the browser after its model files download. Costa does not send audio to an app server or AI Gateway." },
   { title: "Language", body: "UI language from the first-screen picker (cookie). Content and TTS use the same language code." },
   { title: "Intent", body: "Common questions match a multilingual FAQ with no model call. Other questions use Costa’s deterministic local agent to search curated sources and the local-help directory." },
   { title: "Eligibility engine", body: "TypeScript rules apply program tables and categories. The checkup runs in the browser. Costa does not ask immigration status or make benefit decisions." },
