@@ -1,6 +1,6 @@
 import { searchBenefits, type SearchHit, type SearchResponse } from "@/lib/knowledge/search";
 import { findLocalHelp } from "@/lib/local-help";
-import { faqAnswer, faqQuestion, faqSources, matchFaq } from "@/lib/faq";
+import { FAQS, faqAnswer, faqQuestion, faqSources, matchFaq } from "@/lib/faq";
 import type { LanguageCode } from "@/lib/languages";
 import { wantsHuman } from "@/lib/safety/intent";
 import type { ToolTrace } from "./index";
@@ -9,6 +9,7 @@ export interface LocalAgentInput {
   text: string;
   language: LanguageCode;
   wantsHumanHint?: boolean;
+  redactedThisTurn?: boolean;
 }
 
 export interface LocalAgentResult {
@@ -72,21 +73,58 @@ function noSourceText(language: LanguageCode): string {
   return map[language];
 }
 
-function helpOfferText(language: LanguageCode, providers: { name: string; phone?: string | null }[]): string {
+function helpOfferText(
+  language: LanguageCode,
+  providers: { name: string; phone?: string | null; address?: string }[],
+): string {
   const top = providers
     .slice(0, 3)
-    .map((p) => (p.phone ? `${p.name}: ${p.phone}` : p.name))
+    .map((p) => [p.name, p.address, p.phone].filter(Boolean).join(" · "))
     .join("\n");
   const lead: Record<LanguageCode, string> = {
-    en: "I can connect you with a local helper. Here are places that can help, or open Help to request a callback:",
-    es: "Puedo conectarle con una persona local. Lugares que pueden ayudar, o abra Ayuda para pedir que le llamen:",
-    zh: "我可以为您联系本地帮手。以下机构可以帮忙，或打开“帮助”请求回电：",
-    tl: "Pwede kitang ikonekta sa local helper. Narito ang mga lugar, o buksan ang Help para humingi ng callback:",
-    vi: "Tôi có thể kết nối bạn với người hỗ trợ gần đây. Các nơi có thể giúp, hoặc mở Trợ giúp để yêu cầu gọi lại:",
-    ko: "지역 도우미와 연결할 수 있습니다. 도움받을 곳이며, 콜백은 Help에서 요청하세요:",
-    pt: "Posso ligá-lo a um ajudante local. Lugares que podem ajudar, ou abra Ajuda para pedir retorno:",
+    en: "Here are places that may help. Call to confirm what they offer, or open Help to request a callback:",
+    es: "Estos lugares pueden ayudarle. Llame para confirmar qué ofrecen, o abra Ayuda para pedir que le llamen:",
+    zh: "以下机构可能可以帮忙。请先致电确认服务内容，或打开“帮助”请求回电：",
+    tl: "Narito ang mga lugar na maaaring makatulong. Tumawag muna para kumpirmahin ang serbisyo, o buksan ang Help para humingi ng callback:",
+    vi: "Các nơi sau có thể giúp. Hãy gọi để xác nhận dịch vụ, hoặc mở Trợ giúp để yêu cầu gọi lại:",
+    ko: "아래 기관에 도움을 문의할 수 있습니다. 제공 서비스를 전화로 확인하거나 Help에서 콜백을 요청하세요:",
+    pt: "Estes locais podem ajudar. Ligue para confirmar os serviços, ou abra Ajuda para pedir retorno:",
   };
   return `${lead[language]}\n\n${top || "211 / Health Consumer Alliance 1-888-804-3536"}`;
+}
+
+function appealIntent(text: string): boolean {
+  return /\b(denied|rejected|refused|appeal|state hearing|disagree with (the )?(county|decision))\b/i.test(text) ||
+    /(negó|rechazó|denegó|apelación|apelar|audiencia estatal|no estoy de acuerdo)/i.test(text) ||
+    /(拒绝|驳回|申诉|不同意|州听证)/.test(text) ||
+    /(tinanggihan|hindi sang-ayon|mali ito|apela)/i.test(text) ||
+    /(từ chối|không đồng ý|không đúng|kháng cáo|phiên điều trần)/i.test(text) ||
+    /(거부|거절|이의|항소)/.test(text) ||
+    /(negou|recusou|discordo|recurso|contestar)/i.test(text);
+}
+
+function inPersonHelpIntent(text: string): boolean {
+  return /\b(in[- ]person|face[- ]to[- ]face|in person|local (help|office)|somewhere .*help|place .*help)\b/i.test(text) ||
+    /(en persona|presencial|ayuda presencial)/i.test(text) ||
+    /(当面|面对面|现场).{0,8}(帮|协助|办理)|哪里.{0,8}(帮|协助|办理)|有没有地方.{0,12}(帮|协助)/.test(text) ||
+    /(nang personal|personal na tulong)/i.test(text) ||
+    /(trực tiếp|gặp trực tiếp)/i.test(text) ||
+    /(직접|대면)/.test(text) ||
+    /(presencial|pessoalmente)/i.test(text);
+}
+
+function helpProgram(text: string): "medi-cal" | "calfresh" | "wic" | "caleitc" | "disaster" | "any" {
+  if (/\bwic\b/i.test(text)) return "wic";
+  if (/\b(cal ?fresh|snap|ebt)\b|食品补助/i.test(text)) return "calfresh";
+  if (/\b(medi[-\s]?cal|medicaid|medical)\b|医保/i.test(text)) return "medi-cal";
+  if (/\b(caleitc|eitc|tax credit)\b/i.test(text)) return "caleitc";
+  if (/\b(fema|disaster)\b|灾害|thiên tai/i.test(text)) return "disaster";
+  return "any";
+}
+
+function helpArea(text: string): string {
+  // The directory accepts English city names; map the Mandarin name used in the demo prompt.
+  return text.includes("半月湾") ? "Half Moon Bay" : text;
 }
 
 /** Topics Costa covers — used to refuse out-of-scope queries without inventing numbers. */
@@ -94,7 +132,7 @@ const IN_SCOPE =
   /\b(medi[-\s]?cal|medicaid|calfresh|snap|ebt|wic|cal\s*eitc|eitc|disaster|fema|benefit|renew|coverage|福利|医保|혜택|alimentação|alimentação)\b/i;
 
 /**
- * Deterministic Ask path: emergency → soft FAQ → lexical knowledge search → human-help offer.
+ * Deterministic Ask path: emergency/privacy → explicit escalation → FAQ → lexical search.
  * No cloud LLM. Optional Ollama can wrap this later for freer phrasing.
  */
 export async function runLocalAgent(input: LocalAgentInput): Promise<LocalAgentResult> {
@@ -110,6 +148,25 @@ export async function runLocalAgent(input: LocalAgentInput): Promise<LocalAgentR
     return { text: emergencyText(language), tools, kind: "emergency" };
   }
 
+  // Number-bearing turns bypass generic FAQ matching. Their input was already redacted
+  // by the caller, so give a clear privacy note and private-case next steps immediately.
+  if (input.redactedThisTurn || text.includes("[REDACTED]")) {
+    const faq = FAQS.find((candidate) => candidate.id === "case-check-privacy");
+    if (faq) {
+      return {
+        text: faqAnswer(faq, language),
+        tools: [
+          {
+            toolName: "searchBenefits",
+            input: { query: faqQuestion(faq, language) },
+            output: { found: true, results: faqSources(faq) },
+          },
+        ],
+        kind: "faq",
+      };
+    }
+  }
+
   // Topics Costa does not cover — never invent dollar amounts (e.g. Section 8).
   if (/\bsection\s*8\b|housing\s+voucher|住房补助|sección\s*8|sección 8/i.test(text)) {
     const help = await findLocalHelp({ area: "unknown", language, program: "any", need: "general" });
@@ -118,6 +175,55 @@ export async function runLocalAgent(input: LocalAgentInput): Promise<LocalAgentR
       text: `${noSourceText(language)}\n\n${helpOfferText(language, help.results)}`,
       tools,
       kind: "none",
+    };
+  }
+
+  // Medi-Cal disputes get the matching hearing guidance; other programs go to
+  // localized directory help. Run this before fuzzy FAQ answers to preserve escalation.
+  if (appealIntent(text)) {
+    const program = helpProgram(text);
+    const isMediCalAppeal = program === "medi-cal";
+    const faq = isMediCalAppeal ? FAQS.find((candidate) => candidate.id === "state-hearing") : undefined;
+    const input = {
+      area: helpArea(text),
+      language,
+      program,
+      need: isMediCalAppeal ? ("appeal" as const) : ("general" as const),
+    };
+    const help = await findLocalHelp(input);
+    const appealTools: ToolTrace[] = [];
+    if (faq) {
+      appealTools.push({
+        toolName: "searchBenefits",
+        input: { query: faqQuestion(faq, language) },
+        output: { found: true, results: faqSources(faq) },
+      });
+    }
+    appealTools.push({ toolName: "findLocalHelp", input, output: help });
+    return {
+      text: `${faq ? faqAnswer(faq, language) : noSourceText(language)}\n\n${helpOfferText(language, help.results)}`,
+      tools: appealTools,
+      kind: "help",
+      nearFaqQuestion: faq ? faqQuestion(faq, language) : null,
+    };
+  }
+
+  // Place-based in-person requests need the directory, not the generic in-person FAQ.
+  if (inPersonHelpIntent(text)) {
+    const input = { area: helpArea(text), language, program: helpProgram(text), need: "apply" as const };
+    const help = await findLocalHelp(input);
+    tools.push({ toolName: "findLocalHelp", input, output: help });
+    return { text: helpOfferText(language, help.results), tools, kind: "help" };
+  }
+
+  if (input.wantsHumanHint || wantsHuman(text)) {
+    const helpInput = { area: helpArea(text), language, program: helpProgram(text) };
+    const help = await findLocalHelp(helpInput);
+    tools.push({ toolName: "findLocalHelp", input: helpInput, output: help });
+    return {
+      text: helpOfferText(language, help.results),
+      tools,
+      kind: "help",
     };
   }
 
@@ -137,17 +243,6 @@ export async function runLocalAgent(input: LocalAgentInput): Promise<LocalAgentR
     };
   }
   const softOk = soft && soft.score >= SOFT_FAQ && IN_SCOPE.test(text);
-
-  if (input.wantsHumanHint || wantsHuman(text)) {
-    const help = await findLocalHelp({ area: "unknown", language, program: "any" });
-    tools.push({ toolName: "findLocalHelp", input: { area: "unknown", language, program: "any" }, output: help });
-    return {
-      text: helpOfferText(language, help.results),
-      tools,
-      kind: "help",
-      nearFaqQuestion: soft ? faqQuestion(soft.faq, language) : null,
-    };
-  }
 
   // Out-of-scope: admit no source + offer help — do not invent limits.
   // Ignore weak FAQ near-misses for non-benefits questions (e.g. weather → letter FAQ).

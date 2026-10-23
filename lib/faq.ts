@@ -1,6 +1,7 @@
 import { getSource } from "@/lib/knowledge";
 import type { TopicId } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
+import { redact } from "@/lib/safety/redact";
 
 /**
  * Pre-written answers to the most common questions, served without calling the model.
@@ -138,6 +139,34 @@ const CORE_FAQS: Faq[] = [
       vi: "WIC cung cấp thực phẩm lành mạnh, hướng dẫn dinh dưỡng và hỗ trợ cho con bú. Chương trình dành cho người đang mang thai, đang cho con bú hoặc mới sinh con trong 6 tháng qua, và trẻ em dưới 5 tuổi.\n- Nếu bạn đã có Medi-Cal, CalFresh hoặc CalWORKs, bạn tự động đáp ứng quy định thu nhập của WIC.\n- WIC không yêu cầu số An Sinh Xã Hội hay giấy tờ chứng minh quốc tịch.\n- Gọi WIC California số 1-800-852-5770 để lấy hẹn. Chỉ nhân viên WIC mới xác nhận được bạn có đủ điều kiện hay không.",
       ko: "WIC는 건강한 식품, 영양 지원, 모유수유 지원을 제공합니다. 임신·수유 중이거나 최근 6개월 내 출산한 사람, 5세 미만 아동이 대상입니다.\n- 이미 Medi-Cal, CalFresh, CalWORKs를 받으면 WIC 소득 요건을 자동으로 충족합니다.\n- WIC는 사회보장번호나 시민권 증명을 요구하지 않습니다.\n- 캘리포니아 WIC 1-800-852-5770으로 예약하세요. 자격 확정은 WIC 직원만 할 수 있습니다.",
       pt: "O WIC dá comida saudável, ajuda de nutrição e apoio à amamentação. É para quem está grávida, amamentando ou teve bebé nos últimos 6 meses, e para crianças menores de 5 anos.\n- Se já tem Medi-Cal, CalFresh ou CalWORKs, cumpre automaticamente a regra de renda do WIC.\n- O WIC não pede número de Seguro Social nem prova de cidadania.\n- Ligue ao WIC da Califórnia 1-800-852-5770 para marcar. Só o pessoal do WIC confirma se se qualifica.",
+    },
+  },
+  {
+    id: "wic-toddler",
+    topic: "food",
+    sourceIds: ["wic"],
+    aliases: ["wic for my toddler", "wic for a 2 year old", "2 year old wic", "我可以为我2岁的孩子申请 WIC 吗"],
+    question: {
+      en: "Can I get WIC for my 2-year-old?",
+      zh: "我可以为我2岁的孩子申请 WIC 吗？",
+    },
+    answer: {
+      en: "You can ask WIC about a 2-year-old; California WIC serves children under 5. Your household must live in California and meet WIC program rules. If someone in the family gets Medi-Cal, CalFresh, or CalWORKs, the household meets WIC's income rule. Call 1-800-852-5770 to make an appointment. Only WIC staff can confirm eligibility.",
+      zh: "您可以为2岁孩子咨询 WIC；加州 WIC 服务对象包括5岁以下儿童。家庭须住在加州并符合 WIC 项目规则。如果家中有人领取 Medi-Cal、CalFresh 或 CalWORKs，家庭就符合 WIC 的收入规定。请拨打 1-800-852-5770 预约。只有 WIC 工作人员可以确认是否符合领取条件。",
+    },
+  },
+  {
+    id: "wic-immigration-status",
+    topic: "food",
+    sourceIds: ["wic"],
+    aliases: ["wic asks immigration status", "does wic ask about immigration", "WIC 会问移民身份吗"],
+    question: {
+      en: "Does WIC ask about immigration status?",
+      zh: "WIC 会问移民身份吗？",
+    },
+    answer: {
+      en: "WIC does not require a Social Security number or proof of citizenship. Families may apply regardless of immigration status if they live in California and meet WIC program rules. Call 1-800-852-5770 to make an appointment. Only WIC staff can confirm eligibility.",
+      zh: "WIC 不要求提供社会安全号码或公民身份证明。无论移民身份如何，只要住在加州并符合 WIC 项目规则，家庭都可以申请。请拨打 1-800-852-5770 预约。只有 WIC 工作人员可以确认是否符合领取条件。",
     },
   },
   {
@@ -417,6 +446,36 @@ const EXTRA_FAQS: Faq[] = [
     },
   },
   {
+    id: "case-check-privacy",
+    topic: "health",
+    sourceIds: ["medi-cal-apply"],
+    aliases: [
+      "check my medi-cal case",
+      "look up my medi-cal case",
+      "check my case status",
+      "Can you check my Medi-Cal case?",
+      "可以帮我查 Medi-Cal 个案吗",
+    ],
+    question: {
+      en: "Can Costa check my Medi-Cal case?",
+      es: "¿Costa puede revisar mi caso de Medi-Cal?",
+      zh: "Costa 可以查询我的 Medi-Cal 个案吗？",
+      tl: "Maaari bang tingnan ng Costa ang Medi-Cal case ko?",
+      vi: "Costa có thể tra cứu hồ sơ Medi-Cal của tôi không?",
+      ko: "Costa가 내 Medi-Cal 사례를 확인할 수 있나요?",
+      pt: "A Costa pode consultar o meu caso do Medi-Cal?",
+    },
+    answer: {
+      en: "If you included a sensitive number, it was removed to protect your privacy. Costa cannot see or look up private Medi-Cal cases. To check your case, sign in at BenefitsCal.com or call your county: San Mateo 1-800-223-8383 or Santa Clara 1-877-962-3633. Open Help for local support. For safety, keep SSNs and case numbers out of chat.",
+      es: "Si incluyó un número privado, se eliminó para proteger su privacidad. Costa no puede ver ni consultar casos privados de Medi-Cal. Para revisar su caso, inicie sesión en BenefitsCal.com o llame a su condado: San Mateo 1-800-223-8383 o Santa Clara 1-877-962-3633. Abra Ayuda para recibir apoyo local. No envíe aquí su SSN ni número de caso.",
+      zh: "如果您发送了敏感号码，该号码已被删除以保护您的隐私。Costa 无法查看或查询 Medi-Cal 个案。请登录 BenefitsCal.com 或致电县政府查询：San Mateo 1-800-223-8383，Santa Clara 1-877-962-3633。打开“帮助”获取本地协助。请不要在这里发送社会安全号码或个案号码。",
+      tl: "Kung nagsama ka ng sensitibong numero, inalis ito para protektahan ang privacy mo. Hindi nakikita o nasusuri ng Costa ang pribadong Medi-Cal case. Para tingnan ang case, mag-sign in sa BenefitsCal.com o tawagan ang county: San Mateo 1-800-223-8383 o Santa Clara 1-877-962-3633. Buksan ang Help para sa lokal na suporta. Huwag ipadala rito ang SSN o case number mo.",
+      vi: "Nếu bạn gửi một số nhạy cảm, số đó đã được xóa để bảo vệ quyền riêng tư của bạn. Costa không thể xem hoặc tra cứu hồ sơ Medi-Cal riêng tư. Để kiểm tra hồ sơ, hãy đăng nhập tại BenefitsCal.com hoặc gọi quận: San Mateo 1-800-223-8383 hoặc Santa Clara 1-877-962-3633. Mở Trợ giúp để nhận hỗ trợ tại địa phương. Đừng gửi SSN hoặc số hồ sơ ở đây.",
+      ko: "민감한 번호를 입력했다면 개인정보 보호를 위해 삭제했습니다. Costa는 비공개 Medi-Cal 사례를 보거나 조회할 수 없습니다. 사례를 확인하려면 BenefitsCal.com에 로그인하거나 카운티에 전화하세요: San Mateo 1-800-223-8383 또는 Santa Clara 1-877-962-3633. 지역 지원은 Help를 여세요. SSN이나 사례 번호를 여기에 보내지 마세요.",
+      pt: "Se você incluiu um número sensível, ele foi removido para proteger sua privacidade. A Costa não pode ver nem consultar casos privados do Medi-Cal. Para verificar o caso, entre em BenefitsCal.com ou ligue para o condado: San Mateo 1-800-223-8383 ou Santa Clara 1-877-962-3633. Abra Ajuda para obter apoio local. Não envie seu SSN ou número do caso aqui.",
+    },
+  },
+  {
     id: "in-person-help",
     topic: "health",
     sourceIds: ["medi-cal-apply", "calfresh"],
@@ -521,6 +580,9 @@ export function matchFaq(
 ): { faq: Faq; language: LanguageCode; score: number; matchedQuestion: string } | null {
   const raw = text.trim();
   if (!raw) return null;
+  // Do not let a generic FAQ shortcut echo past a turn containing a sensitive number.
+  // The caller can redact the text and route it through the privacy-aware local answer.
+  if (raw.includes("[REDACTED]") || redact(raw).redacted) return null;
   const minScore = opts?.minScore ?? 0.62;
   const exact = byExact.get(compact(raw));
   if (exact) {
