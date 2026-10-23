@@ -34,7 +34,15 @@ const CORE_FAQS: Faq[] = [
       ko: "Medi-Cal을 어떻게 갱신하나요?",
       pt: "Como renovo o meu Medi-Cal?",
     },
-    aliases: ["renew medi-cal", "medi-cal renewal", "how to renew medical", "yellow envelope", "renovar medi-cal", "메디칼 갱신"],
+    aliases: [
+      "renew medi-cal",
+      "medi-cal renewal",
+      "how to renew medical",
+      "yellow envelope",
+      "yellow envelope renewal",
+      "renovar medi-cal",
+      "메디칼 갱신",
+    ],
     answer: {
       en: "Medi-Cal checks every year that you still qualify. First, the county tries to renew you automatically. If it can, you get a notice and don't need to do anything.\n\nIf you get a renewal form in a yellow envelope:\n1. Check the pre-filled information and fix anything that is wrong.\n2. Send the proof it asks for, like pay stubs.\n3. Sign it and return it by the due date: online at BenefitsCal.com, by mail, by phone, or in person.\n\nIf you don't return it, your Medi-Cal will end. County phone: San Mateo 1-800-223-8383, Santa Clara 1-877-962-3633.",
       es: "Medi-Cal revisa cada año si todavía califica. Primero, el condado intenta renovarle automáticamente. Si puede, le llega un aviso y no tiene que hacer nada.\n\nSi le llega un formulario de renovación en un sobre amarillo:\n1. Revise la información que ya viene escrita y corrija lo que esté mal.\n2. Envíe las pruebas que pide, como talones de pago.\n3. Fírmelo y entréguelo antes de la fecha límite: en línea en BenefitsCal.com, por correo, por teléfono o en persona.\n\nSi no lo entrega, su Medi-Cal se termina. Teléfono del condado: San Mateo 1-800-223-8383, Santa Clara 1-877-962-3633.",
@@ -633,6 +641,15 @@ export function matchFaq(
   if (exact) {
     return { faq: exact.faq, language: exact.language, score: 1, matchedQuestion: exact.phrase };
   }
+
+  // Short, broad prompts often contain only a program name and question words.
+  // Fuzzy coverage can mistake them for a more specific FAQ (for example,
+  // "What is Medi-Cal?" for "What if I don't qualify for Medi-Cal?"). Let the
+  // source search handle these unless they exactly match a reviewed FAQ or alias.
+  // Count CJK characters too because Chinese text commonly has no word spaces.
+  const cjkChars =
+    raw.match(/[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}]/gu)?.length ?? 0;
+  if (raw.split(/\s+/u).filter(Boolean).length <= 3 && cjkChars <= 5) return null;
 
   const qTokens = tokens(raw);
   const qGrams = charGrams(raw);
