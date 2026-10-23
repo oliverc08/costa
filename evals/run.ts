@@ -70,7 +70,9 @@ function judgeLocal(s: Scenario, reply: string, tools: ToolTrace[]): Judgement {
   const search = tools.find((t) => t.toolName === "searchBenefits");
   const searchOut = search?.output as { found?: boolean; results?: unknown[] } | undefined;
   const help = tools.find((t) => t.toolName === "findLocalHelp");
-  const detected = detectLanguage(reply);
+  // Ignore provider names and addresses that may contain accents from another language.
+  // The first paragraph is the assistant's own narrative, before any directory listing.
+  const detected = detectLanguage(reply.split(/\n\s*\n/)[0]);
   const languageOk =
     s.language === "en"
       ? detected === null || detected === "en" || detected === "es" // English replies may include Spanish program names

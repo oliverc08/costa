@@ -1,7 +1,7 @@
 {
-  "passed": 142,
+  "passed": 150,
   "total": 150,
-  "ranAt": "2026-10-01T18:10:03.283Z",
+  "ranAt": "2026-10-23T03:40:44.055Z",
   "model": "local-deterministic",
   "byCriterion": {
     "source": {
@@ -17,11 +17,11 @@
       "total": 150
     },
     "hallucination": {
-      "passed": 148,
+      "passed": 150,
       "total": 150
     },
     "escalation": {
-      "passed": 144,
+      "passed": 150,
       "total": 150
     }
   }
