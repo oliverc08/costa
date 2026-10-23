@@ -1,217 +1,114 @@
-# Costa — full CAC application draft (copy into the portal)
+# Costa — CAC application working draft
 
-**District:** CA-16 (Rep. Sam Liccardo)  
-**Deadline:** Monday, October 26, 2026 — **9:00 AM Pacific** (same as 12:00 pm EDT national)  
-**Submit by:** October 24 if possible  
+This is a factual starting point, not a ready-to-submit application. Each participant must verify the facts, write personal answers in their own voice, complete the portal fields, and review the current rules. Do not commit private addresses, student IDs, or guardian contact details to this public repository.
 
-**Fill in before submitting:** replace every `[BRACKET]`  
-**Live app:** https://costa-five.vercel.app  
-**Source code:** https://github.com/oliverc08/costa  
-**Judge walkthrough:** https://costa-five.vercel.app/how  
+**District:** California's 16th Congressional District
 
-Related docs: [TEAM-BRIEF.md](./TEAM-BRIEF.md) (rehearsal) · [AI-DISCLOSURE.md](./AI-DISCLOSURE.md) · [SUBMISSION.md](./SUBMISSION.md)
+**Live app:** https://costa-five.vercel.app
 
----
+**Source:** https://github.com/oliverc08/costa
 
-## A. Registration fields (portal profile)
+**Judge walkthrough:** https://costa-five.vercel.app/how
 
-| Field | What to enter |
-| --- | --- |
-| Personal email | **Not** your school email |
-| Home address | Full street + **9-digit ZIP** |
-| School address | Full street + **9-digit ZIP** |
-| Congressional district | California’s 16th / Sam Liccardo |
-| Parent/guardian name + email | Required |
-| Coding teacher/mentor | Optional — `[NAME / EMAIL]` |
-| Team | One person creates the team; invite ≤3 others |
-| Eligibility quiz | Middle or high school on Oct 26, 2026; live or attend school in CA-16 (or ≥½ of team); U.S. resident; one entry per person |
+**Video:** [ADD THE FINAL PUBLIC VIDEO URL]
 
-**Team roster (edit):**
+The 2026 national rules list October 26, 2026 at 12:00 p.m. EDT (9:00 a.m. Pacific). Verify the live portal and district instructions for the current deadline; contact the district office if the displayed times conflict.
+
+## A. Portal profile and team
+
+Complete these fields in the official portal. Confirm eligibility with every entrant and guardian.
+
+- Personal email for each student, if required by the portal
+- Student and parent/guardian details requested by the portal
+- Home and school district information requested by the portal
+- Team lead and up to the permitted number of teammates
+- Any required teacher or mentor details
+- Eligibility questions and attestations
 
 | Role | Full name | Grade | School |
 | --- | --- | --- | --- |
-| Lead / creates team | `[NAME 1]` | `[ ]` | `[ ]` |
-| Teammate | `[NAME 2]` | `[ ]` | `[ ]` |
-| Teammate | `[NAME 3]` | `[ ]` | `[ ]` |
-| Teammate | `[NAME 4]` | `[ ]` | `[ ]` |
+| Team lead | [FILL IN IN PORTAL] | [ ] | [ ] |
+| Teammate | [FILL IN IN PORTAL] | [ ] | [ ] |
+| Teammate | [FILL IN IN PORTAL] | [ ] | [ ] |
+| Teammate | [FILL IN IN PORTAL] | [ ] | [ ] |
 
----
+## B. Application answer drafts
 
-## B. Application questions (paste these)
-
-### 1. What is the title of your app?
+### 1. App title
 
 Costa
 
-### 2. Explain the app’s purpose.
+### 2. Purpose
 
-Costa is a free, multilingual benefits navigator for families in San Mateo and Santa Clara counties (California’s 16th district). It helps people who don’t speak English fluently understand Medi-Cal and related programs (CalFresh, WIC, CalEITC, and disaster aid), explain confusing government letters, save next steps on their phone, and connect to a real local helper — without creating an account or installing an app.
+Costa is a multilingual web app that helps people in San Mateo and Santa Clara counties navigate Medi-Cal and related benefits. It can explain benefit-letter text, provide next-step guidance from curated sources, offer a deterministic screening checkup, and connect users with local help. It supports English, Spanish, Mandarin, Tagalog, Vietnamese, Korean, and Portuguese. It does not decide eligibility or award benefits.
 
-Users can speak or type in English, Spanish, Mandarin, Tagalog, Vietnamese, Korean, or Portuguese. Costa uses AI to communicate in the user’s language, but it does **not** decide eligibility. Benefit facts come from curated official sources, and screening math runs in plain TypeScript on the device.
+### 3. Inspiration
 
-**Live demo:** https://costa-five.vercel.app
+Write this answer from the entrants' actual experience. Consider: What problem did you observe? Why did it matter to your team? What did each participant contribute? Do not use a generic story or claim lived experience that is not true.
 
-### 3. What inspired you to create this app?
+Draft notes: [ADD YOUR OWN ACCOUNT]
 
-California’s 16th district asked students to build something that helps people access vital federal, state, or local benefits and services. That matched a problem we see every day: families get Medi-Cal renewals and notices that are hard even in English, and harder when English isn’t the language spoken at home.
+### 4. Technical challenge and solution
 
-We wanted a “language layer” between people and the benefits system — something voice-first, free, and trustworthy. Existing chatbots often invent facts or sound too sure. So we designed Costa so that common questions can be answered from a verified FAQ without calling a model, eligibility screening is deterministic code (not AI), and when someone still needs a person, they can request local help with consent.
+One technical challenge was keeping benefit guidance understandable while avoiding unsupported eligibility decisions. Costa uses a multilingual FAQ for common questions, a deterministic local agent that searches curated benefit sources for other questions, and TypeScript rules for the screening checkup. Letter OCR runs in the browser; Costa redacts the extracted text in the browser and again on the server before heuristic analysis. The default web demo does not call a cloud model or AI Gateway. Optional local models can be configured separately.
 
-### 4. What technical/coding difficulty did you face, and how did you address it?
+Add what each entrant personally designed, implemented, tested, or reviewed: [VERIFY AND COMPLETE]
 
-The hardest problem was **trust**. Language models are great at sounding helpful, but for Medi-Cal they can invent deadlines, phone numbers, or eligibility. That would make Costa dangerous.
+### 5. What the team learned
 
-We solved it with product constraints in code:
+Each participant should write this answer from their own work. Possible topics to consider include source verification, designing a fallback, testing language coverage, or handling sensitive data. Use only lessons that the team actually learned.
 
-1. **FAQ matcher first** — Common questions are matched with fuzzy text matching to pre-written multilingual answers, so many Ask requests never hit a model (`lib/faq.ts`).
-2. **Tool-backed chat** — Open questions go through an agent that must use tools like `searchBenefits` over our curated knowledge base (`content/sources/`), instead of answering from model memory.
-3. **Deterministic eligibility** — Checkup and the agent’s `screenEligibility` tool share the same TypeScript rules and FPL tables (`lib/eligibility/`). Costa says someone *may* qualify; it never decides benefits.
-4. **Safety layer** — We redact sensitive ID patterns before the model, audit replies for definite eligibility claims / immigration questions / unverified phones, and maintain a multilingual safety eval suite.
-5. **Fallbacks** — If cloud AI is down, FAQ still works, Ask shows an offline hint, and letter photos can be read with on-device OCR.
+Draft notes: [ADD YOUR OWN ACCOUNT]
 
-The challenge wasn’t “calling an API” — it was architecting the app so AI is for communication, not authority.
+### 6. What the team would change
 
-### 5. What did you learn while participating in the CAC? What was your biggest takeaway?
+Choose improvements the team genuinely wants to pursue. Possible areas include broader language review, more real-world usability testing with consent, improved source freshness checks, or stronger letter support. Do not claim user testing or partner feedback that has not happened.
 
-Biggest takeaway: for public benefits, **AI features are not enough**. You need verified data, hard product rules, and a path to a human.
+Draft notes: [ADD YOUR OWN PLAN]
 
-We also learned that voice-first design, huge tap targets, and offline fallbacks matter more to real users (and to a live demo) than adding another model call. Building Costa taught us to treat safety and language access as engineering problems — FAQ matching, deterministic screening, redaction, evals — not just prompt wording.
+## C. AI and third-party tools disclosure
 
-### 6. What would you change about your app if you were to create a 2.0 version?
+Attach or paste the current [AI-DISCLOSURE.md](./AI-DISCLOSURE.md), after each participant confirms the tools and assistance it lists. The current project work identifies Cursor and OpenAI Codex; add any other AI tools, models, or generative-media tools actually used by the entrants.
 
-In 2.0 we would:
+### Short disclosure text
 
-- Finish full UI translations for every supported language (not only FAQ/content paths)
-- Improve letter support for PDFs and low-light photos
-- Complete structured user testing with partners like ALAS, Puente de la Costa Sur, and Sacred Heart Community Service, and fold their feedback into the UX
-- Publish always-on safety-eval scores on the site after every release
-- Add clearer “how to renew” guided checklists per county
+Costa's default runtime uses a multilingual FAQ, deterministic local-agent code, curated sources, and TypeScript eligibility rules. It does not use Vercel AI Gateway or require a cloud model. Optional local model features run only when an OpenAI-compatible local endpoint is configured. During development, AI coding assistants including Cursor and OpenAI Codex assisted with code/documentation review and drafting and implementation suggestions. Each participant must review and accurately describe their own contribution and add any AI tools they used. The project also uses open-source libraries and optional services listed in AI-DISCLOSURE.md and the package manifests.
 
----
-
-## C. AI / open-source disclosure (paste or attach)
-
-If the portal has a dedicated AI field, paste this. Otherwise attach `docs/AI-DISCLOSURE.md` or include this under Q4.
-
-```
-AI DISCLOSURE — Costa (Congressional App Challenge 2026)
-
-Runtime AI in the product:
-- FAQ matcher (no model): maps common questions to pre-written multilingual answers.
-- Chat agent (AI Gateway + AI SDK): only when FAQ misses; must use tools backed by curated government sources.
-- Letter vision (when Gateway works): explains a letter photo; photo is not permanently stored.
-- On-device OCR fallback (Tesseract.js): when cloud AI is unavailable.
-- Speech: browser speech first; Whisper/TTS only as fallback.
-- Eligibility checkup: deterministic TypeScript only — AI never decides eligibility.
-
-AI used while building:
-- Coding assistants (including Cursor) helped scaffold UI/API routes, draft FAQ copy for our review, and suggest tests/refactors.
-- Students directed architecture, product decisions, safety rules, source curation, eligibility tables, FAQ design, handoff flow, letter heuristics, eval scenarios, and UX.
-- AI did not write the entire app unattended. Significant personal/student contribution is required by the rules and is reflected in the systems above.
-
-Open-source / platforms (not student-written):
-Next.js, React, TypeScript, Tailwind CSS, Vercel AI SDK, Vercel AI Gateway, Zod, Twilio (optional), Neon Postgres + pgvector (optional), Tesseract.js, Vitest.
-
-Principle: AI for communication, not authority.
-Full detail: https://github.com/oliverc08/costa/blob/main/docs/AI-DISCLOSURE.md
-```
-
----
-
-## D. Links for judges (put wherever the portal asks for source / demo)
+## D. Links
 
 | Label | URL |
 | --- | --- |
 | Live app | https://costa-five.vercel.app |
-| How it works (judges) | https://costa-five.vercel.app/how |
-| Source code (public) | https://github.com/oliverc08/costa |
+| Judge walkthrough | https://costa-five.vercel.app/how |
+| Source code | https://github.com/oliverc08/costa |
 | AI disclosure | https://github.com/oliverc08/costa/blob/main/docs/AI-DISCLOSURE.md |
-| Demo video | `[PASTE YOUTUBE OR VIMEO PUBLIC LINK]` |
+| Public demo video | [ADD AFTER RECORDING AND VERIFYING VISIBILITY] |
 
----
+## E. Video preparation
 
-## E. Full demo video script (read this on camera)
+Follow the live portal requirements. The current project notes describe a public 1–3 minute video that includes participants' names, app name, purpose, target audience, tools/languages, and a live demonstration. Verify that these instructions are still current.
 
-**Rules reminder:** 1–3 minutes · **Public** on YouTube or Vimeo (not Unlisted) · Include names, app name, one-sentence purpose, audience, tools/languages, live showcase.
+Suggested order:
 
-**Replace names. Practice once with a phone timer.**
+1. Each actual participant says their name and introduces Costa.
+2. Explain the purpose and intended audience in your own words.
+3. Name the languages and tools used by the team.
+4. Show the running app and one common-question answer with its source.
+5. Show Checkup or My Plan and explain the safety boundary.
+6. Optionally show a letter example made from fabricated or fully redacted data.
+7. End with the live app and source links.
 
----
+Before upload, verify that the video is the required length, public, accessible without signing in, and free of personal data. Add captions if useful or required. Paste the final URL into the portal and section D.
 
-**[0:00–0:15] Faces / name cards**  
-“Hi — I’m `[NAME 1]`[, and this is `NAME 2` / `NAME 3`]. We’re students in California’s 16th congressional district. This is **Costa**.”
+## F. Final checks
 
-**[0:15–0:30] Home screen**  
-“Costa helps families who don’t speak English fluently **access Medi-Cal and other benefits** in California’s 16th district.”
-
-**[0:30–0:40] Language picker**  
-“It’s for parents and workers who get confusing benefits letters and need a clear next step — with **no account** and no app install.”
-
-**[0:40–0:55] Keep home or flash `/how`**  
-“We built Costa with **TypeScript, Next.js, and React**, hosted on **Vercel**, using the **AI SDK**. Eligibility screening is plain TypeScript — not the language model.”
-
-**[0:55–1:25] Phone: switch to Spanish or Vietnamese → Ask**  
-*(Tap a common-question chip, or paraphrase one.)*  
-“You can speak or type. Many common questions match a FAQ we wrote, so the answer can come from verified sources **without inventing facts**. No account required.”
-
-**[1:25–1:55] Letter → take/upload a clear photo**  
-“Here’s a Medi-Cal letter. Costa explains the deadline and what to do next. The photo isn’t saved on our servers.”
-
-**[1:55–2:20] Plan tab or Help → request a person**  
-“You can save steps on this phone in My Plan, or request a real person from a local partner — with your consent.”
-
-**[2:20–2:45] Safety line (stay on `/how` or Help)**  
-“AI helps with language. It never decides eligibility, and Costa never asks about immigration status.”
-
-**[2:45–3:00] End card**  
-“Try Costa at **costa-five.vercel.app**. Thanks for watching.”
-
----
-
-### Video checklist before upload
-
-- [ ] Length between 1:00 and 3:00  
-- [ ] Every teammate’s name said on camera  
-- [ ] App name “Costa” said clearly  
-- [ ] One-sentence purpose said clearly  
-- [ ] Audience said  
-- [ ] Tools/languages said (TypeScript, Next.js, React, Vercel, AI SDK)  
-- [ ] Live phone demo (not only slides)  
-- [ ] YouTube/Vimeo set to **Public**  
-- [ ] English captions if any spoken language isn’t English  
-- [ ] Link pasted into section D above and into the portal  
-
----
-
-## F. Optional “extra credit” blurbs (if there’s a free-response / notes box)
-
-**District theme:**  
-Costa directly addresses CA-16’s 2026 theme: helping people access vital federal, state, or local benefits and services — focused on Medi-Cal and related programs for San Mateo and Santa Clara families.
-
-**Coding excellence (short):**  
-Deterministic eligibility engine; multilingual FAQ matcher before the LLM; verified-source search; input redaction and output safety audit; on-device letter OCR fallback; 399 automated unit tests; multilingual safety eval suite.
-
-**User testing (fill after you talk to orgs):**  
-“In early feedback sessions with `[ORG / N people]`, users said: “[QUOTE 1]” and “[QUOTE 2].” We changed `[WHAT]` based on that.”
-
-Partner contacts (from DEMO.md): ALAS (Half Moon Bay) · Puente de la Costa Sur (Pescadero) · Sacred Heart Community Service (San José).
-
----
-
-## G. Final submit checklist
-
-- [ ] Registered with personal email; eligibility quiz passed  
-- [ ] Team invites accepted (if any)  
-- [ ] Questions 1–6 pasted (edited into your voice)  
-- [ ] AI disclosure pasted or file attached  
-- [ ] Demo video Public + link added  
-- [ ] Live URL + GitHub URL added  
-- [ ] Parent/guardian info complete  
-- [ ] Submitted before **Oct 26, 2026, 9:00 AM PT**  
-- [ ] After deadline: every teammate completes the Exit Questionnaire  
-
----
-
-## H. Voice pass (do this before paste)
-
-Read Q2–Q6 out loud once. Change any sentence that doesn’t sound like you. Keep the facts; swap the wording. Judges can tell when answers are generic — they can’t tell you used a draft if it sounds like your team.
+- [ ] Every entrant and guardian has confirmed eligibility and roster information.
+- [ ] Each participant has reviewed the answer drafts and made them accurate and personal.
+- [ ] Student contributions are described truthfully and distinctly.
+- [ ] AI and third-party tools are fully disclosed by every participant.
+- [ ] Current rulebook, district instructions, and live deadline have been checked.
+- [ ] App, repository, and judge-walkthrough links have been opened and checked.
+- [ ] Demo video is complete and satisfies the current portal instructions.
+- [ ] All bracketed fields are resolved; no names or video link are fabricated.
+- [ ] Portal entry has been submitted and confirmation saved.
+- [ ] Any post-deadline questionnaire required by the rules is completed.
