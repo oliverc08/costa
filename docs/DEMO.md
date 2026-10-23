@@ -1,55 +1,66 @@
-# Demo, user testing, and submission
+# Demo and submission preparation
 
-Canonical CAC checklist (rules-aligned): **[docs/SUBMISSION.md](./SUBMISSION.md)**  
-AI / open-source disclosure (required): **[docs/AI-DISCLOSURE.md](./AI-DISCLOSURE.md)**  
-Team script / “we understand the code” brief (internal): **[docs/TEAM-BRIEF.md](./TEAM-BRIEF.md)**
+Use the canonical checklist in SUBMISSION.md and verify every current requirement in the official portal before submitting. This file is a practical run sheet; it is not evidence that a video, user test, or submission has been completed.
 
-**Deadline for CA-16:** Monday, **October 26, 2026, 9:00 AM Pacific** (national cutoff is the same instant: 12:00 pm EDT). Submit by **October 24**.
+## Local run-through
 
-CA-16 theme (Liccardo): apps that help people access **vital federal, state, or local benefits and services** — Costa is built for this.
+From the project root, start the default app:
 
-## Before recording
+```bash
+npm install
+npm run dev
+```
 
-- [ ] Production deploy: https://costa-five.vercel.app (AI Gateway working **or** rely on FAQ chips + letter photo offline path)
-- [x] GitHub repo **public**: https://github.com/oliverc08/costa
-- [ ] `npm run eval` once with Gateway; commit `public/eval-results.json` if you want the score on `/how`
-- [ ] Sample Medi-Cal letter photo (MC 216 / MC 355) with personal details covered
-- [ ] Partner dashboard ready if you show handoff (`/partners`)
-- [ ] Screen recorder; English captions for non-English speech
+Open http://localhost:3000. The default run does not need AI credentials or an AI Gateway account.
 
-## Two-minute demo script (recording)
+Before recording, walk through these paths on the device you will show:
 
-Prefer the **web app** on a phone. CAC video must be **1–3 minutes**, **public** on YouTube/Vimeo (not unlisted), and must state: your names, app name, one-sentence purpose, target audience, tools/languages, and a live showcase. Full beat sheet: [SUBMISSION.md](./SUBMISSION.md).
+- [ ] Choose one supported language and confirm the visible labels are understandable.
+- [ ] Ask a common question using a FAQ suggestion; confirm the response displays its source.
+- [ ] Try one typed question that is not in the FAQ; confirm the local agent returns a useful, grounded response.
+- [ ] Open the Checkup and My Plan paths; explain that screening is guidance and saved plan details stay in browser storage.
+- [ ] Try the letter path with a fabricated or fully redacted sample. OCR is performed in the browser, redacted extracted text is sent to the app server, and the server redacts it again before analysis. Redaction may miss details; do not use an unredacted real benefits letter.
+- [ ] If showing a person handoff, configure and test partner sign-in and storage first. Without DATABASE_URL, handoffs are temporary process memory and are unsuitable for a durable shared queue.
+- [ ] Run npm run eval and review any failures. The evaluation uses the local deterministic agent and needs no AI Gateway.
+
+For the hosted app, check the same paths on the actual deployment. If demonstrating partner handoff, verify the production PARTNER_PASSCODE and SESSION_SECRET, durable storage if required, and the partner dashboard before recording.
+
+## Video run sheet
+
+The 2026 CAC instructions call for a 1–3 minute video; verify the current portal instructions before upload. Make it public on the required hosting service and include the participants' actual names, app name, purpose, target audience, tools/languages, and a live demonstration. Do not publish unapproved personal details from a real user or partner.
+
+Suggested two-minute sequence:
 
 | Time | Show | Say |
 | --- | --- | --- |
-| 0:00–0:15 | Welcome → Spanish or Vietnamese | Names + “This is Costa.” Mention CA-16 language access + Medi-Cal confusion. |
-| 0:15–0:40 | Home mic or Ask chip / paraphrase | “No account. Verified sources and a next step.” |
-| 0:40–1:05 | Letter **photo** (not PDF if Gateway is flaky) | Deadline + steps. “Photo isn’t saved.” |
-| 1:05–1:25 | Plan tab or Checkup → save | “Steps stay on this phone.” |
-| 1:25–1:45 | Help → request a person | Handoff confirmation. |
-| 1:45–2:00 | `/how` or safety line | “AI explains; never decides eligibility; never asks immigration status.” |
+| 0:00–0:15 | Participants and app | Each participant gives their real name; introduce Costa. |
+| 0:15–0:30 | Home screen | Explain the app's purpose and who it is for, in your own words. |
+| 0:30–0:45 | Language picker | Show the language the team can comfortably present. |
+| 0:45–1:10 | Ask | Ask a common question and point out its source. Explain the default local FAQ/agent path. |
+| 1:10–1:30 | Checkup or Plan | Show the screening guidance and local saved steps. |
+| 1:30–1:50 | Redacted sample letter | Show OCR and the resulting explanation; do not use private information. |
+| 1:50–2:00 | How page / links | Explain that the default app does not use a cloud AI Gateway and eligibility is code. |
 
-**Safer Ask path:** tap a common-question chip if free-text AI fails.
+Before uploading:
 
-Fill district language stats from ACS table S1601 for CA-16 and cite in the write-up.
+- [ ] Video is between 1 and 3 minutes and plays from a signed-out browser.
+- [ ] Every team member's name and role is accurate.
+- [ ] The video names Costa, its purpose, audience, tools/languages, and shows the working app.
+- [ ] Public visibility and captions meet the portal instructions.
+- [ ] The video does not show real personal data or unapproved participant information.
+- [ ] Add the final video URL to the portal and the application draft.
 
-## User testing with community organizations
+## Optional user feedback
 
-Goal: five to eight real users, plus at least one staff member, before October 20.
+If the team conducts user testing, first get informed consent and permission to quote. Record the date, number and type of participants, what they tried, what changed, and whether a quote may be used publicly. Do not list an organization as a partner or claim endorsement without its permission. The team can consider organizations such as ALAS, Puente de la Costa Sur, or Sacred Heart Community Service; no outreach or testing is implied by this list.
 
-- **ALAS** (Half Moon Bay), 650-560-8947  
-- **Puente de la Costa Sur** (Pescadero), (650) 879-1691  
-- **Sacred Heart Community Service** (San José), (408) 278-2160  
+## Current submission tasks
 
-Session plan and prompts: see earlier sections in git history / keep short: consent → ask about renewal → photo letter → request a person → trust questions. Put 2–3 quotes in the portal answers.
+- [ ] Confirm eligibility and roster details with each entrant and guardian.
+- [ ] Verify the deadline and all video/file requirements in the official portal and district instructions.
+- [ ] Review the AI and third-party tools disclosure with every entrant.
+- [ ] Replace draft application language with the team's own accurate account.
+- [ ] Record and publish the required video.
+- [ ] Complete the portal application and retain confirmation.
 
-## Submission checklist (portal)
-
-- [ ] Registered at congressionalappchallenge.us (personal email)  
-- [ ] Demo video **public** 1–3 min with all required beats  
-- [ ] Portal questions (drafts in SUBMISSION.md)  
-- [ ] AI disclosure attached / pasted  
-- [ ] Source link for judges (public GitHub + live URL)  
-- [ ] Submit before Oct 26, 9:00 AM PT  
-- [ ] Exit questionnaire after deadline (every teammate)  
+See SUBMISSION.md for official links and the full checklist.

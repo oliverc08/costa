@@ -1,240 +1,88 @@
-# Costa — team brief (INTERNAL)
+# Costa — team rehearsal brief
 
-**For us only.** Use this to rehearse the demo video, portal answers, and judge Q&A.  
-Not for the CAC portal attachment (that’s `AI-DISCLOSURE.md` + `SUBMISSION.md`).
+Internal prompts for understanding the code and preparing the demo. Each participant should explain only work they personally understand and accurately describe their own contribution. This brief is not a substitute for the application or AI disclosure.
 
-**North star line (memorize):**  
-*AI is for communication. Eligibility math and benefit facts are our code and our sources — not the model inventing answers.*
+## Core explanation
 
----
+**Purpose:** Costa helps people navigate Medi-Cal and related benefits with multilingual guidance, source links, screening information, and a path to local help.
 
-## How to use this
+**Default runtime:** The FAQ and deterministic local agent do not call a cloud model. Optional model-assisted chat is available only if a local OpenAI-compatible endpoint is configured. No Vercel AI Gateway is used.
 
-| Situation | What to pull from here |
-| --- | --- |
-| Demo video (1–3 min) | § Elevator lines + § Video beat cards |
-| Portal Q4 (technical difficulty) | § Hardest problem we solved |
-| Portal Q5 (what we learned) | § What we actually understand |
-| Judge asks “show me the code” | § System cards (file + 30-second pitch) |
-| Someone asks “did AI build this?” | § What we did vs what AI helped with |
+**Safety:** Eligibility screening is TypeScript code; it is not a model decision. Costa offers information and possible next steps, not a benefits determination. Do not claim perfect accuracy or complete privacy.
 
----
+## Demo order
 
-## Elevator lines (say these out loud)
+| Beat | Show | Explain |
+| --- | --- | --- |
+| Introduction | Actual participants and Costa | State real names, app purpose, and intended audience. |
+| Ask | A common question in a language the presenter can discuss | The FAQ returns reviewed content and source links. Other questions use the deterministic local agent. |
+| Checkup | A screening flow | The rules are implemented in TypeScript; results are guidance, not a decision. |
+| My Plan | Save or view next steps | Plan details are stored in browser localStorage. |
+| Letter | Fabricated or fully redacted letter | OCR runs in the browser; redacted extracted text is sent to the app server and redacted again before analysis. Redaction may miss details. |
+| Help | Local help or handoff, if configured and tested | A request to a person requires consent. Do not promise follow-up unless the displayed flow supports it. |
+| Wrap | /how page and project links | Describe the default local-first runtime and disclose optional services accurately. |
 
-**One-sentence purpose (video must have this):**  
-“Costa helps families who don’t speak English fluently access Medi-Cal and other benefits in California’s 16th district.”
+## Architecture map
 
-**Audience:**  
-“Parents and workers who get confusing benefits letters and need a next step — without creating an account.”
+```text
+Browser
+  ├─ language choice and interface
+  ├─ Checkup rules and My Plan storage
+  ├─ letter photo → browser OCR → redacted extracted text to Costa app server
+  └─ Ask text → FAQ → deterministic local agent → curated sources / local help
 
-**Tools / languages (video must name these):**  
-“We built it in **TypeScript** with **Next.js** and **React**, hosted on **Vercel**, using the **AI SDK**. Eligibility screening is plain TypeScript — not the language model.”
-
-**Coding excellence one-liner:**  
-“Common questions never hit the model; checkup runs on the phone; every benefit fact comes from curated government sources; if we’re unsure we connect you to a person.”
-
----
-
-## What we did vs what AI helped with
-
-Say this if asked about Cursor / AI coding:
-
-| We directed / own | AI helped draft / speed up |
-| --- | --- |
-| Product idea: language layer for benefits in CA-16 | UI scaffolding, boilerplate routes |
-| Safety rules: no immigration questions, no “you qualify” | Some FAQ wording for us to edit |
-| Deterministic eligibility tables + checkup flow | Test stubs, refactors |
-| FAQ bank + fuzzy matcher design | Copy variants |
-| Verified-source knowledge base (`content/sources/`) | Markdown formatting polish |
-| Letter heuristics + on-device OCR fallback plan | Component wiring |
-| Human handoff consent flow | Partner dashboard layout |
-| Eval scenarios and pass/fail criteria | Running eval harness |
-
-**Honest sentence:** “We used AI coding tools the way you’d use autocomplete and a fast junior — we still designed the architecture, curated the sources, and can explain every safety decision.”
-
----
-
-## Video beat cards (backbone for the script)
-
-Keep total under **3:00**. Practice until each card is natural.
-
-| Time | On screen | Say (backbone) | If they ask “prove you get it” |
-| --- | --- | --- | --- |
-| 0:00–0:15 | Faces / names | “I’m [Name]. We’re students in CA-16. This is **Costa**.” | — |
-| 0:15–0:30 | Logo / home | One-sentence purpose (above). | — |
-| 0:30–0:40 | Language picker | Audience line. “No account.” | Cookie `costa_lang` picks UI language. |
-| 0:40–0:55 | — | Tools/languages line. | “Eligibility is TypeScript in `lib/eligibility`.” |
-| 0:55–1:25 | Ask in Spanish / chip | “Common questions match a FAQ we wrote — often **no AI call**. Sources show on screen.” | `matchFaq` in `lib/faq.ts` before the model. |
-| 1:25–1:55 | Letter **photo** | “Explains the deadline and next step. Photo isn’t saved.” | Cloud vision, or phone OCR if Gateway is down. |
-| 1:55–2:20 | Plan or Help | “Save steps on this phone, or request a real person.” | Plan = `localStorage`; handoff needs consent. |
-| 2:20–2:45 | `/how` or safety | “AI explains; it never decides eligibility and never asks immigration status.” | Redact + audit + deterministic screen. |
-| 2:45–3:00 | URL | “Try it: costa-five.vercel.app” | — |
-
----
-
-## Architecture in one picture (words)
-
-```
-User (voice / type / letter photo)
-        │
-        ▼
-   Language cookie + UI
-        │
-        ├── Ask ──► FAQ matcher ──hit──► canned answer + sources (no model)
-        │              │ miss
-        │              ▼
-        │         Chat agent + 4 tools (only if AI Gateway works)
-        │              │
-        │              ├── searchBenefits  → our knowledge base
-        │              ├── screenEligibility → same math as Checkup
-        │              ├── findLocalHelp
-        │              └── createHumanHandoff (consent required)
-        │
-        ├── Checkup ──► 100% on-device TypeScript (no server math)
-        ├── Letter ──► cloud vision OR on-device OCR → explain
-        └── Plan ──► localStorage only (reminders + steps)
+Costa app server
+  ├─ default deterministic FAQ and local-agent routes
+  ├─ optional model request to COSTA_LOCAL_LLM_URL, if configured
+  ├─ temporary process-memory store by default
+  └─ optional Neon store and Twilio integration
 ```
 
----
+## Code paths to explore
 
-## System cards (know these cold)
+| Area | Files | What to explain |
+| --- | --- | --- |
+| Language and FAQ | lib/faq.ts, lib/languages.ts, app/api/chat/route.ts | Common questions can match a multilingual FAQ before local-agent processing. |
+| Default local agent | lib/agent/local.ts, lib/knowledge/search.ts | Lexical search over project-curated content with deterministic response construction. |
+| Optional model integration | lib/config.ts, lib/agent/index.ts | A model is used only when COSTA_LOCAL_LLM_URL is configured. |
+| Eligibility | lib/eligibility/, lib/checkup.ts, components/app/Checkup.tsx | TypeScript screening rules and shared program facts. Explain limits and that the result is not a determination. |
+| Letter OCR | components/LetterUpload.tsx, lib/letter-ocr.ts, app/api/letter-text/route.ts | OCR is performed in the browser; redacted extracted text goes to the app server for another redaction pass and heuristic analysis. |
+| My Plan | lib/device.ts, app/plan/page.tsx | Browser-side data storage and clearing behavior. |
+| Human handoff | lib/handoff.ts, app/api/handoff/route.ts, components/app/PersonRequest.tsx | Consent, validation, and conditions for a request. |
+| Knowledge base | content/sources/, scripts/build-kb.ts, lib/knowledge/ | Source metadata and generated search content. Verify source dates before relying on a specific fact. |
+| Evaluation | evals/scenarios.ts, evals/run.ts | Local scenarios exercise source use, action, language, safety, and escalation. The score is a test result, not a guarantee. |
+| Persistence | lib/store/index.ts, lib/store/memory.ts, lib/store/neon.ts | Memory is temporary; Neon is optional durable storage. |
 
-### 1) Language + home
-- **Files:** `lib/ui-language.ts`, `components/app/Welcome.tsx`, `VoiceHome.tsx`
-- **30s:** First screen chooses a language → cookie `costa_lang`. Home is voice-first; speaking stores the transcript and opens Ask.
-- **We understand:** No account. Language is product, not a translation afterthought.
+## Questions judges may ask
 
-### 2) FAQ matcher (big coding point)
-- **Files:** `lib/faq.ts`, `app/api/chat/route.ts`
-- **30s:** Before any model call, the server tries to match the question to our multilingual FAQ. Match → stream a pre-written answer with real source cards. That’s why Ask still works when AI is flaky.
-- **We understand:** Trust + demo reliability beat “always call GPT.”
+**Does Costa decide who receives benefits?**
 
-### 3) Chat agent + tools
-- **Files:** `lib/agent/`, `lib/tools/index.ts`
-- **30s:** If FAQ misses and Gateway is up, the agent can only answer with tools. Facts come from `searchBenefits`. It can screen eligibility with the **same function** as Checkup. It can hand someone to a human only with consent.
-- **Four tools:** `searchBenefits`, `screenEligibility`, `findLocalHelp`, `createHumanHandoff`
+No. It provides screening guidance and links or next steps. Agencies decide eligibility.
 
-### 4) Eligibility / Checkup (biggest “we didn’t let AI decide” point)
-- **Files:** `lib/eligibility/index.ts`, `lib/eligibility/limits.ts`, `lib/checkup.ts`, `components/app/Checkup.tsx`
-- **30s:** Checkup is **on the phone**. It runs TypeScript against published income tables. Labels are “may qualify / might / likely not” — never a legal decision. Chat uses the identical `screenEligibility` function.
-- **We understand:** Models hallucinate numbers; FPL tables don’t.
+**Does the default chat use a cloud AI service?**
 
-### 5) Letter explainer
-- **Files:** `components/LetterUpload.tsx`, `app/api/letter/route.ts`, `lib/letter-ocr.ts`, `lib/letter-from-text.ts`
-- **30s:** Photo goes to vision when AI works. If the Gateway returns 503, the phone runs OCR (Tesseract) and we explain from text. We don’t keep the photo.
-- **We understand:** Killer feature for Medi-Cal letters; needs a clear **photo** for the offline path.
+No. The default uses deterministic code and curated content. An optional local model can be configured by the operator.
 
-### 6) My Plan
-- **Files:** `lib/device.ts`, `app/plan/page.tsx`
-- **30s:** Reminders and checklist live in `localStorage` (`costa_device_v1`). No login. Clear data wipes the plan.
-- **We understand:** Local-first for sensitive screening answers.
+**Where do benefit facts come from?**
 
-### 7) Human handoff
-- **Files:** `lib/handoff.ts`, `app/api/handoff/route.ts`, `components/app/PersonRequest.tsx`
-- **30s:** One pipeline for the form and the agent tool. User must consent. Contact info required. We redact sensitive patterns. Partners see a queue (`/partners`). Confirmation looks like `C-XXXXX`.
-- **We understand:** Language access without a human path is incomplete.
+The curated content/sources directory. The team should verify current source dates and limitations before presenting a particular fact.
 
-### 8) Safety
-- **Files:** `lib/safety/redact.ts`, `lib/safety/output.ts`, `lib/agent/instructions.ts`
-- **30s:** We redact SSN/ITIN-style IDs before the model. After replies we audit for “you qualify,” immigration questions, and fake phone numbers. Evals fail those cases.
-- **We understand:** Soft audit on the live stream + hard fail in evals; prompt alone isn’t enough.
+**Where does a letter photo go?**
 
-### 9) Knowledge base
-- **Files:** `content/sources/*.md`, `scripts/build-kb.ts`, `lib/knowledge/`
-- **30s:** Benefit facts are markdown we curated with agency + URL + last-verified. Build turns them into chunks. Agent must search before stating facts; if nothing found, admit it.
-- **We understand:** RAG over **our** sources, not the open internet.
+The default path performs OCR in the browser, redacts the extracted text there, then sends the text to the Costa app server for further redaction and analysis. Redaction may miss details; do not demonstrate with unredacted personal documents.
 
-### 10) Evals
-- **Files:** `evals/scenarios.ts`, `evals/run.ts`
-- **30s:** ~150 scenarios (intents × languages) run the real agent and judge language, action, grounding, escalation. Unit tests (`npm test`) work without keys; full eval needs AI Gateway.
-- **We understand:** Coding excellence isn’t vibes — we wrote scenarios that catch unsafe answers.
+**Where is user data stored?**
 
----
+Checkup and My Plan data use browser storage. Server-side sessions and handoffs use temporary process memory unless DATABASE_URL is configured for Neon. Explain that memory can disappear on restart or differ across serverless instances.
 
-## Hardest problem we solved (portal Q4 backbone)
+**Did AI help build Costa?**
 
-**Problem:** Language models invent benefits facts and can sound sure when they’re wrong — dangerous for Medi-Cal.
+AI coding tools identified in project work include Cursor and OpenAI Codex. The team should describe each entrant's real contribution and all tools actually used, without claiming AI-produced work as personal work.
 
-**What we did:**
-1. Put the most common questions on a **FAQ matcher** so many asks never hit the model.
-2. Force open chat through **tools** backed by curated sources.
-3. Keep eligibility in **deterministic TypeScript** shared by Checkup and the agent.
-4. Add **redaction + output audit + evals**.
-5. When cloud AI is down, still help: FAQ path, letter OCR on-device, offline Ask hint.
+## Rehearsal
 
-**One sentence:** “The hard part wasn’t calling an API — it was constraining AI so Costa stays safe and useful.”
-
----
-
-## What we learned (portal Q5 backbone)
-
-Pick 2–3 and say them in your own voice:
-
-- Public benefits need **product constraints**, not just a chat box.
-- **Voice-first + big buttons** matter more for our users than fancy UI chrome.
-- A **human handoff** is part of the product, not a failure mode.
-- Demo reliability forced us to invent the FAQ shortcut and OCR fallback.
-
----
-
-## Storage cheat sheet (judges love this)
-
-| Data | Where it lives |
-| --- | --- |
-| UI language | Cookie `costa_lang` |
-| Chat session id | HttpOnly cookie `costa_sid` |
-| Web chat transcript | `sessionStorage` `costa_chat_v1` |
-| Pending voice text | `sessionStorage` `costa_pending_voice` |
-| Plan / checkup summary | `localStorage` `costa_device_v1` |
-| Handoffs / SMS sessions | Neon Postgres if configured, else memory |
-
----
-
-## Practice Q&A (quiz each other)
-
-**Q: Does Costa decide if someone gets Medi-Cal?**  
-A: No. Checkup and `screenEligibility` are screening only. We say they may qualify and point to official apply/renew paths.
-
-**Q: Why doesn’t every Ask question use AI?**  
-A: FAQ match first. Faster, cheaper, grounded, works offline. Model is for open questions.
-
-**Q: Where do dollar amounts and phone numbers come from?**  
-A: Curated `content/sources/` via `searchBenefits`, or local-help directory — not model memory.
-
-**Q: What if the AI Gateway is down during the demo?**  
-A: FAQ chips / paraphrase still work; letter photo can OCR on-device; Ask shows an offline hint instead of a silent fail.
-
-**Q: Do you ask immigration status?**  
-A: Never. Instructions forbid it; output audit flags it; evals test it.
-
-**Q: Is My Plan in the cloud?**  
-A: No. Device `localStorage` only.
-
-**Q: Did AI write the whole app?**  
-A: No. AI assisted coding. We designed architecture, sources, safety, eligibility, FAQ, handoff, and evals — and we can walk the code.
-
-**Q: What’s TypeScript doing that the model isn’t?**  
-A: FPL/program math in `lib/eligibility`, FAQ matching in `lib/faq`, letter heuristics, redaction regexes, handoff validation.
-
----
-
-## 10-minute rehearsal plan
-
-1. Each teammate reads **Elevator lines** out loud once.  
-2. One person drives the phone through **Video beat cards**; others only say the backbone lines.  
-3. Cold-call 5 questions from **Practice Q&A**.  
-4. One person explains **Eligibility** and **FAQ** with the file names.  
-5. Record a practice take; cut anything that doesn’t show the live app.
-
----
-
-## Links
-
-| Doc | Use |
-| --- | --- |
-| [SUBMISSION.md](./SUBMISSION.md) | Official checklist + portal drafts |
-| [AI-DISCLOSURE.md](./AI-DISCLOSURE.md) | Paste/attach for CAC AI disclosure |
-| [DEMO.md](./DEMO.md) | Recording + partner testing |
-| https://costa-five.vercel.app/how | Judge-facing architecture page |
-| https://github.com/oliverc08/costa | Public source for judges |
+1. Each participant explains one part they personally implemented or reviewed.
+2. Run the local app and evaluation using SETUP.md.
+3. Rehearse once with a fabricated letter and no private user data.
+4. Ask another participant to challenge a factual claim and find its source.
+5. Remove any sentence from the video or application that the team cannot substantiate.

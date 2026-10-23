@@ -6,29 +6,29 @@ import { resolveUiLanguage } from "@/lib/ui-language";
 
 export const metadata: Metadata = {
   title: "How Costa works · Costa",
-  description: "Architecture for judges: speech, deterministic eligibility, verified-source RAG, and human handoff.",
+  description: "How Costa runs locally: multilingual FAQ, deterministic eligibility, verified sources, and human handoff.",
   robots: { index: false },
 };
 
 const STEPS = [
-  { title: "Speech in", body: "Browser speech recognition (Web Speech API) in the user’s language. Falls back to Whisper via AI Gateway only when needed." },
+  { title: "Speech in", body: "Uses browser-provided speech recognition where available. Recorded fallback runs Whisper-tiny in the browser after its model files download. Costa does not send audio to an app server or AI Gateway." },
   { title: "Language", body: "UI language from the first-screen picker (cookie). Content and TTS use the same language code." },
-  { title: "Intent", body: "Common questions match a multilingual FAQ bank with zero model calls. Open questions go to the chat agent." },
-  { title: "Eligibility engine", body: "Deterministic on-device rules (FPL tables, WIC categories, CalEITC). Never asks immigration status. AI does not invent eligibility." },
-  { title: "Verified-source RAG", body: "Answers cite government sources with agency and last-verified date. pgvector search over an ingested knowledge base when AI is used." },
-  { title: "Localized response", body: "Pre-written FAQ answers in multiple languages. Model replies stay in the user’s language with safety audits." },
+  { title: "Intent", body: "Common questions match a multilingual FAQ with no model call. Other questions use Costa’s deterministic local agent to search curated sources and the local-help directory." },
+  { title: "Eligibility engine", body: "TypeScript rules apply program tables and categories. The checkup runs in the browser. Costa does not ask immigration status or make benefit decisions." },
+  { title: "Verified sources", body: "The FAQ and local agent draw from Costa’s curated source files, which include agency and verification details. Optional database-backed embeddings are not needed." },
+  { title: "Localized response", body: "Pre-written FAQ answers and local-agent templates support multiple languages. If configured, an optional local model can provide freer chat; it is not required." },
   { title: "Speech out", body: "Device text-to-speech reads results and chat replies aloud so the journey can work without reading." },
   { title: "Human handoff", body: "One tap to call local orgs (ALAS, Puente, 211, county lines) or request a person callback with consent." },
 ];
 
 const TECH = [
   "Next.js App Router on Vercel",
-  "On-device checkup (no server round-trip for screening math)",
-  "FAQ shortcut before any LLM",
-  "Deterministic local agent (lexical KB) — no cloud AI required",
-  "Optional tiny local models via Ollama (COSTA_LOCAL_LLM_URL)",
-  "On-device letter OCR + PDF rasterize; output safety audit",
-  "localStorage plan / city / reminders; chats expire after 30 days",
+  "On-device checkup; screening math does not need a server round-trip",
+  "FAQ matching and deterministic local agent are the default; no cloud model is called",
+  "Optional local model endpoint such as Ollama (COSTA_LOCAL_LLM_URL)",
+  "Letter image OCR runs in the browser; redacted extracted text is sent to the Costa app server for analysis",
+  "My Plan and checkup details are saved in browser localStorage",
+  "In-memory server storage by default; optional Neon database for durable sessions and handoffs",
   "No account; no immigration questions",
   "AI coding assistance disclosed in docs/AI-DISCLOSURE.md (CAC requirement)",
 ];
@@ -44,18 +44,18 @@ export default async function HowPage({ searchParams }: PageProps<"/how">) {
           <p className="text-[13px] font-semibold uppercase tracking-wider text-poppy-700">For judges & partners</p>
           <h1 className="text-[30px] leading-tight text-pine-950">How Costa works</h1>
           <p className="text-[16px] leading-relaxed text-stone-700">
-            Costa is intentionally simple on the surface — voice first, huge buttons, listen on every important answer — with serious engineering underneath. AI explains; structured rules decide screening.
+            Costa is intentionally simple on the surface — voice first, large buttons, and spoken answers — with structured rules for screening. The default app runs without a cloud AI service.
           </p>
           {evalSummary ? (
             <p className="rounded-md border border-pine-800/20 bg-pine-50 px-4 py-3 text-[15px] font-semibold text-pine-950">
               Costa Safety Eval: {evalSummary.passed}/{evalSummary.total} passing
               <span className="mt-1 block text-[13px] font-medium text-stone-600">
-                Ran {new Date(evalSummary.ranAt).toLocaleDateString("en-US")} · model {evalSummary.model}
+                Ran {new Date(evalSummary.ranAt).toLocaleDateString("en-US")} · {evalSummary.model}
               </span>
             </p>
           ) : (
             <p className="rounded-md border border-amber-800/20 bg-amber-50 px-4 py-3 text-[14px] leading-relaxed text-amber-950">
-              Safety eval score not published yet. Judges can run <code className="font-mono text-[13px]">npm run eval</code> (no API keys — local agent), or review scenarios in <code className="font-mono text-[13px]">evals/scenarios.ts</code>.
+              Safety eval score not published yet. Judges can run <code className="font-mono text-[13px]">npm run eval</code> (no API keys or AI Gateway account needed), or review scenarios in <code className="font-mono text-[13px]">evals/scenarios.ts</code>.
             </p>
           )}
         </header>
@@ -98,7 +98,7 @@ export default async function HowPage({ searchParams }: PageProps<"/how">) {
         </section>
 
         <p className="text-[14px] leading-relaxed text-stone-600">
-          Privacy claim: checkup and plan stay on the phone. Questions may be processed to answer you; chats are deleted from the server after 30 days. We do not claim fully on-device AI.
+          Checkup answers and My Plan stay in browser storage. Ask messages are processed by the Costa app server; when running locally, that is your local development server. Without a database, server-side sessions and handoffs use temporary process memory. If a database is configured, the scheduled purge removes sessions older than 30 days and resolved handoffs older than 30 days. Letter photos are OCR’d in the browser, then redacted extracted text is sent to the app server for analysis. Redaction may miss details, so use a fabricated or carefully reviewed sample. See the privacy and data-flow details in the AI disclosure.
         </p>
 
         <Link href="/" className="flex min-h-12 items-center justify-center rounded-md bg-pine-800 font-semibold text-white active:bg-pine-900">
