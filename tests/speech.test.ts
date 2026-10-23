@@ -3,10 +3,10 @@ import {
   BROWSER_STT,
   hasBrowserSpeech,
   isAppleWebKit,
-  mustUseCloudStt,
+  mustUseOnDeviceStt,
   pickVoice,
   scoreVoice,
-  shouldFallbackToCloudStt,
+  shouldFallbackToOnDeviceStt,
 } from "@/lib/speech";
 import { LANGUAGE_CODES } from "@/lib/languages";
 import { PENDING_VOICE_KEY } from "@/components/app/VoiceHome";
@@ -51,22 +51,22 @@ describe("browser speech-to-text", () => {
     ).toBe(false);
   });
 
-  it("forces cloud STT only on Firefox", () => {
-    expect(mustUseCloudStt("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0")).toBe(true);
+  it("uses on-device Whisper on Firefox", () => {
+    expect(mustUseOnDeviceStt("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0")).toBe(true);
     expect(
-      mustUseCloudStt(
+      mustUseOnDeviceStt(
         "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36",
       ),
     ).toBe(false);
   });
 
-  it("falls back to recording on network / audio-capture for every browser", () => {
+  it("falls back to on-device Whisper on network / audio-capture for every browser", () => {
     const iphone =
       "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
-    expect(shouldFallbackToCloudStt(iphone, "network")).toBe(true);
-    expect(shouldFallbackToCloudStt(iphone, "no-speech")).toBe(false);
+    expect(shouldFallbackToOnDeviceStt(iphone, "network")).toBe(true);
+    expect(shouldFallbackToOnDeviceStt(iphone, "no-speech")).toBe(false);
     expect(
-      shouldFallbackToCloudStt(
+      shouldFallbackToOnDeviceStt(
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
         "network",
       ),

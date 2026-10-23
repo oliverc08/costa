@@ -89,14 +89,14 @@ export function isAppleWebKit(
   return false;
 }
 
-/** Firefox has no usable SpeechRecognition — cloud recording only. */
-export function mustUseCloudStt(ua: string): boolean {
+/** Firefox has no usable SpeechRecognition, so it uses the on-device Whisper path. */
+export function mustUseOnDeviceStt(ua: string): boolean {
   return /Firefox/i.test(ua);
 }
 
 export function browserSttAvailable(): boolean {
   if (typeof window === "undefined" || !speechRecCtor()) return false;
-  return !mustUseCloudStt(navigator.userAgent);
+  return !mustUseOnDeviceStt(navigator.userAgent);
 }
 
 function preferredRecorderMime(): string | undefined {
@@ -105,12 +105,6 @@ function preferredRecorderMime(): string | undefined {
     ? ["audio/mp4", "audio/aac", "audio/webm;codecs=opus", "audio/webm"]
     : ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
   return candidates.find((m) => MediaRecorder.isTypeSupported(m));
-}
-
-function recorderFilename(mime: string) {
-  if (mime.includes("mp4") || mime.includes("aac") || mime.includes("m4a")) return "question.m4a";
-  if (mime.includes("ogg")) return "question.ogg";
-  return "question.webm";
 }
 
 let micPrimed = false;
@@ -135,8 +129,8 @@ async function primeMicPermission() {
   micPrimed = true;
 }
 
-/** Prefer free Web Speech; fall back to MediaRecorder (+ cloud or on-device Whisper). */
-export function shouldFallbackToCloudStt(_ua: string, errorCode: string): boolean {
+/** Fall back to on-device Whisper when browser speech reports a network or capture failure. */
+export function shouldFallbackToOnDeviceStt(_ua: string, errorCode: string): boolean {
   return errorCode === "network" || errorCode === "audio-capture";
 }
 
@@ -248,10 +242,8 @@ export type RecorderState = "idle" | "recording" | "loading-model" | "transcribi
 
 const MAX_RECORDING_MS = 60_000;
 
-/**
- * Mic input for Ask. Prefers free browser speech recognition (no API key).
- * Falls back to recording + /api/transcribe (Whisper via AI Gateway) when the
- * browser has no SpeechRecognition, or when recognition fails with a network error.
+/** Mic input for Ask. Prefers browser speech recognition where available and uses
+ * browser-side Whisper when recognition is unavailable or fails.
  */
 export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void) {
   const [state, setState] = useState<RecorderState>("idle");
@@ -337,43 +329,28 @@ export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void
     }
   }, [lang]);
 
-  const finishCloud = useCallback(async (blob: Blob) => {
+  const finishRecordedAudio = useCallback(async (blob: Blob) => {
     if (cancelled.current) return setState("idle");
     if (blob.size === 0) return setState("error");
-    setState("transcribing");
-    const body = new FormData();
-    body.append("audio", blob, recorderFilename(blob.type || "audio/webm"));
-    const res = await fetch("/api/transcribe", { method: "POST", body }).catch(() => null);
-    if (res?.ok) {
-      const data = (await res.json().catch(() => null)) as { text?: string } | null;
-      if (data?.text?.trim()) {
+    try {
+      setState("loading-model");
+      const { transcribeLocally } = await import("@/lib/local-transcribe");
+      setState("transcribing");
+      const text = await transcribeLocally(blob, lang);
+      if (cancelled.current) return setState("idle");
+      if (text) {
         setState("idle");
-        onTextRef.current(data.text.trim());
+        onTextRef.current(text);
         return;
       }
+      setState("error");
+    } catch (error) {
+      console.error("[voice] local whisper failed", error);
+      setState("error");
     }
-    // Gateway billing / missing key → decode blob with on-device Whisper.
-    if (res?.status === 503 || !res?.ok) {
-      try {
-        setState("loading-model");
-        const { transcribeLocally } = await import("@/lib/local-transcribe");
-        setState("transcribing");
-        const text = await transcribeLocally(blob, lang);
-        if (cancelled.current) return setState("idle");
-        if (text) {
-          setState("idle");
-          onTextRef.current(text);
-          return;
-        }
-      } catch (error) {
-        console.error("[voice] local whisper failed", error);
-      }
-      return setState(res?.status === 503 ? "unavailable" : "error");
-    }
-    setState("error");
   }, [lang]);
 
-  const startCloud = useCallback(async () => {
+  const startRecordedAudio = useCallback(async () => {
     cancelled.current = false;
     finalized.current = false;
     setState("recording");
@@ -399,7 +376,7 @@ export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void
     r.onstop = () => {
       releaseSessionStream();
       clearTimer();
-      void finishCloud(new Blob(chunks, { type: r.mimeType || mime || "audio/webm" }));
+      void finishRecordedAudio(new Blob(chunks, { type: r.mimeType || mime || "audio/webm" }));
     };
     recorder.current = r;
     try {
@@ -426,7 +403,7 @@ export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void
         r.stop();
       }
     }, MAX_RECORDING_MS);
-  }, [finishCloud]);
+  }, [finishRecordedAudio]);
 
   /** Capture raw PCM for on-device Whisper — avoids iOS MediaRecorder codec / decode failures. */
   const startPcm = useCallback(async () => {
@@ -447,7 +424,7 @@ export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void
     }
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AudioCtx) {
-      if (hasMediaRecorder()) return startCloud();
+      if (hasMediaRecorder()) return startRecordedAudio();
       releaseSessionStream();
       return setState("unavailable");
     }
@@ -476,7 +453,7 @@ export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void
     timer.current = setTimeout(() => {
       void finishPcm();
     }, MAX_RECORDING_MS);
-  }, [finishPcm, startCloud]);
+  }, [finishPcm, startRecordedAudio]);
 
   const startBrowser = useCallback(() => {
     const Ctor = speechRecCtor();
@@ -545,8 +522,8 @@ export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void
         setState("blocked");
         return;
       }
-      // Network / service failures → on-device Whisper via PCM (skips Gateway billing).
-      if (shouldFallbackToCloudStt(ua, e.error) && hasPcmCapture()) {
+      // Network / service failures → on-device Whisper via PCM.
+      if (shouldFallbackToOnDeviceStt(ua, e.error) && hasPcmCapture()) {
         finalized.current = true;
         recognition.current = null;
         void startPcm();
@@ -633,11 +610,11 @@ export function useVoiceInput(lang: LanguageCode, onText: (text: string) => void
       return;
     }
     if (hasMediaRecorder()) {
-      await startCloud();
+      await startRecordedAudio();
       return;
     }
     setState("unavailable");
-  }, [startBrowser, startPcm, startCloud]);
+  }, [startBrowser, startPcm, startRecordedAudio]);
 
   const stop = useCallback(() => {
     wantStop.current = true;
