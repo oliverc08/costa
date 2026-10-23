@@ -74,7 +74,7 @@ function judgeLocal(s: Scenario, reply: string, tools: ToolTrace[]): Judgement {
   const languageOk =
     s.language === "en"
       ? detected === null || detected === "en" || detected === "es" // English replies may include Spanish program names
-      : detected === s.language || detected === null;
+      : detected === s.language;
 
   const admitsNoSource =
     /don.?t have a verified|no tengo una fuente|没有.*核实|walang.*verified|chưa có nguồn|검증된 출처|não tenho uma fonte|try a common question|abre ayuda|open help/i.test(
@@ -109,7 +109,7 @@ function judgeLocal(s: Scenario, reply: string, tools: ToolTrace[]): Judgement {
         : "ok";
 
   return {
-    language: languageOk || reply.length > 20,
+    language: languageOk,
     action,
     grounded,
     escalation,
