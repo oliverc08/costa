@@ -69,10 +69,10 @@ export const UI: Record<TranslatedUiLang, UiStrings> = {
       "Private numbers like SSNs are removed before anything is sent or saved.",
       "Costa never asks about immigration status.",
       "You can ask for a real person at any time.",
-      "Messages are deleted after 30 days.",
+      "Questions are processed by the Costa app server. See Privacy for storage details.",
     ],
     commonQuestions: "Common questions",
-    notConfigured: "Costa can't read letters or chat yet — the AI service isn't set up.",
+    notConfigured: "Costa couldn't answer just now. Please try again.",
   },
   es: {
     tagline: "Ayuda con beneficios en su idioma.",
@@ -108,10 +108,10 @@ export const UI: Record<TranslatedUiLang, UiStrings> = {
       "Los números privados, como el Seguro Social, se quitan antes de enviar o guardar algo.",
       "Costa nunca pregunta sobre su estatus migratorio.",
       "Puede pedir hablar con una persona en cualquier momento.",
-      "Los mensajes se borran después de 30 días.",
+      "Costa procesa sus preguntas en el servidor de la aplicación. Consulte Privacidad para saber cómo se guardan los datos.",
     ],
     commonQuestions: "Preguntas frecuentes",
-    notConfigured: "La IA de Costa todavía no está configurada en este servidor.",
+    notConfigured: "Costa no pudo responder ahora. Inténtelo de nuevo.",
   },
   zh: {
     tagline: "用您的语言获得福利帮助。",
@@ -147,10 +147,10 @@ export const UI: Record<TranslatedUiLang, UiStrings> = {
       "社会安全号码等私人号码在发送或保存前会被删除。",
       "Costa 从不询问移民身份。",
       "您随时可以要求与真人交谈。",
-      "消息会在 30 天后删除。",
+      "您的问题会由 Costa 应用服务器处理。请查看隐私说明了解数据保存方式。",
     ],
     commonQuestions: "常见问题",
-    notConfigured: "此服务器尚未配置 Costa 的 AI。",
+    notConfigured: "Costa 暂时无法回答。请再试一次。",
   },
   tl: {
     tagline: "Tulong sa benepisyo sa sarili mong wika.",
@@ -186,10 +186,10 @@ export const UI: Record<TranslatedUiLang, UiStrings> = {
       "Tinatanggal ang mga pribadong numero tulad ng SSN bago magpadala o mag-save.",
       "Hindi kailanman nagtatanong si Costa tungkol sa immigration status.",
       "Puwede kang humingi ng totoong tao anumang oras.",
-      "Binubura ang mga mensahe pagkalipas ng 30 araw.",
+      "Pinoproseso ng Costa app server ang mga tanong mo. Tingnan ang Privacy para malaman kung paano iniimbak ang data.",
     ],
     commonQuestions: "Mga karaniwang tanong",
-    notConfigured: "Hindi pa naka-configure ang AI ni Costa sa server na ito.",
+    notConfigured: "Hindi muna nakasagot si Costa. Subukan muli.",
   },
   vi: {
     tagline: "Trợ giúp phúc lợi bằng ngôn ngữ của bạn.",
@@ -225,20 +225,20 @@ export const UI: Record<TranslatedUiLang, UiStrings> = {
       "Các số riêng tư như SSN được xóa trước khi gửi hoặc lưu.",
       "Costa không bao giờ hỏi về tình trạng di trú.",
       "Bạn có thể yêu cầu nói chuyện với người thật bất cứ lúc nào.",
-      "Tin nhắn được xóa sau 30 ngày.",
+      "Máy chủ ứng dụng Costa xử lý câu hỏi của bạn. Xem mục Quyền riêng tư để biết dữ liệu được lưu thế nào.",
     ],
     commonQuestions: "Câu hỏi thường gặp",
-    notConfigured: "AI của Costa chưa được cấu hình trên máy chủ này.",
+    notConfigured: "Costa chưa thể trả lời lúc này. Vui lòng thử lại.",
   },
 };
 
 /** First-message notice for SMS, sent once per phone number. */
 export const SMS_CONSENT: Record<TranslatedUiLang, string> = {
-  en: "Costa: free benefits help. Info comes from official sources; Costa can't decide eligibility. Never text your SSN or Medi-Cal ID. Msgs deleted after 30 days. Reply STOP to stop.",
-  es: "Costa: ayuda gratis con beneficios. La información viene de fuentes oficiales; Costa no decide si califica. Nunca envíe su Seguro Social ni número de Medi-Cal. Mensajes se borran en 30 días. Responda STOP para parar.",
-  zh: "Costa：免费福利帮助。信息来自官方资料；Costa 不能决定您的资格。请勿发送社会安全号码或 Medi-Cal 卡号。消息 30 天后删除。回复 STOP 停止。",
-  tl: "Costa: libreng tulong sa benepisyo. Galing sa opisyal na source ang impormasyon; hindi nagpapasya si Costa sa eligibility. Huwag i-text ang SSN o Medi-Cal ID. Binubura ang msg sa loob ng 30 araw. Reply STOP para huminto.",
-  vi: "Costa: trợ giúp phúc lợi miễn phí. Thông tin từ nguồn chính thức; Costa không quyết định điều kiện. Đừng nhắn số An Sinh Xã Hội hay số Medi-Cal. Tin nhắn xóa sau 30 ngày. Trả lời STOP để dừng.",
+  en: "Costa: free benefits help. Info comes from official sources; Costa can't decide eligibility. Never text your SSN or Medi-Cal ID. Reply STOP to stop.",
+  es: "Costa: ayuda gratis con beneficios. La información viene de fuentes oficiales; Costa no decide si califica. Nunca envíe su Seguro Social ni número de Medi-Cal. Responda STOP para parar.",
+  zh: "Costa：免费福利帮助。信息来自官方资料；Costa 不能决定您的资格。请勿发送社会安全号码或 Medi-Cal 卡号。回复 STOP 停止。",
+  tl: "Costa: libreng tulong sa benepisyo. Galing sa opisyal na source ang impormasyon; hindi nagpapasya si Costa sa eligibility. Huwag i-text ang SSN o Medi-Cal ID. Reply STOP para huminto.",
+  vi: "Costa: trợ giúp phúc lợi miễn phí. Thông tin từ nguồn chính thức; Costa không quyết định điều kiện. Đừng nhắn số An Sinh Xã Hội hay số Medi-Cal. Trả lời STOP để dừng.",
 };
 
 export const VOICE: Record<
@@ -453,7 +453,7 @@ export function ui(lang: LanguageCode): UiStrings {
       privacyNote: "사회보장번호, ITIN, Medi-Cal ID는 절대 공유하지 마세요.",
       redactedWarning: "전송 전에 메시지에서 개인 번호를 제거했습니다.",
       commonQuestions: "자주 묻는 질문",
-      notConfigured: "Costa가 아직 편지나 채팅을 사용할 수 없습니다 — AI 서비스가 설정되지 않았습니다.",
+      notConfigured: "Costa가 지금 답변할 수 없습니다. 다시 시도해 주세요.",
     };
   }
   if (lang === "pt") {
@@ -488,7 +488,7 @@ export function ui(lang: LanguageCode): UiStrings {
       privacyNote: "Nunca compartilhe seu número de Seguro Social, ITIN ou ID do Medi-Cal.",
       redactedWarning: "Removemos um número privado da sua mensagem antes de enviar.",
       commonQuestions: "Perguntas frequentes",
-      notConfigured: "A Costa ainda não pode ler cartas nem conversar — o serviço de IA não está configurado.",
+      notConfigured: "A Costa não conseguiu responder agora. Tente novamente.",
     };
   }
   return UI.en;

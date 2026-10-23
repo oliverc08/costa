@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { addReminder, downloadIcs } from "@/lib/device";
-import { letterUi, ui, LETTER_UI, UI } from "@/lib/i18n";
-import { app, APP } from "@/lib/i18n-app";
+import { letterUi, ui } from "@/lib/i18n";
+import { app } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import type { LetterResult } from "@/lib/letters";
 import { CalendarIcon, CameraIcon, CheckIcon, ExternalIcon, PhoneIcon, PlusIcon, SpeakerIcon, StopIcon } from "./app/Icons";
@@ -12,6 +12,7 @@ import { HumanHandoff } from "./app/HumanHandoff";
 import { PersonRequest } from "./app/PersonRequest";
 import { APPLY } from "@/lib/checkup";
 import { useReadAloud } from "@/lib/speech";
+import { redact } from "@/lib/safety/redact";
 
 type Phase =
   | { kind: "idle" }
@@ -23,6 +24,28 @@ type Phase =
 const MAX_EDGE = 2000;
 
 type Prepared = { blob: Blob; filename: string };
+
+/** Remove common personal fields from OCR before any text leaves the device. */
+export function redactLetterOcrText(input: string): string {
+  let text = redact(input).text;
+  text = text.replace(
+    /(^|\b)(case\s*(?:number|no\.?|#|id)|client\s*(?:number|no\.?|#|id)|member\s*(?:number|no\.?|#|id)|recipient\s*(?:number|no\.?|#|id)|benefit\s*(?:number|no\.?|#|id)|account\s*(?:number|no\.?|#|id)|application\s*(?:number|no\.?|#|id)|household\s*(?:number|no\.?|#|id)|subscriber\s*(?:number|no\.?|#|id)|Medi[- ]Cal\s*(?:number|no\.?|#|id)|Medicaid\s*(?:number|no\.?|#|id))\s*[:#-]?\s*([A-Z0-9-]*\d[A-Z0-9-]*(?:\s+[A-Z0-9-]*\d[A-Z0-9-]*)?)/gi,
+    (_match, prefix: string, label: string) => `${prefix}${label} [REDACTED]`,
+  );
+  text = text.replace(
+    /(\b(?:date\s+of\s+birth|birth\s+date|DOB)\s*[:#-]?\s*)(?:\d{1,2}[/.\-]\d{1,2}[/.\-]\d{2,4}|\d{4}[/.\-]\d{1,2}[/.\-]\d{1,2}|[A-Z][a-z]+\s+\d{1,2},?\s+\d{4})/gi,
+    "$1[REDACTED]",
+  );
+  text = text.replace(
+    /(^|\n)([ \t]*(?:(?:recipient|client|applicant|beneficiary|member|patient|parent|guardian)\s+)?name\s*[:#-]\s*)[^\r\n]*/gim,
+    "$1$2[REDACTED]",
+  );
+  text = text.replace(
+    /(^|\n)([ \t]*(?:(?:mailing|home|residential)\s+)?address\s*[:#-]\s*)[^\r\n]*/gim,
+    "$1$2[REDACTED]",
+  );
+  return text.replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[REDACTED]");
+}
 
 /** Shrinks photos / rasterizes PDF page 1 to JPEG for on-device OCR. */
 async function prepareImage(file: File): Promise<Prepared | null> {
@@ -85,10 +108,11 @@ export function LetterUpload({ lang }: { lang: LanguageCode }) {
           setPhase({ kind: "error", message: l.unreadable });
           return;
         }
+        const redactedText = redactLetterOcrText(text);
         const local = await fetch("/api/letter-text", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ text, language: lang }),
+          body: JSON.stringify({ text: redactedText, language: lang }),
         });
         if (!local.ok) {
           setPhase({ kind: "error", message: l.error });
@@ -201,6 +225,21 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
   const letter = a.letter;
   const read = useReadAloud(lang);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const speakText = result.ok
+    ? [result.explanation.whatThisMeans, result.explanation.deadline, result.explanation.whatToDo.join(". "), result.explanation.needHelp].filter(Boolean).join(". ")
+    : "";
+  const speaking = read.speakingId === "letter-explain";
+
+  useEffect(() => {
+    if (!result.ok || !read.available) return;
+    // Letter page: auto-speak is the demo win (Spanish parent hears the explanation).
+    const timer = window.setTimeout(() => read.speak("letter-explain", speakText), 500);
+    return () => {
+      window.clearTimeout(timer);
+      read.stop();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- speak once when this result mounts
+  }, []);
 
   if (!result.ok) {
     return (
@@ -217,21 +256,8 @@ function LetterResultView({ result, lang, onReset }: { result: LetterResult; lan
 
   const { explanation: e, extraction: x } = result;
   const noticeKey = x.noticeType in letter.noticeTypes ? x.noticeType : "other";
-  const speakText = [e.whatThisMeans, e.deadline, e.whatToDo.join(". "), e.needHelp].filter(Boolean).join(". ");
-  const speaking = read.speakingId === "letter-explain";
   const programKey = x.program === "medi-cal" || x.program === "calfresh" || x.program === "wic" || x.program === "caleitc" ? x.program : null;
   const apply = programKey ? APPLY[programKey] : null;
-
-  useEffect(() => {
-    if (!read.available) return;
-    // Letter page: auto-speak is the demo win (Spanish parent hears the explanation).
-    const timer = window.setTimeout(() => read.speak("letter-explain", speakText), 500);
-    return () => {
-      window.clearTimeout(timer);
-      read.stop();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- speak once when this result mounts
-  }, []);
 
   return (
     <div className="flex flex-col gap-4" aria-live="polite">
