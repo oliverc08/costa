@@ -48,6 +48,7 @@ describe("deterministic local agent escalation", () => {
   it.each([
     ["半月湾有没有地方可以当面帮我办理 Medi-Cal？", "zh"],
     ["Ở Half Moon Bay có nơi nào giúp tôi trực tiếp về Medi-Cal không?", "vi"],
+    ["May lugar ba sa Half Moon Bay na makakatulong sa akin nang personal sa Medi-Cal?", "tl"],
   ] as const)("uses the local directory for in-person requests in %s", async (text, language) => {
     const result = await runLocalAgent({ text, language });
     const helpTool = result.tools.find((tool) => tool.toolName === "findLocalHelp");
@@ -77,6 +78,33 @@ describe("localized WIC FAQ routing", () => {
     expect(output?.results?.map((source) => source.sourceId)).toContain("wic");
     expect(detectLanguage(result.text)).toBe("zh");
     expect(result.text).toMatch(faqId === "wic-toddler" ? /5岁以下|5 岁以下/ : /移民身份/);
+    expect(auditReply(result.text)).toEqual([]);
+  });
+
+  it("answers WIC immigration questions in Tagalog", async () => {
+    const result = await runLocalAgent({
+      text: "Nagtatanong ba ang WIC tungkol sa immigration status?",
+      language: "tl",
+    });
+
+    expect(result.kind).toBe("faq");
+    expect(result.text).toContain("Ang WIC ay hindi nangangailangan");
+    expect(detectLanguage(result.text)).toBe("tl");
+    expect(auditReply(result.text)).toEqual([]);
+  });
+});
+
+describe("localized Chinese food and disaster FAQ routing", () => {
+  it.each([
+    ["三口之家最多可以领多少 CalFresh？", /808 美元|808/],
+    ["我们的房子被水淹了。如果我丈夫没有合法身份，我们还能获得 FEMA 的帮助吗？", /如果总统宣布|家庭成员的移民身份不同/],
+    ["停电了，我们的食物全坏了。我们有 CalFresh。能得到帮助吗？", /申请补发福利|10 天内/],
+  ])("answers %s in Chinese from a localized FAQ", async (text, answerPattern) => {
+    const result = await runLocalAgent({ text, language: "zh" });
+
+    expect(result.kind).toBe("faq");
+    expect(detectLanguage(result.text)).toBe("zh");
+    expect(result.text).toMatch(answerPattern);
     expect(auditReply(result.text)).toEqual([]);
   });
 });
