@@ -189,7 +189,7 @@ export default async function PartnersPage({ searchParams }: PageProps<"/partner
       )}
 
       <p className="text-xs text-stone-500">
-        Requests only include what the person agreed to share. Resolved requests are deleted after 30 days.
+        Requests include only what the person agreed to share. Without a database, records stay in temporary process memory. With Neon and scheduled purging, resolved requests older than 30 days are deleted; unresolved requests remain.
       </p>
     </main>
   );

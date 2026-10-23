@@ -241,7 +241,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       listen: "Listen",
       stop: "Stop",
       stepOf: (n, total) => `Step ${n} of ${total}`,
-      stayPrivate: "No account required. Costa does not save your answers after your session.",
+      stayPrivate: "No account. Your checkup and plan stay in this browser until you delete them.",
       emergency: "In an emergency, call 911.",
     },
     welcome: {
@@ -250,10 +250,10 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     },
     privacy: {
       title: "Your privacy",
-      body: "Costa never asks about immigration status. No account is required. Your checkup and plan stay on this phone. Questions you ask may be processed to answer you, then chats are deleted from our server after 30 days.",
-      deleteButton: "Delete everything on this phone",
-      confirm: "Delete your chat, plan, and reminders from this phone?",
-      done: "Deleted.",
+      body: "No account. Your checkup and plan stay in this browser. Questions go to the Costa app server. Without a database, server data is temporary process memory. With Neon and scheduled purging, sessions and resolved requests older than 30 days are deleted; unresolved requests remain. Costa never asks about immigration status.",
+      deleteButton: "Delete local data in this browser",
+      confirm: "Delete this browser's chat, checkup, plan, and reminders? Server records are not deleted by this action.",
+      done: "Local data deleted.",
     },
     home: {
       greeting: "Help with Medi-Cal, food, and money",
@@ -314,7 +314,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       promises: [
         "We never ask about immigration status.",
         "No names, no Social Security numbers.",
-        "No account required. Checkup answers stay on this phone.",
+        "No account required. Checkup answers stay in this browser.",
       ],
       start: "Start",
       county: {
@@ -513,7 +513,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       listen: "Escuchar",
       stop: "Parar",
       stepOf: (n, total) => `Paso ${n} de ${total}`,
-      stayPrivate: "No se necesita cuenta. Costa no guarda sus respuestas después de esta sesión.",
+      stayPrivate: "No necesita una cuenta. Su revisión y plan permanecen en este navegador hasta que los borre.",
       emergency: "En una emergencia, llame al 911.",
     },
     welcome: {
@@ -522,10 +522,10 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     },
     privacy: {
       title: "Su privacidad",
-      body: "Costa nunca pregunta sobre estatus migratorio. No se necesita cuenta. Su revisión y plan se quedan en este teléfono. Las preguntas que haga pueden procesarse para responderle; los chats se borran de nuestro servidor después de 30 días.",
-      deleteButton: "Borrar todo en este teléfono",
-      confirm: "¿Borrar su chat, plan y recordatorios de este teléfono?",
-      done: "Borrado.",
+      body: "No se necesita una cuenta. Su revisión y plan se guardan en este navegador. Sus preguntas se procesan en el servidor de Costa. Sin base de datos, los datos del servidor solo están en la memoria temporal del proceso. Con Neon y la eliminación programada, se borran las sesiones y solicitudes resueltas de más de 30 días; las solicitudes sin resolver permanecen. Costa nunca pregunta sobre estatus migratorio.",
+      deleteButton: "Borrar datos locales de este navegador",
+      confirm: "¿Borrar el chat, la revisión, el plan y los recordatorios de este navegador? Esta acción no borra los datos del servidor.",
+      done: "Datos locales borrados.",
     },
     home: {
       greeting: "Ayuda con Medi-Cal, comida y dinero",
@@ -583,7 +583,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     check: {
       title: "Revisión de beneficios",
       intro: "Conteste unas preguntas para ver qué programas podría recibir su familia.",
-      promises: ["Nunca preguntamos sobre estatus migratorio.", "Sin nombres ni números de Seguro Social.", "No se necesita cuenta. Las respuestas de la revisión se quedan en este teléfono."],
+      promises: ["Nunca preguntamos sobre estatus migratorio.", "Sin nombres ni números de Seguro Social.", "No se necesita cuenta. Las respuestas de la revisión se guardan en este navegador."],
       start: "Empezar",
       county: {
         q: "¿Dónde vive?",
@@ -781,7 +781,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       listen: "朗读",
       stop: "停止",
       stepOf: (n, total) => `第 ${n} 步，共 ${total} 步`,
-      stayPrivate: "无需账号。会话结束后 Costa 不会保存您的回答。",
+      stayPrivate: "无需账号。您的评估和计划保存在此浏览器中，直到您删除它们。",
       emergency: "紧急情况请拨打 911。",
     },
     welcome: {
@@ -790,10 +790,10 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     },
     privacy: {
       title: "您的隐私",
-      body: "Costa 从不询问移民身份。无需账号。查询和计划保存在这部手机上。您提出的问题可能会被处理以作答；聊天记录会在 30 天后从我们的服务器删除。",
-      deleteButton: "删除这部手机上的所有资料",
-      confirm: "要从这部手机删除您的聊天、计划和提醒吗？",
-      done: "已删除。",
+      body: "无需账号。您的评估和计划保存在此浏览器中。您的问题会发送到 Costa 应用服务器处理。没有数据库时，服务器数据只暂存在进程内存中。使用 Neon 并启用定期清理后，超过 30 天的会话和已解决的求助请求会被删除；未解决的请求会保留。Costa 从不询问移民身份。",
+      deleteButton: "删除此浏览器中的本地数据",
+      confirm: "要删除此浏览器中的聊天、评估、计划和提醒吗？此操作不会删除服务器记录。",
+      done: "本地数据已删除。",
     },
     home: {
       greeting: "Medi-Cal、食物和现金福利帮助",
@@ -851,7 +851,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     check: {
       title: "福利查询",
       intro: "回答几个问题，看看您家可能可以获得哪些福利。",
-      promises: ["我们从不询问移民身份。", "不需要姓名或社会安全号码。", "无需账号。查询回答保存在这部手机上。"],
+      promises: ["我们从不询问移民身份。", "不需要姓名或社会安全号码。", "无需账号。评估答案保存在此浏览器中。"],
       start: "开始",
       county: {
         q: "您住在哪里？",
@@ -1049,7 +1049,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       listen: "Pakinggan",
       stop: "Itigil",
       stepOf: (n, total) => `Hakbang ${n} sa ${total}`,
-      stayPrivate: "Walang account na kailangan. Hindi sine-save ni Costa ang mga sagot mo pagkatapos ng session.",
+      stayPrivate: "Walang account. Nasa browser na ito ang checkup at plano mo hanggang burahin mo ang mga ito.",
       emergency: "Sa emergency, tumawag sa 911.",
     },
     welcome: {
@@ -1058,10 +1058,10 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     },
     privacy: {
       title: "Ang iyong privacy",
-      body: "Hindi kailanman nagtatanong si Costa tungkol sa immigration status. Walang account na kailangan. Ang checkup at plano ay nasa teleponong ito. Maaaring i-proseso ang mga tanong para masagot ka; binubura ang mga chat sa server namin pagkalipas ng 30 araw.",
-      deleteButton: "Burahin lahat sa teleponong ito",
-      confirm: "Burahin ang chat, plano, at mga paalala mo sa teleponong ito?",
-      done: "Nabura na.",
+      body: "Walang account. Nasa browser na ito ang checkup at plano mo. Pinoproseso ng Costa app server ang mga tanong mo. Kung walang database, pansamantala lang nasa memorya ng proseso ang server data. Kapag may Neon at nakatakdang paglilinis, buburahin ang mga session at nalutas na request na lampas 30 araw; mananatili ang mga hindi pa nalulutas. Hindi nagtatanong si Costa tungkol sa immigration status.",
+      deleteButton: "Burahin ang lokal na data sa browser na ito",
+      confirm: "Burahin ang chat, checkup, plano, at paalala sa browser na ito? Hindi nito binubura ang mga rekord sa server.",
+      done: "Nabura ang lokal na data.",
     },
     home: {
       greeting: "Tulong sa Medi-Cal, pagkain, at pera",
@@ -1119,7 +1119,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     check: {
       title: "Benefits checkup",
       intro: "Sagutin ang ilang tanong para makita kung aling mga programa ang puwedeng makuha ng pamilya mo.",
-      promises: ["Hindi kami nagtatanong tungkol sa immigration status.", "Walang pangalan, walang Social Security number.", "Walang account. Ang sagot sa checkup ay nasa teleponong ito."],
+      promises: ["Hindi kami nagtatanong tungkol sa immigration status.", "Walang pangalan, walang Social Security number.", "Walang account. Nasa browser na ito ang mga sagot sa checkup mo."],
       start: "Simulan",
       county: {
         q: "Saan ka nakatira?",
@@ -1317,7 +1317,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
       listen: "Nghe",
       stop: "Dừng",
       stepOf: (n, total) => `Bước ${n}/${total}`,
-      stayPrivate: "Không cần tài khoản. Costa không lưu câu trả lời của bạn sau phiên này.",
+      stayPrivate: "Không cần tài khoản. Bài kiểm tra và kế hoạch được lưu trong trình duyệt này cho đến khi bạn xóa.",
       emergency: "Trường hợp khẩn cấp, hãy gọi 911.",
     },
     welcome: {
@@ -1326,10 +1326,10 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     },
     privacy: {
       title: "Quyền riêng tư của bạn",
-      body: "Costa không bao giờ hỏi về tình trạng di trú. Không cần tài khoản. Kết quả kiểm tra và kế hoạch lưu trên điện thoại này. Câu hỏi của bạn có thể được xử lý để trả lời; tin nhắn trò chuyện được xóa khỏi máy chủ sau 30 ngày.",
-      deleteButton: "Xóa hết trên điện thoại này",
-      confirm: "Xóa cuộc trò chuyện, kế hoạch và lời nhắc khỏi điện thoại này?",
-      done: "Đã xóa.",
+      body: "Không cần tài khoản. Bài kiểm tra và kế hoạch được lưu trong trình duyệt này. Câu hỏi được xử lý trên máy chủ ứng dụng Costa. Không có cơ sở dữ liệu thì dữ liệu máy chủ chỉ tạm thời nằm trong bộ nhớ tiến trình. Khi dùng Neon và bật lịch xóa, các phiên và yêu cầu đã giải quyết hơn 30 ngày sẽ bị xóa; yêu cầu chưa giải quyết vẫn được giữ lại. Costa không bao giờ hỏi về tình trạng di trú.",
+      deleteButton: "Xóa dữ liệu cục bộ trong trình duyệt này",
+      confirm: "Xóa trò chuyện, bài kiểm tra, kế hoạch và lời nhắc trong trình duyệt này? Thao tác này không xóa dữ liệu trên máy chủ.",
+      done: "Đã xóa dữ liệu cục bộ.",
     },
     home: {
       greeting: "Trợ giúp về Medi-Cal, thực phẩm và tiền",
@@ -1387,7 +1387,7 @@ export const APP: Record<TranslatedUiLang, AppStrings> = {
     check: {
       title: "Kiểm tra phúc lợi",
       intro: "Trả lời vài câu hỏi để xem gia đình bạn có thể nhận những chương trình nào.",
-      promises: ["Chúng tôi không bao giờ hỏi về tình trạng di trú.", "Không cần tên, không cần số An Sinh Xã Hội.", "Không cần tài khoản. Câu trả lời kiểm tra lưu trên điện thoại này."],
+      promises: ["Chúng tôi không bao giờ hỏi về tình trạng di trú.", "Không cần tên, không cần số An Sinh Xã Hội.", "Không cần tài khoản. Câu trả lời kiểm tra được lưu trong trình duyệt này."],
       start: "Bắt đầu",
       county: {
         q: "Bạn sống ở đâu?",
@@ -1588,10 +1588,10 @@ export function app(lang: LanguageCode): AppStrings {
       privacy: {
         ...base.privacy,
         title: "개인정보",
-        body: "Costa는 이민 신분을 묻지 않습니다. 계정이 필요 없습니다. 확인 결과와 계획은 이 휴대폰에 저장됩니다. 질문은 답변을 위해 처리될 수 있으며, 채팅은 30일 후 서버에서 삭제됩니다.",
-        deleteButton: "이 휴대폰의 모든 데이터 삭제",
-        confirm: "이 휴대폰에서 채팅, 계획, 알림을 삭제할까요?",
-        done: "삭제되었습니다.",
+        body: "계정이 필요 없습니다. 확인 결과와 계획은 이 브라우저에 저장됩니다. 질문은 Costa 앱 서버에서 처리됩니다. 데이터베이스가 없으면 서버 데이터는 임시 프로세스 메모리에만 있습니다. Neon과 예약 삭제가 설정되면 30일이 지난 세션과 해결된 요청은 삭제되고, 해결되지 않은 요청은 남습니다. Costa는 이민 신분을 묻지 않습니다.",
+        deleteButton: "이 브라우저의 로컬 데이터 삭제",
+        confirm: "이 브라우저의 채팅, 확인 결과, 계획, 알림을 삭제할까요? 서버 기록은 삭제되지 않습니다.",
+        done: "로컬 데이터가 삭제되었습니다.",
       },
       home: {
         ...base.home,
@@ -1637,7 +1637,7 @@ export function app(lang: LanguageCode): AppStrings {
         promises: [
           "이민 신분은 묻지 않습니다.",
           "이름이나 사회보장번호는 필요 없습니다.",
-          "계정 불필요. 답변은 이 휴대폰에만 저장됩니다.",
+          "계정 불필요. 답변은 이 브라우저에 저장됩니다.",
         ],
         start: "시작",
         seeResults: "결과 보기",
@@ -1713,7 +1713,7 @@ export function app(lang: LanguageCode): AppStrings {
       common: {
         ...base.common,
         chooseLanguage: "언어 선택",
-        stayPrivate: "계정 불필요. 세션 후 Costa는 답변을 저장하지 않습니다.",
+        stayPrivate: "계정이 필요 없습니다. 확인 결과와 계획은 삭제할 때까지 이 브라우저에 저장됩니다.",
       },
     };
   }
@@ -1728,10 +1728,10 @@ export function app(lang: LanguageCode): AppStrings {
       privacy: {
         ...base.privacy,
         title: "Sua privacidade",
-        body: "A Costa nunca pergunta sobre status migratório. Não é preciso criar conta. Sua verificação e plano ficam neste telefone. As perguntas podem ser processadas para responder; os chats são apagados do servidor após 30 dias.",
-        deleteButton: "Apagar tudo neste telefone",
-        confirm: "Apagar seu chat, plano e lembretes deste telefone?",
-        done: "Apagado.",
+        body: "Não é preciso criar conta. Sua verificação e seu plano ficam neste navegador. As perguntas são processadas no servidor do app Costa. Sem banco de dados, os dados do servidor ficam apenas na memória temporária do processo. Com Neon e limpeza programada, sessões e pedidos resolvidos há mais de 30 dias são apagados; pedidos não resolvidos permanecem. A Costa nunca pergunta sobre status migratório.",
+        deleteButton: "Apagar dados locais deste navegador",
+        confirm: "Apagar a conversa, verificação, plano e lembretes deste navegador? Esta ação não apaga registros do servidor.",
+        done: "Dados locais apagados.",
       },
       home: {
         ...base.home,
@@ -1777,7 +1777,7 @@ export function app(lang: LanguageCode): AppStrings {
         promises: [
           "Nunca perguntamos sobre status migratório.",
           "Sem nomes, sem números de Seguro Social.",
-          "Sem conta. As respostas ficam neste telefone.",
+          "Sem conta. As respostas ficam neste navegador.",
         ],
         start: "Começar",
         seeResults: "Ver meus resultados",
@@ -1858,7 +1858,7 @@ export function app(lang: LanguageCode): AppStrings {
       common: {
         ...base.common,
         chooseLanguage: "Escolher idioma",
-        stayPrivate: "Não é preciso conta. A Costa não guarda suas respostas após a sessão.",
+        stayPrivate: "Não é preciso conta. Sua verificação e seu plano ficam neste navegador até você apagá-los.",
       },
     };
   }
