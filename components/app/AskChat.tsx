@@ -5,8 +5,8 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CHAT_STORAGE_KEY } from "@/lib/device";
-import { letterUi, ui, LETTER_UI, UI } from "@/lib/i18n";
-import { app, APP } from "@/lib/i18n-app";
+import { letterUi, ui } from "@/lib/i18n";
+import { app } from "@/lib/i18n-app";
 import type { LanguageCode } from "@/lib/languages";
 import { redact } from "@/lib/safety/redact";
 import { useReadAloud, isAppleWebKit } from "@/lib/speech";
@@ -126,7 +126,10 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
       const r = redact(trimmed);
       setRedactedNotice(r.redacted);
       read.stop();
-      void sendMessage({ text: r.text });
+      void sendMessage({ text: r.text }).catch(() => {
+        // Keep the user's utterance available if the local/server request fails.
+        setInput(trimmed);
+      });
       setInput("");
     },
     [read, sendMessage],
@@ -135,8 +138,6 @@ export function AskChat({ lang, suggestions, micHint }: { lang: LanguageCode; su
   useEffect(() => {
     const pending = sessionStorage.getItem(PENDING_VOICE_KEY);
     if (pending) {
-      // Keep until send starts so a failed hop can still show the utterance in the input.
-      setInput(pending);
       queueMicrotask(() => {
         sessionStorage.removeItem(PENDING_VOICE_KEY);
         send(pending);

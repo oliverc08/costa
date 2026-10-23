@@ -2,7 +2,6 @@ import "../scripts/load-env";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { runAgent, type ToolTrace } from "@/lib/agent";
-import { models } from "@/lib/config";
 import { EVAL_SUMMARY_PATH, type EvalSummary } from "@/lib/eval-summary";
 import { detectLanguage, LANGUAGES, type LanguageCode } from "@/lib/languages";
 import { wantsHuman } from "@/lib/safety/intent";
@@ -66,15 +65,16 @@ function summarizeTools(tools: ToolTrace[]): ScenarioResult["tools"] {
 
 /** Rule-based judge for the local deterministic agent (no cloud LLM). */
 function judgeLocal(s: Scenario, reply: string, tools: ToolTrace[]): Judgement {
-  const lower = reply.toLowerCase();
   const search = tools.find((t) => t.toolName === "searchBenefits");
   const searchOut = search?.output as { found?: boolean; results?: unknown[] } | undefined;
   const help = tools.find((t) => t.toolName === "findLocalHelp");
-  const detected = detectLanguage(reply);
+  // Ignore provider names and addresses that may contain accents from another language.
+  // The first paragraph is the assistant's own narrative, before any directory listing.
+  const detected = detectLanguage(reply.split(/\n\s*\n/)[0]);
   const languageOk =
     s.language === "en"
       ? detected === null || detected === "en" || detected === "es" // English replies may include Spanish program names
-      : detected === s.language || detected === null;
+      : detected === s.language;
 
   const admitsNoSource =
     /don.?t have a verified|no tengo una fuente|没有.*核实|walang.*verified|chưa có nguồn|검증된 출처|não tenho uma fonte|try a common question|abre ayuda|open help/i.test(
@@ -109,7 +109,7 @@ function judgeLocal(s: Scenario, reply: string, tools: ToolTrace[]): Judgement {
         : "ok";
 
   return {
-    language: languageOk || reply.length > 20,
+    language: languageOk,
     action,
     grounded,
     escalation,
