@@ -62,6 +62,7 @@ describe("FAQ answers", () => {
 
   it("does not force-match unrelated free text", () => {
     expect(matchFaq("what is the weather in San Jose today")).toBeNull();
+    expect(matchFaq("What is Medi-Cal?")).toBeNull();
   });
 });
 
@@ -124,5 +125,22 @@ describe("chat route FAQ shortcut", () => {
     expect(res.status).toBe(200);
     const body = await res.text();
     expect(body).toMatch(/verified source|common question|Help|don't have/i);
+  });
+
+  it("does not answer a broad Medi-Cal question with a conditional FAQ", async () => {
+    delete process.env.COSTA_LOCAL_LLM_URL;
+    const res = await POST(
+      new Request("http://localhost/api/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          language: "en",
+          messages: [{ id: "1", role: "user", parts: [{ type: "text", text: "What is Medi-Cal?" }] }],
+        }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).not.toContain("If Medi-Cal is not an option");
+    expect(body).toContain("Medi-Cal is California's free or low-cost health insurance");
   });
 });
