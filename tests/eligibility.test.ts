@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { screenEligibility } from "@/lib/eligibility";
-import { annualFpl, monthlyFplLimit } from "@/lib/eligibility/limits";
+import { annualFpl, CALFRESH_ADDITIONAL, CALFRESH_GROSS_LIMITS, monthlyFplLimit } from "@/lib/eligibility/limits";
 
 describe("FPL math", () => {
   it("uses the 2026 poverty guidelines", () => {
@@ -72,6 +72,12 @@ describe("Medi-Cal screen", () => {
 });
 
 describe("CalFresh screen", () => {
+  it("uses the current 200% gross table for FFY 2027", () => {
+    expect(CALFRESH_GROSS_LIMITS).toEqual([2660, 3608, 4554, 5500, 6448, 7394, 8340, 9288]);
+    expect(CALFRESH_ADDITIONAL).toBe(948);
+    expect(screenEligibility({ program: "calfresh", householdSize: 1, monthlyIncome: 2660 }).limit?.amount).toBe(2660);
+  });
+
   it("uses the 200% gross table", () => {
     expect(screenEligibility({ program: "calfresh", householdSize: 3, monthlyIncome: 4400 }).result).toBe("likely");
     expect(screenEligibility({ program: "calfresh", householdSize: 3, monthlyIncome: 6000 }).result).toBe("unlikely");
@@ -79,7 +85,7 @@ describe("CalFresh screen", () => {
 
   it("extends the table past 8 people", () => {
     const r = screenEligibility({ program: "calfresh", householdSize: 10, monthlyIncome: 1 });
-    expect(r.limit?.amount).toBe(9026 + 918 * 2);
+    expect(r.limit?.amount).toBe(9288 + 948 * 2);
   });
 });
 

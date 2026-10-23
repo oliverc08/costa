@@ -4,46 +4,41 @@ agency: California Department of Health Care Services (DHCS)
 program: medi-cal
 topic: rule-changes
 title: Medi-Cal changes in 2026 and 2027
-url: https://www.dhcs.ca.gov/medi-cal/help/medi-cal-changes/
-lastVerified: 2026-09-26
-nextAction: If you already have full-scope Medi-Cal, renew on time and report changes within 10 days so you can keep it. For free help with these changes, call the Health Consumer Alliance at 1-888-804-3536.
+url: https://www.dhcs.ca.gov/medi-cal/updates/medi-cal-changes/
+lastVerified: 2026-10-22
+nextAction: Keep your Medi-Cal contact information current and respond to county notices. For free help, call the Health Consumer Alliance at 1-888-804-3536.
 ---
 
-## Enrollment freeze for some adults (since January 1, 2026)
+## Full-scope enrollment freeze for some adults (since January 1, 2026)
 
-Starting January 1, 2026, adults 19 and older who do not have a qualifying immigration status and are not already enrolled can no longer sign up for full-scope Medi-Cal. This includes people who are undocumented, some green card holders in the five-year waiting period, and people considered PRUCOL. They can get restricted-scope Medi-Cal, which covers emergency care, pregnancy-related care, and nursing home care.
+Some adults age 19 and older who do not have a satisfactory immigration status cannot newly enroll in full-scope Medi-Cal because of an enrollment freeze. They may still be able to get restricted-scope Medi-Cal if otherwise eligible. Who is affected depends on a person's status and circumstances. Do not assume that a green card, a pending immigration application, or another document by itself answers the question. Check the [DHCS immigration-status chart](https://www.dhcs.ca.gov/immigration-status-and-changes-to-medi-cal-eligibility/) or ask the county.
 
-## Keeping full-scope Medi-Cal if you already have it
+Children under 19, pregnant people (through pregnancy and one year after it ends), and former foster youth under 26 who were in foster care on their 18th birthday can still get full-scope Medi-Cal regardless of immigration status if they meet other eligibility rules.
 
-If you already have full-scope Medi-Cal, you can keep it no matter your immigration status. You must renew on time and still meet the Medi-Cal rules, like income and California residency.
+## Keeping or restoring coverage
 
-If your Medi-Cal ends, you have three months (a grace period) starting the day your coverage ends to sign up again for full-scope Medi-Cal. If you miss the three-month grace period, you must apply again and you will only be able to get restricted-scope Medi-Cal.
+People who were already enrolled in full-scope Medi-Cal on January 1, 2026 can keep coverage if they continue to meet Medi-Cal rules and renew on time. If a member affected by the freeze loses full-scope coverage, DHCS provides a three-month period to re-establish eligibility. If they reapply after that period, the freeze may apply to them as a new applicant. The county decides each case. See the [DHCS Medi-Cal changes page](https://www.dhcs.ca.gov/medi-cal/updates/medi-cal-changes/) and contact the county promptly if coverage ends.
 
-## Who still gets full-scope Medi-Cal regardless of immigration status
+## Dental coverage changes (starting July 1, 2027)
 
-- Children under 19.
-- Pregnant people, during the pregnancy and for one year after the pregnancy ends.
-- Foster youth and former foster youth who were in foster care on their 18th birthday, up to age 26.
+Starting July 1, 2027, some adults age 19 and older with unsatisfactory immigration status will no longer have full-scope Medi-Cal dental coverage. Emergency dental care will remain covered. DHCS says children, pregnant and postpartum people, and former foster youth under 26 keep full dental benefits. Check with the county or [Medi-Cal Dental](https://www.dhcs.ca.gov/services/Pages/Medi-CalDental.aspx) about an individual case.
 
-## Dental changes (since July 1, 2026)
+## Six-month eligibility checks (starting March 1, 2027)
 
-Starting July 1, 2026, Medi-Cal no longer covers regular dental services for some adults 19 and older affected by the immigration-status changes, except emergencies. This does not apply to people who are pregnant or within one year after pregnancy, or to former foster youth under 26.
+Starting March 1, 2027, some adults age 19–64 covered through the Affordable Care Act adult expansion will have eligibility checked twice a year instead of once a year. DHCS says the rule applies to the ACA new adult group, including some members affected by immigration-related changes. Members outside that group, pregnant or postpartum people, American Indian or Alaska Native members, and former foster youth under 26 continue to renew annually. Respond to each county notice by its deadline.
 
-## Help with the changes
+## Work and community engagement rules (starting January 1, 2027)
 
-DHCS offers a nurse advice line and community navigators to help people affected by these changes. The Health Consumer Alliance gives free help with Medi-Cal eligibility questions: 1-888-804-3536.
+Some adults age 19–64 in the ACA adult expansion group will need to meet a work or community engagement rule to keep Medi-Cal, unless an exemption applies. DHCS says qualifying activities include:
 
-## Coming in 2027: six-month eligibility checks
+- Working and earning at least $580 a month (or, for seasonal workers, averaging $580 a month over six months).
+- Job training for at least 80 hours a month.
+- Volunteering or community service for at least 80 hours a month.
+- Attending school at least half-time.
+- Combining activities to reach 80 hours or $580 a month.
 
-Starting January 1, 2027, some adults ages 19 to 64 who get Medi-Cal through the Affordable Care Act adult expansion will have their eligibility checked every six months instead of once a year. New members who enroll after January 1, 2027 will have their first check six months after joining. People already on Medi-Cal move to the six-month schedule at their next renewal after March 1, 2027. Children, pregnant and postpartum people, older adults, people with disabilities, and American Indian and Alaska Native members keep renewing once a year.
+The rule has exemptions, and a county will tell you whether it applies to you and what information it needs. Read the current [DHCS Medi-Cal changes page](https://www.dhcs.ca.gov/medi-cal/updates/medi-cal-changes/) or get help before a deadline if you receive a notice.
 
-## Coming in 2027: work and community engagement requirements
+## Help
 
-Starting January 1, 2027, some adults ages 19 to 64 in the Affordable Care Act adult expansion group will need to do one or more of these to keep Medi-Cal, unless they have an exemption:
-- Work and earn at least $580 a month (seasonal workers can average $580 a month over six months).
-- Be in a job training program for at least 80 hours a month.
-- Volunteer or do community service for at least 80 hours a month.
-- Go to school at least half-time.
-- A mix of these that adds up to at least 80 hours or $580 a month.
-
-Medi-Cal will send you a letter if this applies to you. If you miss deadlines, you could lose your Medi-Cal.
+Call the Health Consumer Alliance at 1-888-804-3536 for free help with Medi-Cal questions. Only the county can decide eligibility for a particular person.
