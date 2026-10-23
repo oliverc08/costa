@@ -19,9 +19,9 @@ export const MEDI_CAL_PERCENT = {
   agedDisabled: 138,
 } as const;
 
-/** CalFresh 200% FPL gross monthly limits (BBCE), Oct 1, 2025 to Sep 30, 2026. */
-export const CALFRESH_GROSS_LIMITS = [2610, 3526, 4442, 5360, 6276, 7192, 8110, 9026] as const;
-export const CALFRESH_ADDITIONAL = 918;
+/** CalFresh 200% FPL gross monthly limits for MCE households, Oct 1, 2026 to Sep 30, 2027. */
+export const CALFRESH_GROSS_LIMITS = [2660, 3608, 4554, 5500, 6448, 7394, 8340, 9288] as const;
+export const CALFRESH_ADDITIONAL = 948;
 
 /** California WIC 185% FPL gross monthly limits, May 1, 2026 to Jun 30, 2027. */
 export const WIC_MONTHLY_LIMITS = [2461, 3337, 4212, 5088, 5964, 6839, 7715, 8591] as const;
@@ -50,9 +50,9 @@ export const RULE_SOURCES = {
   },
   calfresh: {
     agency: "California Department of Social Services (CDSS)",
-    url: "https://www.cdss.ca.gov/benefits-services/food-nutrition-services/calfresh/frequently-asked-questions",
-    effective: "Oct 1, 2025 to Sep 30, 2026",
-    lastVerified: "2026-09-26",
+    url: "https://www.cdss.ca.gov/portals/9/calfreshoutreach/220000_English_Income_Inserts_FFY2027.pdf",
+    effective: "Oct 1, 2026 to Sep 30, 2027",
+    lastVerified: "2026-10-22",
   },
   wic: {
     agency: "California Department of Public Health, WIC Division",

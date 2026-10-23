@@ -16,8 +16,8 @@
       "program": "calfresh",
       "topic": "overview",
       "title": "CalFresh food benefits",
-      "url": "https://www.cdss.ca.gov/benefits-services/food-nutrition-services/calfresh/frequently-asked-questions",
-      "lastVerified": "2026-09-26",
+      "url": "https://www.cdss.ca.gov/portals/9/calfreshoutreach/220000_English_Income_Inserts_FFY2027.pdf",
+      "lastVerified": "2026-10-22",
       "nextAction": "Apply at BenefitsCal.com or call 1-877-847-3663 (1-877-847-FOOD) to reach your county CalFresh office."
     },
     {
@@ -36,9 +36,9 @@
       "program": "medi-cal",
       "topic": "rule-changes",
       "title": "Medi-Cal changes in 2026 and 2027",
-      "url": "https://www.dhcs.ca.gov/medi-cal/help/medi-cal-changes/",
-      "lastVerified": "2026-09-26",
-      "nextAction": "If you already have full-scope Medi-Cal, renew on time and report changes within 10 days so you can keep it. For free help with these changes, call the Health Consumer Alliance at 1-888-804-3536."
+      "url": "https://www.dhcs.ca.gov/medi-cal/updates/medi-cal-changes/",
+      "lastVerified": "2026-10-22",
+      "nextAction": "Keep your Medi-Cal contact information current and respond to county notices. For free help, call the Health Consumer Alliance at 1-888-804-3536."
     },
     {
       "id": "medi-cal-apply",
@@ -151,22 +151,22 @@
       "text": "- Online at BenefitsCal.com.\n- By phone: call 1-877-847-3663 (1-877-847-FOOD) to connect to your county office. San Mateo County: 1-800-223-8383. Santa Clara County: 1-877-962-3633.\n- In person at your county human services office.\n\nAfter you apply, the county will do an interview, usually by phone, and ask for proof of income."
     },
     {
-      "id": "calfresh#calfresh-income-limits-october-1-2025-to-september-30-2026",
+      "id": "calfresh#calfresh-income-limits-october-1-2026-to-september-30-2027",
       "sourceId": "calfresh",
-      "heading": "CalFresh income limits (October 1, 2025 to September 30, 2026)",
-      "text": "Most households can qualify if their gross (before taxes) monthly income is at or below these amounts (200% of the Federal Poverty Level):\n\n- 1 person: $2,610\n- 2 people: $3,526\n- 3 people: $4,442\n- 4 people: $5,360\n- 5 people: $6,276\n- 6 people: $7,192\n- 7 people: $8,110\n- 8 people: $9,026\n- Each additional person: add $918\n\nHouseholds where an older adult or a person with a disability is a separate household have different rules. The county decides eligibility and the benefit amount."
+      "heading": "CalFresh income limits (October 1, 2026 to September 30, 2027)",
+      "text": "These are the gross (before taxes) monthly limits at 200% of the Federal Poverty Level for households under California's Modified Categorical Eligibility (MCE) rules:\n\n- 1 person: $2,660\n- 2 people: $3,608\n- 3 people: $4,554\n- 4 people: $5,500\n- 5 people: $6,448\n- 6 people: $7,394\n- 7 people: $8,340\n- 8 people: $9,288\n- Each additional person: add $948\n\nHouseholds not covered by MCE generally use a 130% gross-income limit and a 100% net-income limit. Households with an older adult or a person with a disability can also have different rules. These figures are only a screening guide: the county decides eligibility and the benefit amount. See the [current CDSS income insert](https://www.cdss.ca.gov/portals/9/calfreshoutreach/220000_English_Income_Inserts_FFY2027.pdf) and [Santa Clara County's detailed eligibility chart](https://stgenssa.sccgov.org/debs/program_handbooks/charts/assets/2CalFresh/CFMonthAllIncomeElig.htm)."
     },
     {
-      "id": "calfresh#maximum-monthly-calfresh-amounts-october-1-2025-to-september-30-2026",
+      "id": "calfresh#maximum-monthly-calfresh-amounts-october-1-2026-to-september-30-2027",
       "sourceId": "calfresh",
-      "heading": "Maximum monthly CalFresh amounts (October 1, 2025 to September 30, 2026)",
-      "text": "- 1 person: $298\n- 2 people: $546\n- 3 people: $785\n- 4 people: $994\n- 5 people: $1,183\n- 6 people: $1,421\n- 7 people: $1,571\n- 8 people: $1,789\n- Each additional person: add $218\n\nMost households get less than the maximum. The amount depends on income and expenses like rent and utilities."
+      "heading": "Maximum monthly CalFresh amounts (October 1, 2026 to September 30, 2027)",
+      "text": "- 1 person: $306\n- 2 people: $562\n- 3 people: $808\n- 4 people: $1,023\n- 5 people: $1,217\n- 6 people: $1,463\n- 7 people: $1,616\n- 8 people: $1,841\n- Each additional person: add $225\n\nMost households get less than the maximum. The amount depends on income and expenses like rent and utilities."
     },
     {
       "id": "calfresh#calfresh-changes-from-the-federal-h-r-1-law",
       "sourceId": "calfresh",
       "heading": "CalFresh changes from the federal H.R. 1 law",
-      "text": "- Since November 1, 2025: households without a member over 60 or with a disability must have heating or cooling costs separate from their rent to claim a utility deduction. Some households got less money because of this.\n- Since April 1, 2026: many lawfully present immigrants no longer qualify for CalFresh.\n- Since June 1, 2026: more CalFresh recipients may need to participate in work or community engagement activities to keep their benefits.\n\nIf you are not sure how these changes affect you, contact your county."
+      "text": "- Since November 1, 2025: some households can no longer use a heating or cooling utility deduction unless they pay that cost separately from rent. This change depends on household circumstances; ask the county how it affects your case.\n- Since April 1, 2026: some immigration categories that were previously eligible for CalFresh are no longer eligible under federal rules. Other household members may still be eligible, and the California Food Assistance Program may be an option for some people. See the [CDSS H.R. 1 FAQ](https://www.cdss.ca.gov/benefits-services/food-nutrition-services/calfresh/frequently-asked-questions) or ask the county.\n- Since June 1, 2026: some CalFresh recipients ages 18–64 may need to meet work or community engagement rules to get or keep benefits. Exemptions and county waivers apply. See the [CDSS work rules page](https://www.cdss.ca.gov/inforesources/calfresh/abawd) or ask the county whether the rule applies.\n\nIf you are not sure how these changes affect you, contact your county."
     },
     {
       "id": "calfresh#keeping-calfresh",
@@ -211,46 +211,40 @@
       "text": "Dial 2-1-1 for local disaster shelters, food, and recovery resources in San Mateo and Santa Clara counties."
     },
     {
-      "id": "medi-cal-2026-changes#enrollment-freeze-for-some-adults-since-january-1-2026",
+      "id": "medi-cal-2026-changes#full-scope-enrollment-freeze-for-some-adults-since-january-1-2026",
       "sourceId": "medi-cal-2026-changes",
-      "heading": "Enrollment freeze for some adults (since January 1, 2026)",
-      "text": "Starting January 1, 2026, adults 19 and older who do not have a qualifying immigration status and are not already enrolled can no longer sign up for full-scope Medi-Cal. This includes people who are undocumented, some green card holders in the five-year waiting period, and people considered PRUCOL. They can get restricted-scope Medi-Cal, which covers emergency care, pregnancy-related care, and nursing home care."
+      "heading": "Full-scope enrollment freeze for some adults (since January 1, 2026)",
+      "text": "Some adults age 19 and older who do not have a satisfactory immigration status cannot newly enroll in full-scope Medi-Cal because of an enrollment freeze. They may still be able to get restricted-scope Medi-Cal if otherwise eligible. Who is affected depends on a person's status and circumstances. Do not assume that a green card, a pending immigration application, or another document by itself answers the question. Check the [DHCS immigration-status chart](https://www.dhcs.ca.gov/immigration-status-and-changes-to-medi-cal-eligibility/) or ask the county.\n\nChildren under 19, pregnant people (through pregnancy and one year after it ends), and former foster youth under 26 who were in foster care on their 18th birthday can still get full-scope Medi-Cal regardless of immigration status if they meet other eligibility rules."
     },
     {
-      "id": "medi-cal-2026-changes#keeping-full-scope-medi-cal-if-you-already-have-it",
+      "id": "medi-cal-2026-changes#keeping-or-restoring-coverage",
       "sourceId": "medi-cal-2026-changes",
-      "heading": "Keeping full-scope Medi-Cal if you already have it",
-      "text": "If you already have full-scope Medi-Cal, you can keep it no matter your immigration status. You must renew on time and still meet the Medi-Cal rules, like income and California residency.\n\nIf your Medi-Cal ends, you have three months (a grace period) starting the day your coverage ends to sign up again for full-scope Medi-Cal. If you miss the three-month grace period, you must apply again and you will only be able to get restricted-scope Medi-Cal."
+      "heading": "Keeping or restoring coverage",
+      "text": "People who were already enrolled in full-scope Medi-Cal on January 1, 2026 can keep coverage if they continue to meet Medi-Cal rules and renew on time. If a member affected by the freeze loses full-scope coverage, DHCS provides a three-month period to re-establish eligibility. If they reapply after that period, the freeze may apply to them as a new applicant. The county decides each case. See the [DHCS Medi-Cal changes page](https://www.dhcs.ca.gov/medi-cal/updates/medi-cal-changes/) and contact the county promptly if coverage ends."
     },
     {
-      "id": "medi-cal-2026-changes#who-still-gets-full-scope-medi-cal-regardless-of-immigration-status",
+      "id": "medi-cal-2026-changes#dental-coverage-changes-starting-july-1-2027",
       "sourceId": "medi-cal-2026-changes",
-      "heading": "Who still gets full-scope Medi-Cal regardless of immigration status",
-      "text": "- Children under 19.\n- Pregnant people, during the pregnancy and for one year after the pregnancy ends.\n- Foster youth and former foster youth who were in foster care on their 18th birthday, up to age 26."
+      "heading": "Dental coverage changes (starting July 1, 2027)",
+      "text": "Starting July 1, 2027, some adults age 19 and older with unsatisfactory immigration status will no longer have full-scope Medi-Cal dental coverage. Emergency dental care will remain covered. DHCS says children, pregnant and postpartum people, and former foster youth under 26 keep full dental benefits. Check with the county or [Medi-Cal Dental](https://www.dhcs.ca.gov/services/Pages/Medi-CalDental.aspx) about an individual case."
     },
     {
-      "id": "medi-cal-2026-changes#dental-changes-since-july-1-2026",
+      "id": "medi-cal-2026-changes#six-month-eligibility-checks-starting-march-1-2027",
       "sourceId": "medi-cal-2026-changes",
-      "heading": "Dental changes (since July 1, 2026)",
-      "text": "Starting July 1, 2026, Medi-Cal no longer covers regular dental services for some adults 19 and older affected by the immigration-status changes, except emergencies. This does not apply to people who are pregnant or within one year after pregnancy, or to former foster youth under 26."
+      "heading": "Six-month eligibility checks (starting March 1, 2027)",
+      "text": "Starting March 1, 2027, some adults age 19–64 covered through the Affordable Care Act adult expansion will have eligibility checked twice a year instead of once a year. DHCS says the rule applies to the ACA new adult group, including some members affected by immigration-related changes. Members outside that group, pregnant or postpartum people, American Indian or Alaska Native members, and former foster youth under 26 continue to renew annually. Respond to each county notice by its deadline."
     },
     {
-      "id": "medi-cal-2026-changes#help-with-the-changes",
+      "id": "medi-cal-2026-changes#work-and-community-engagement-rules-starting-january-1-2027",
       "sourceId": "medi-cal-2026-changes",
-      "heading": "Help with the changes",
-      "text": "DHCS offers a nurse advice line and community navigators to help people affected by these changes. The Health Consumer Alliance gives free help with Medi-Cal eligibility questions: 1-888-804-3536."
+      "heading": "Work and community engagement rules (starting January 1, 2027)",
+      "text": "Some adults age 19–64 in the ACA adult expansion group will need to meet a work or community engagement rule to keep Medi-Cal, unless an exemption applies. DHCS says qualifying activities include:\n\n- Working and earning at least $580 a month (or, for seasonal workers, averaging $580 a month over six months).\n- Job training for at least 80 hours a month.\n- Volunteering or community service for at least 80 hours a month.\n- Attending school at least half-time.\n- Combining activities to reach 80 hours or $580 a month.\n\nThe rule has exemptions, and a county will tell you whether it applies to you and what information it needs. Read the current [DHCS Medi-Cal changes page](https://www.dhcs.ca.gov/medi-cal/updates/medi-cal-changes/) or get help before a deadline if you receive a notice."
     },
     {
-      "id": "medi-cal-2026-changes#coming-in-2027-six-month-eligibility-checks",
+      "id": "medi-cal-2026-changes#help",
       "sourceId": "medi-cal-2026-changes",
-      "heading": "Coming in 2027: six-month eligibility checks",
-      "text": "Starting January 1, 2027, some adults ages 19 to 64 who get Medi-Cal through the Affordable Care Act adult expansion will have their eligibility checked every six months instead of once a year. New members who enroll after January 1, 2027 will have their first check six months after joining. People already on Medi-Cal move to the six-month schedule at their next renewal after March 1, 2027. Children, pregnant and postpartum people, older adults, people with disabilities, and American Indian and Alaska Native members keep renewing once a year."
-    },
-    {
-      "id": "medi-cal-2026-changes#coming-in-2027-work-and-community-engagement-requirements",
-      "sourceId": "medi-cal-2026-changes",
-      "heading": "Coming in 2027: work and community engagement requirements",
-      "text": "Starting January 1, 2027, some adults ages 19 to 64 in the Affordable Care Act adult expansion group will need to do one or more of these to keep Medi-Cal, unless they have an exemption:\n- Work and earn at least $580 a month (seasonal workers can average $580 a month over six months).\n- Be in a job training program for at least 80 hours a month.\n- Volunteer or do community service for at least 80 hours a month.\n- Go to school at least half-time.\n- A mix of these that adds up to at least 80 hours or $580 a month.\n\nMedi-Cal will send you a letter if this applies to you. If you miss deadlines, you could lose your Medi-Cal."
+      "heading": "Help",
+      "text": "Call the Health Consumer Alliance at 1-888-804-3536 for free help with Medi-Cal questions. Only the county can decide eligibility for a particular person."
     },
     {
       "id": "medi-cal-apply#what-medi-cal-is",
