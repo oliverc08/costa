@@ -2,7 +2,6 @@ import "../scripts/load-env";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { runAgent, type ToolTrace } from "@/lib/agent";
-import { models } from "@/lib/config";
 import { EVAL_SUMMARY_PATH, type EvalSummary } from "@/lib/eval-summary";
 import { detectLanguage, LANGUAGES, type LanguageCode } from "@/lib/languages";
 import { wantsHuman } from "@/lib/safety/intent";
@@ -66,7 +65,6 @@ function summarizeTools(tools: ToolTrace[]): ScenarioResult["tools"] {
 
 /** Rule-based judge for the local deterministic agent (no cloud LLM). */
 function judgeLocal(s: Scenario, reply: string, tools: ToolTrace[]): Judgement {
-  const lower = reply.toLowerCase();
   const search = tools.find((t) => t.toolName === "searchBenefits");
   const searchOut = search?.output as { found?: boolean; results?: unknown[] } | undefined;
   const help = tools.find((t) => t.toolName === "findLocalHelp");
